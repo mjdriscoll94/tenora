@@ -27,6 +27,7 @@ struct RootTabView: View {
         .sheet(isPresented: $isAddingTask) {
             AddTaskView()
         }
+        .tint(.tenoraBlue)
         .task {
             await taskStore.load()
         }
@@ -43,4 +44,3 @@ struct RootTabView: View {
         }
     }
 }
-

@@ -19,6 +19,7 @@ struct TodayView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
         }
+        .background(Color.tenoraSurface.ignoresSafeArea())
         .navigationTitle("Today")
         .overlay(alignment: .bottom) {
             if let errorMessage = taskStore.errorMessage {
@@ -38,30 +39,38 @@ struct TodayView: View {
 
             if let task = taskStore.nowRecommendation {
                 VStack(alignment: .leading, spacing: 16) {
+                    Text("WHAT MATTERS NOW")
+                        .font(.caption2.weight(.bold))
+                        .tracking(1.1)
+                        .foregroundStyle(Color.tenoraLavender)
+
                     Text(task.title)
-                        .font(.title2.weight(.semibold))
+                        .font(.system(.title2, design: .rounded, weight: .semibold))
+                        .foregroundStyle(.white)
 
                     if let duration = task.estimatedDurationMinutes {
                         Label("About \(duration) minutes", systemImage: "clock")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.white.opacity(0.72))
                     }
 
                     HStack {
                         Button("Complete") {
                             Task { await taskStore.complete(task) }
                         }
-                        .buttonStyle(.borderedProminent)
+                        .buttonStyle(TenoraPrimaryButtonStyle())
 
                         Button("Later") {
                             Task { await taskStore.postpone(task) }
                         }
                         .buttonStyle(.bordered)
+                        .tint(.white)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(20)
-                .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 20))
+                .padding(22)
+                .background(TenoraNowCardBackground())
+                .shadow(color: Color.tenoraNavy.opacity(0.18), radius: 18, y: 10)
                 .accessibilityElement(children: .contain)
             } else {
                 ContentUnavailableView(
@@ -98,6 +107,12 @@ struct TodayView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
                 .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 16))
+                .overlay(alignment: .leading) {
+                    Capsule()
+                        .fill(TenoraTheme.accentGradient)
+                        .frame(width: 4)
+                        .padding(.vertical, 12)
+                }
             }
         }
     }
@@ -109,7 +124,7 @@ struct TodayView: View {
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
             .font(.caption.weight(.semibold))
-            .foregroundStyle(.secondary)
+            .foregroundStyle(Color.tenoraBlue)
             .tracking(1.2)
     }
 }

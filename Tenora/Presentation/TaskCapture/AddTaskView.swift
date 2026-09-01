@@ -22,6 +22,9 @@ struct AddTaskView: View {
                         .lineLimit(2...5)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.tenoraSurface)
+            .tint(.tenoraBlue)
             .navigationTitle("Add Task")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -45,4 +48,3 @@ struct AddTaskView: View {
         }
     }
 }
-

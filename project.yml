@@ -18,6 +18,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tenora.app
         PRODUCT_NAME: Tenora
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Tenora
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
@@ -41,4 +43,3 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Tenora.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tenora"
         BUNDLE_LOADER: "$(TEST_HOST)"
-

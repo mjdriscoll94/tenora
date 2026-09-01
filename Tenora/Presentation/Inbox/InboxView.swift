@@ -19,6 +19,7 @@ struct InboxView: View {
                         } label: {
                             Image(systemName: "circle")
                                 .font(.title3)
+                                .foregroundStyle(Color.tenoraBlue)
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("Complete \(task.title)")
@@ -37,6 +38,8 @@ struct InboxView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(Color.tenoraSurface.ignoresSafeArea())
         .navigationTitle("Inbox")
         .overlay(alignment: .bottom) {
             if let errorMessage = taskStore.errorMessage {
@@ -49,4 +52,3 @@ struct InboxView: View {
         }
     }
 }
-
