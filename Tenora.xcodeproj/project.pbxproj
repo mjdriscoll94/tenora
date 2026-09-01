@@ -14,11 +14,16 @@
 		3DFA95E7E87EACD8FB4AE016 /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A53CB65C882B6D7CF17EFEB /* InboxView.swift */; };
 		60FEFCA2E15B9D0201854426 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604F3CF4EBF37F94368BCFC9 /* AddTaskView.swift */; };
 		6BA8BE22E0DBE0037ED1B3A7 /* TaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8F837184BFD98E3459E985 /* TaskRepository.swift */; };
+		6D48EF0408EBBA662E06234D /* ResurfacingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */; };
+		7B2D12CDB9E604B6A87BDFF8 /* TenoraClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D308B84A73C48483E0987 /* TenoraClock.swift */; };
+		8D3F3E31B17B93DA3C8586C1 /* TaskPriorityEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C66726052401F713836DD7E /* TaskPriorityEngineTests.swift */; };
+		97D1587772CADDAC643B6E37 /* TaskPriorityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */; };
 		9E868298E79D04132FA3238A /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEBBB461D5EE714B551CAA2 /* CalendarView.swift */; };
 		A8854A3DFFC27EC0654F923D /* StoredTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32C111D0AB90057D68F77C2 /* StoredTask.swift */; };
 		E2A67032527C1684336B0BBC /* SwiftDataTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D4AC1B40D0945D73975D96 /* SwiftDataTaskRepository.swift */; };
 		F0F2676A336AA0641FDAC392 /* TenoraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675BBBBAD84FAABC4FC78C11 /* TenoraApp.swift */; };
 		F87D76931A25DFDC59728325 /* SwiftDataTaskRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61958874194B7B375841513D /* SwiftDataTaskRepositoryTests.swift */; };
+		FD2795F09FD35262B448FD83 /* ResurfacingEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37321E3F7287D21A2716E2BC /* ResurfacingEngineTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,14 +37,19 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		37321E3F7287D21A2716E2BC /* ResurfacingEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResurfacingEngineTests.swift; sourceTree = "<group>"; };
 		4274B603B59539ED701D1BFE /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		49D4AC1B40D0945D73975D96 /* SwiftDataTaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataTaskRepository.swift; sourceTree = "<group>"; };
+		4C66726052401F713836DD7E /* TaskPriorityEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPriorityEngineTests.swift; sourceTree = "<group>"; };
+		5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResurfacingEngine.swift; sourceTree = "<group>"; };
 		604F3CF4EBF37F94368BCFC9 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		61958874194B7B375841513D /* SwiftDataTaskRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataTaskRepositoryTests.swift; sourceTree = "<group>"; };
 		675BBBBAD84FAABC4FC78C11 /* TenoraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraApp.swift; sourceTree = "<group>"; };
 		67A21DB4A81A3680B2429D5E /* TenoraTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TenoraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6D4D308B84A73C48483E0987 /* TenoraClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraClock.swift; sourceTree = "<group>"; };
 		7103B4F45D830AB456714BEE /* TaskStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStore.swift; sourceTree = "<group>"; };
 		7A53CB65C882B6D7CF17EFEB /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
+		7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPriorityEngine.swift; sourceTree = "<group>"; };
 		9B5DF93911830F780A3C6D2F /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
 		9C8F837184BFD98E3459E985 /* TaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepository.swift; sourceTree = "<group>"; };
 		A32C111D0AB90057D68F77C2 /* StoredTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredTask.swift; sourceTree = "<group>"; };
@@ -74,6 +84,15 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		1A1F6DC03AEDAC4666D21CFD /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */,
+				7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		206CA588D5D158520BB0D938 /* LocalPersistence */ = {
 			isa = PBXGroup;
 			children = (
@@ -88,6 +107,8 @@
 			children = (
 				3AADCAF53ACD489028526C5E /* Models */,
 				73641F531C097096A47B41ED /* Repositories */,
+				1A1F6DC03AEDAC4666D21CFD /* Services */,
+				D6B656E84905F9AF03413FCB /* Time */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -173,6 +194,15 @@
 			path = Inbox;
 			sourceTree = "<group>";
 		};
+		B87107C7898ED3F62E0196A0 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				37321E3F7287D21A2716E2BC /* ResurfacingEngineTests.swift */,
+				4C66726052401F713836DD7E /* TaskPriorityEngineTests.swift */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
 		C072C249E8CD9CB126C6196F /* App */ = {
 			isa = PBXGroup;
 			children = (
@@ -189,10 +219,19 @@
 			path = Navigation;
 			sourceTree = "<group>";
 		};
+		D6B656E84905F9AF03413FCB /* Time */ = {
+			isa = PBXGroup;
+			children = (
+				6D4D308B84A73C48483E0987 /* TenoraClock.swift */,
+			);
+			path = Time;
+			sourceTree = "<group>";
+		};
 		E491BA617F63EC5CE7AFC692 /* TenoraTests */ = {
 			isa = PBXGroup;
 			children = (
 				18CDFDBDBCBBB0E530D9E604 /* Data */,
+				B87107C7898ED3F62E0196A0 /* Domain */,
 			);
 			path = TenoraTests;
 			sourceTree = "<group>";
@@ -286,7 +325,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD2795F09FD35262B448FD83 /* ResurfacingEngineTests.swift in Sources */,
 				F87D76931A25DFDC59728325 /* SwiftDataTaskRepositoryTests.swift in Sources */,
+				8D3F3E31B17B93DA3C8586C1 /* TaskPriorityEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,12 +338,15 @@
 				60FEFCA2E15B9D0201854426 /* AddTaskView.swift in Sources */,
 				9E868298E79D04132FA3238A /* CalendarView.swift in Sources */,
 				3DFA95E7E87EACD8FB4AE016 /* InboxView.swift in Sources */,
+				6D48EF0408EBBA662E06234D /* ResurfacingEngine.swift in Sources */,
 				0F2F1BEC60C274416F49AA3D /* RootTabView.swift in Sources */,
 				A8854A3DFFC27EC0654F923D /* StoredTask.swift in Sources */,
 				E2A67032527C1684336B0BBC /* SwiftDataTaskRepository.swift in Sources */,
+				97D1587772CADDAC643B6E37 /* TaskPriorityEngine.swift in Sources */,
 				6BA8BE22E0DBE0037ED1B3A7 /* TaskRepository.swift in Sources */,
 				372A8421BFC36C8C8CF0B8B2 /* TaskStore.swift in Sources */,
 				F0F2676A336AA0641FDAC392 /* TenoraApp.swift in Sources */,
+				7B2D12CDB9E604B6A87BDFF8 /* TenoraClock.swift in Sources */,
 				2BEA67D92CE64346ED4DC289 /* TenoraTask.swift in Sources */,
 				14980D8B2E14247D8B06B1AB /* TodayView.swift in Sources */,
 			);

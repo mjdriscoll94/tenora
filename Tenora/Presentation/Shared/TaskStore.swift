@@ -6,13 +6,38 @@ final class TaskStore: ObservableObject {
     @Published private(set) var errorMessage: String?
 
     private let repository: any TaskRepository
+    private let clock: any TenoraClock
+    private let priorityEngine: TaskPriorityEngine
+    private let resurfacingEngine: ResurfacingEngine
+    private let calendar: Calendar
 
-    init(repository: any TaskRepository) {
+    init(
+        repository: any TaskRepository,
+        clock: any TenoraClock = SystemClock(),
+        priorityEngine: TaskPriorityEngine = TaskPriorityEngine(),
+        resurfacingEngine: ResurfacingEngine = ResurfacingEngine(),
+        calendar: Calendar = .current
+    ) {
         self.repository = repository
+        self.clock = clock
+        self.priorityEngine = priorityEngine
+        self.resurfacingEngine = resurfacingEngine
+        self.calendar = calendar
     }
 
     var inboxTasks: [TenoraTask] {
         tasks.filter { $0.status == .inbox }
+    }
+
+    var nowRecommendation: TenoraTask? {
+        priorityEngine.recommendation(
+            from: tasks,
+            context: .init(now: clock.now, calendar: calendar)
+        )
+    }
+
+    var resurfacedTasks: [TenoraTask] {
+        resurfacingEngine.tasksToSurface(from: tasks, at: clock.now)
     }
 
     func load() async {
@@ -29,7 +54,9 @@ final class TaskStore: ObservableObject {
         guard !cleanTitle.isEmpty else { return false }
 
         do {
-            try await repository.save(TenoraTask(title: cleanTitle, notes: notes))
+            var task = TenoraTask(title: cleanTitle, notes: notes, createdAt: clock.now)
+            task.nextSurfaceAt = resurfacingEngine.initialSurfaceDate(for: task, calendar: calendar)
+            try await repository.save(task)
             tasks = try await repository.fetchTasks()
             errorMessage = nil
             return true
@@ -41,14 +68,22 @@ final class TaskStore: ObservableObject {
 
     func complete(_ task: TenoraTask) async {
         var completedTask = task
-        completedTask.complete()
+        completedTask.complete(at: clock.now)
+        await saveAndReload(completedTask, failureMessage: "Tenora couldn't complete that task.")
+    }
+
+    func postpone(_ task: TenoraTask) async {
+        let postponedTask = resurfacingEngine.postpone(task, at: clock.now, calendar: calendar)
+        await saveAndReload(postponedTask, failureMessage: "Tenora couldn't bring that task back later.")
+    }
+
+    private func saveAndReload(_ task: TenoraTask, failureMessage: String) async {
         do {
-            try await repository.save(completedTask)
+            try await repository.save(task)
             tasks = try await repository.fetchTasks()
             errorMessage = nil
         } catch {
-            errorMessage = "Tenora couldn't complete that task."
+            errorMessage = failureMessage
         }
     }
 }
-
