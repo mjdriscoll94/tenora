@@ -2,15 +2,20 @@ import SwiftUI
 
 struct TodayView: View {
     @EnvironmentObject private var taskStore: TaskStore
+    @EnvironmentObject private var calendarStore: CalendarStore
 
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 28) {
-                Text(Date.now.formatted(.dateTime.weekday(.wide).month(.wide).day()))
+                Text(calendarStore.currentDate.formatted(.dateTime.weekday(.wide).month(.wide).day()))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
                 nowSection
+
+                if !calendarStore.upcomingEvents.isEmpty {
+                    comingUpSection
+                }
 
                 if !remainingResurfacedTasks.isEmpty {
                     resurfacedSection
@@ -37,7 +42,7 @@ struct TodayView: View {
         VStack(alignment: .leading, spacing: 12) {
             sectionLabel("NOW")
 
-            if let task = taskStore.nowRecommendation {
+            if let task = recommendation {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("WHAT MATTERS NOW")
                         .font(.caption2.weight(.bold))
@@ -53,6 +58,8 @@ struct TodayView: View {
                             .font(.subheadline)
                             .foregroundStyle(.white.opacity(0.72))
                     }
+
+                    availabilityContext
 
                     HStack {
                         Button("Complete") {
@@ -81,6 +88,55 @@ struct TodayView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical)
             }
+        }
+    }
+
+    @ViewBuilder
+    private var availabilityContext: some View {
+        if let snapshot = calendarStore.availability,
+           let nextEvent = snapshot.nextEvent,
+           let minutes = snapshot.availableMinutes,
+           minutes > 0 {
+            Text("You have \(minutes) minutes before \(nextEvent.title).")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.8))
+        } else if let minutes = calendarStore.availability?.availableMinutes, minutes > 0 {
+            Text("You have about \(minutes) minutes available.")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.8))
+        }
+    }
+
+    private var comingUpSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionLabel("COMING UP")
+            VStack(spacing: 0) {
+                ForEach(Array(calendarStore.upcomingEvents.prefix(3).enumerated()), id: \.element.id) { index, event in
+                    HStack(alignment: .firstTextBaseline, spacing: 14) {
+                        Text(event.isAllDay ? "All day" : event.startDate.formatted(date: .omitted, time: .shortened))
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Color.tenoraBlue)
+                            .frame(width: 72, alignment: .leading)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(event.title)
+                                .font(.body.weight(.medium))
+                            if !event.calendarName.isEmpty {
+                                Text(event.calendarName)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        Spacer()
+                    }
+                    .padding(.vertical, 12)
+
+                    if index < min(calendarStore.upcomingEvents.count, 3) - 1 {
+                        Divider()
+                    }
+                }
+            }
+            .padding(.horizontal)
+            .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
     }
 
@@ -118,7 +174,11 @@ struct TodayView: View {
     }
 
     private var remainingResurfacedTasks: [TenoraTask] {
-        taskStore.resurfacedTasks.filter { $0.id != taskStore.nowRecommendation?.id }
+        taskStore.resurfacedTasks.filter { $0.id != recommendation?.id }
+    }
+
+    private var recommendation: TenoraTask? {
+        taskStore.recommendation(availableMinutes: calendarStore.availability?.availableMinutes)
     }
 
     private func sectionLabel(_ text: String) -> some View {

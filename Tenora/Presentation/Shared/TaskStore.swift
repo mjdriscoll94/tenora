@@ -30,9 +30,17 @@ final class TaskStore: ObservableObject {
     }
 
     var nowRecommendation: TenoraTask? {
+        recommendation(availableMinutes: nil)
+    }
+
+    func recommendation(availableMinutes: Int?) -> TenoraTask? {
         priorityEngine.recommendation(
             from: tasks,
-            context: .init(now: clock.now, calendar: calendar)
+            context: .init(
+                now: clock.now,
+                availableMinutes: availableMinutes,
+                calendar: calendar
+            )
         )
     }
 
@@ -49,12 +57,17 @@ final class TaskStore: ObservableObject {
         }
     }
 
-    func createTask(title: String, notes: String = "") async -> Bool {
+    func createTask(
+        title: String,
+        notes: String = "",
+        estimatedDurationMinutes: Int? = nil
+    ) async -> Bool {
         let cleanTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanTitle.isEmpty else { return false }
 
         do {
             var task = TenoraTask(title: cleanTitle, notes: notes, createdAt: clock.now)
+            task.estimatedDurationMinutes = estimatedDurationMinutes
             task.nextSurfaceAt = resurfacingEngine.initialSurfaceDate(for: task, calendar: calendar)
             try await repository.save(task)
             tasks = try await repository.fetchTasks()

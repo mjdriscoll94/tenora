@@ -4,12 +4,15 @@ import XCTest
 
 @MainActor
 final class SwiftDataTaskRepositoryTests: XCTestCase {
+    private var containers: [ModelContainer] = []
+
     private func makeRepository() throws -> SwiftDataTaskRepository {
         let configuration = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(
             for: StoredTask.self,
             configurations: configuration
         )
+        containers.append(container)
         return SwiftDataTaskRepository(modelContext: container.mainContext)
     }
 

@@ -2,6 +2,7 @@ import SwiftUI
 
 struct RootTabView: View {
     @EnvironmentObject private var taskStore: TaskStore
+    @EnvironmentObject private var calendarStore: CalendarStore
     @State private var isAddingTask = false
 
     var body: some View {
@@ -30,6 +31,7 @@ struct RootTabView: View {
         .tint(.tenoraBlue)
         .task {
             await taskStore.load()
+            await calendarStore.refresh()
         }
     }
 

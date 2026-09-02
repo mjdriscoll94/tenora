@@ -5,6 +5,7 @@ struct AddTaskView: View {
     @EnvironmentObject private var taskStore: TaskStore
     @State private var title = ""
     @State private var notes = ""
+    @State private var estimatedDurationMinutes: Int?
     @FocusState private var isTitleFocused: Bool
 
     var body: some View {
@@ -20,6 +21,13 @@ struct AddTaskView: View {
                 Section("Optional") {
                     TextField("Notes", text: $notes, axis: .vertical)
                         .lineLimit(2...5)
+
+                    Picker("Duration", selection: $estimatedDurationMinutes) {
+                        Text("None").tag(Int?.none)
+                        ForEach([5, 15, 30, 45, 60, 120], id: \.self) { minutes in
+                            Text(durationLabel(for: minutes)).tag(Optional(minutes))
+                        }
+                    }
                 }
             }
             .scrollContentBackground(.hidden)
@@ -42,9 +50,21 @@ struct AddTaskView: View {
 
     private func save() {
         Task {
-            if await taskStore.createTask(title: title, notes: notes) {
+            if await taskStore.createTask(
+                title: title,
+                notes: notes,
+                estimatedDurationMinutes: estimatedDurationMinutes
+            ) {
                 dismiss()
             }
+        }
+    }
+
+    private func durationLabel(for minutes: Int) -> String {
+        switch minutes {
+        case 60: return "1 hour"
+        case 120: return "2 hours"
+        default: return "\(minutes) min"
         }
     }
 }
