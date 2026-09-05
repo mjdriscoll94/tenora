@@ -113,6 +113,14 @@ final class TaskStore: ObservableObject {
         return await saveAndReload(task, failureMessage: "Your reminder decision couldn't be saved.")
     }
 
+    var reviewTasks: [TenoraTask] { ReviewEngine().queue(tasks: tasks, now: clock.now, calendar: calendar) }
+
+    func review(_ id: UUID, decision: ReviewDecision) async -> Bool {
+        guard let task = tasks.first(where: { $0.id == id }) else { return false }
+        let updated = ReviewEngine().apply(decision, to: task, now: clock.now, calendar: calendar)
+        return await saveAndReload(updated, failureMessage: "That decision couldn't be saved. Please try again.")
+    }
+
     func update(_ draft: TenoraTask) async -> Bool {
         guard let previous = tasks.first(where: { $0.id == draft.id }) else { return false }
         do {

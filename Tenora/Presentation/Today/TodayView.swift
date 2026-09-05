@@ -3,6 +3,7 @@ import SwiftUI
 struct TodayView: View {
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
+    @State private var reviewKind: ReviewKind?
 
     var body: some View {
         ScrollView {
@@ -20,12 +21,18 @@ struct TodayView: View {
                 if !remainingResurfacedTasks.isEmpty {
                     resurfacedSection
                 }
+                VStack(alignment: .leading, spacing: 12) {
+                    sectionLabel("A MOMENT TO REORIENT")
+                    Button("Morning review") { reviewKind = .morning }.buttonStyle(.bordered)
+                    Button("Evening reset") { reviewKind = .evening }.buttonStyle(.bordered)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
         }
         .background(Color.tenoraSurface.ignoresSafeArea())
         .navigationTitle("Today")
+        .sheet(item: $reviewKind) { ReviewView(kind: $0) }
         .overlay(alignment: .bottom) {
             if let errorMessage = taskStore.errorMessage {
                 Text(errorMessage)

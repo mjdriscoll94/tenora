@@ -26,3 +26,7 @@ The Add task to Tenora App Intent is available to Shortcuts and through the phra
 The embedded TenoraWidgets extension provides small and medium Home Screen widgets. Both deep-link to the recommended task; medium also shows the next timed event and a capture link. Tasks remain in the original SwiftData store. Only a Codable snapshot is shared through `group.com.tenora.app`, avoiding a database migration. Timelines recompute around event boundaries and every 15 minutes; snapshots older than six hours show a refresh prompt. iOS decides actual widget reload timing.
 
 For a physical device or distribution archive, choose your Apple development team and enable the same App Group (`group.com.tenora.app`, or your own identifier changed in both entitlements and WidgetSnapshot) for the app and extension. Unsigned builds verify compilation, not provisioning or Home Screen refresh delivery.
+
+## Reviews
+
+Today offers optional Morning review and Evening reset. Both present one unresolved item at a time, exclude tasks scheduled for future days, and persist each decision before advancing. Morning adds Make room today. Both offer Tomorrow, Schedule, Keep reminding me, Done, and confirmed deletion. Closing the flow preserves completed decisions; the next session recomputes the queue from persisted tasks. Tomorrow means 9 AM on the next local calendar day, including daylight-saving transitions, and does not change a task's actual deadline.
