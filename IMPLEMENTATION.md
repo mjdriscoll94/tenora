@@ -30,3 +30,15 @@ For a physical device or distribution archive, choose your Apple development tea
 ## Reviews
 
 Today offers optional Morning review and Evening reset. Both present one unresolved item at a time, exclude tasks scheduled for future days, and persist each decision before advancing. Morning adds Make room today. Both offer Tomorrow, Schedule, Keep reminding me, Done, and confirmed deletion. Closing the flow preserves completed decisions; the next session recomputes the queue from persisted tasks. Tomorrow means 9 AM on the next local calendar day, including daylight-saving transitions, and does not change a task's actual deadline.
+
+## NOW
+
+Recommendations respect configurable working hours, future schedules, snooze return dates, active meetings, and estimated duration versus the available gap. Without calendar access, Tenora cannot check meetings or gap size. Start persists a focused task; completing, postponing, scheduling, or deleting it releases focus. Focused tasks are excluded from reminder scheduling. The card explains its recommendation, and resurfacing is limited to two additional eligible items.
+
+The foreground app refreshes every minute and on activation; EventKit changes refresh calendar data. Failed calendar reads discard stale availability. Widgets share working hours and focus and add schedule/return boundaries to their timelines. Unchanged minute refreshes do not repeatedly move pending notification delivery times.
+
+## Device acceptance checks
+
+Validation: 39 unit tests and one isolated simulator UI test cover the domain/store rules and capture → schedule → complete → review navigation. The UI test uses an in-memory task store. An unsigned iOS device build checks compilation of the app and widget.
+
+Before release, verify notification permission, delivery and cold-launch actions; Siri phrase discovery; Share Sheet capture through a configured Shortcut; and small/medium widgets on a signed physical device with the App Group enabled. No native Share extension is included. Automated domain/store tests and unsigned builds do not replace those device checks.

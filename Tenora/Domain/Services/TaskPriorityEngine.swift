@@ -5,11 +5,13 @@ struct TaskPriorityEngine: Sendable {
         let now: Date
         let availableMinutes: Int?
         let calendar: Calendar
+        let workingHours: WorkingHours
 
-        init(now: Date, availableMinutes: Int? = nil, calendar: Calendar = .current) {
+        init(now: Date, availableMinutes: Int? = nil, calendar: Calendar = .current, workingHours: WorkingHours = WorkingHours()) {
             self.now = now
             self.availableMinutes = availableMinutes
             self.calendar = calendar
+            self.workingHours = workingHours
         }
     }
 
@@ -37,15 +39,28 @@ struct TaskPriorityEngine: Sendable {
             + availabilityWeight(task.estimatedDurationMinutes, available: context.availableMinutes)
     }
 
-    private func isEligible(_ task: TenoraTask, context: Context) -> Bool {
+    func isEligible(_ task: TenoraTask, context: Context) -> Bool {
         guard [.inbox, .active, .scheduled].contains(task.status) else { return false }
-
-        if let scheduledDate = task.scheduledDate,
-           scheduledDate > context.calendar.endOfDay(containing: context.now),
-           task.dueDate == nil {
-            return false
-        }
+        let hour = context.calendar.component(.hour, from: context.now)
+        guard hour >= context.workingHours.startHour && hour < context.workingHours.endHour,
+              context.availableMinutes != 0 else { return false }
+        if let scheduled = task.scheduledDate, scheduled > context.now { return false }
+        if task.snoozeCount > 0, let next = task.nextSurfaceAt, next > context.now { return false }
+        if let duration = task.estimatedDurationMinutes, let available = context.availableMinutes, duration > available { return false }
         return true
+    }
+
+    func reason(for task: TenoraTask, context: Context) -> String {
+        if let due = task.dueDate, due <= context.now { return "Its deadline has passed. Choose a next step when you're ready." }
+        if let due = task.dueDate, context.calendar.isDate(due, inSameDayAs: context.now) { return "This is due today." }
+        if let duration = task.estimatedDurationMinutes, let available = context.availableMinutes, duration <= available {
+            return "Its estimate fits the time in your calendar."
+        }
+        if let scheduled = task.scheduledDate, scheduled <= context.now { return "You made room for this today." }
+        if task.snoozeCount >= 3 { return "Still important? You can schedule it or let it go." }
+        if task.nextSurfaceAt.map({ $0 <= context.now }) == true { return "It's ready for another look." }
+        if task.priority != .normal { return "You marked this as \(task.priority.rawValue)." }
+        return "One small next step from the things you're holding."
     }
 
     private func priorityWeight(_ priority: TaskPriority) -> Int {
@@ -95,12 +110,5 @@ struct TaskPriorityEngine: Sendable {
     private func availabilityWeight(_ duration: Int?, available: Int?) -> Int {
         guard let duration, let available else { return 0 }
         return duration <= available ? 15 : -25
-    }
-}
-
-private extension Calendar {
-    func endOfDay(containing date: Date) -> Date {
-        let startOfTomorrow = self.date(byAdding: .day, value: 1, to: startOfDay(for: date)) ?? date
-        return startOfTomorrow.addingTimeInterval(-1)
     }
 }

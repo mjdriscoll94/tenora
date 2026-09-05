@@ -25,6 +25,7 @@ struct TenoraProvider: TimelineProvider {
         var dates = (0...24).map { now.addingTimeInterval(Double($0) * 900) }
         dates += (snapshot?.events ?? []).flatMap { [$0.startDate, $0.endDate] }.filter { $0 > now && $0 < now.addingTimeInterval(6 * 3600) }
         dates += (snapshot?.tasks ?? []).compactMap(\.nextSurfaceAt).filter { $0 > now && $0 < now.addingTimeInterval(6 * 3600) }
+        dates += (snapshot?.tasks ?? []).compactMap(\.scheduledDate).filter { $0 > now && $0 < now.addingTimeInterval(6 * 3600) }
         let entries = Set(dates).sorted().map { TenoraEntry(date: $0, snapshot: snapshot) }
         completion(Timeline(entries: entries, policy: .after(now.addingTimeInterval(1800))))
     }

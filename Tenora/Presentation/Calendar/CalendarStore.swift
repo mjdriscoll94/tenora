@@ -11,32 +11,34 @@ final class CalendarStore: ObservableObject {
     private let availabilityEngine: AvailabilityEngine
     private let clock: any TenoraClock
     private let calendar: Calendar
-    private let workingHours: WorkingHours
+    private let workingHoursOverride: WorkingHours?
+    private var loadedDay: Date?
     var didChange: (() -> Void)?
 
     init(
         repository: any CalendarRepository,
         availabilityEngine: AvailabilityEngine = AvailabilityEngine(),
         clock: any TenoraClock = SystemClock(),
-        calendar: Calendar = .current,
-        workingHours: WorkingHours = WorkingHours()
+        calendar: Calendar = .autoupdatingCurrent,
+        workingHours: WorkingHours? = nil
     ) {
         self.repository = repository
         self.availabilityEngine = availabilityEngine
         self.clock = clock
         self.calendar = calendar
-        self.workingHours = workingHours
+        self.workingHoursOverride = workingHours
         authorization = repository.authorizationStatus()
     }
 
     var currentDate: Date { clock.now }
 
     var availability: AvailabilitySnapshot? {
-        guard authorization == .fullAccess else { return nil }
+        guard authorization == .fullAccess, errorMessage == nil,
+              loadedDay == calendar.startOfDay(for: clock.now) else { return nil }
         return availabilityEngine.snapshot(
             at: clock.now,
             events: events,
-            workingHours: workingHours,
+            workingHours: workingHoursOverride ?? AttentionPreferences.workingHours,
             calendar: calendar
         )
     }
@@ -55,6 +57,8 @@ final class CalendarStore: ObservableObject {
         authorization = repository.authorizationStatus()
         guard authorization == .fullAccess else {
             events = []
+            loadedDay = nil
+            errorMessage = nil
             return
         }
         await loadTodayEvents()
@@ -70,7 +74,6 @@ final class CalendarStore: ObservableObject {
             if authorization == .fullAccess {
                 await loadTodayEvents()
             }
-            errorMessage = nil
         } catch {
             authorization = repository.authorizationStatus()
             errorMessage = "Tenora couldn't connect to your calendar."
@@ -83,8 +86,11 @@ final class CalendarStore: ObservableObject {
 
         do {
             events = try await repository.events(in: DateInterval(start: dayStart, end: dayEnd))
+            loadedDay = dayStart
             errorMessage = nil
         } catch {
+            events = []
+            loadedDay = nil
             errorMessage = "Tenora couldn't load today's events."
         }
     }

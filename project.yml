@@ -46,6 +46,7 @@ targets:
     scheme:
       testTargets:
         - TenoraTests
+        - TenoraUITests
   TenoraWidgets:
     type: app-extension
     platform: iOS
@@ -70,6 +71,17 @@ targets:
         CODE_SIGN_ENTITLEMENTS: TenoraWidgets/TenoraWidgets.entitlements
         TARGETED_DEVICE_FAMILY: "1"
         SKIP_INSTALL: YES
+  TenoraUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: TenoraUITests
+    dependencies:
+      - target: Tenora
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tenora.uitests
+        GENERATE_INFOPLIST_FILE: YES
   TenoraTests:
     type: bundle.unit-test
     platform: iOS

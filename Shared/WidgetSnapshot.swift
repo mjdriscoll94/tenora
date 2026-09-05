@@ -9,6 +9,7 @@ struct WidgetSnapshot: Codable {
     let calendarKnown: Bool
     let startHour: Int
     let endHour: Int
+    var focusedTaskID: UUID? = nil
 
     static func read() -> WidgetSnapshot? {
         guard let data = UserDefaults(suiteName: groupID)?.data(forKey: key) else { return nil }
@@ -20,7 +21,9 @@ struct WidgetSnapshot: Codable {
         let snapshot = AvailabilityEngine().snapshot(at: date, events: events,
             workingHours: WorkingHours(startHour: startHour, endHour: endHour))
         guard snapshot.currentEvent == nil, snapshot.availableMinutes != nil else { return nil }
-        return TaskPriorityEngine().recommendation(from: tasks, context: .init(now: date,
-            availableMinutes: calendarKnown ? snapshot.availableMinutes : nil))
+        let context = TaskPriorityEngine.Context(now: date, availableMinutes: calendarKnown ? snapshot.availableMinutes : nil,
+            workingHours: WorkingHours(startHour: startHour, endHour: endHour))
+        if let focused = tasks.first(where: { $0.id == focusedTaskID }), TaskPriorityEngine().isEligible(focused, context: context) { return focused }
+        return TaskPriorityEngine().recommendation(from: tasks, context: context)
     }
 }

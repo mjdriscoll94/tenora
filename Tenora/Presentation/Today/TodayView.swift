@@ -70,6 +70,12 @@ struct TodayView: View {
                     }
 
                     availabilityContext
+                    Text(taskStore.reason(for: task, availableMinutes: calendarStore.availability?.availableMinutes))
+                        .font(.footnote).foregroundStyle(.white.opacity(0.85))
+                    if taskStore.focusedTaskID != task.id {
+                        Button("Start") { Task { await taskStore.start(task) } }
+                            .buttonStyle(TenoraPrimaryButtonStyle())
+                    }
 
                     HStack {
                         Button("Complete") {
@@ -91,9 +97,9 @@ struct TodayView: View {
                 .accessibilityElement(children: .contain)
             } else {
                 ContentUnavailableView(
-                    "Nothing needs you right now",
+                    calendarStore.availability?.currentEvent != nil ? "Your calendar has this time" : "Nothing needs you right now",
                     systemImage: "checkmark.circle",
-                    description: Text("Capture something and Tenora will hold your place.")
+                    description: Text("Tenora holds your tasks for an available moment in your working hours. You can always find them in Inbox.")
                 )
                 .frame(maxWidth: .infinity)
                 .padding(.vertical)
@@ -106,6 +112,7 @@ struct TodayView: View {
         if let snapshot = calendarStore.availability,
            let nextEvent = snapshot.nextEvent,
            let minutes = snapshot.availableMinutes,
+           minutes == snapshot.minutesUntilNextEvent,
            minutes > 0 {
             Text("You have \(minutes) minutes before \(nextEvent.title).")
                 .font(.subheadline)
@@ -160,6 +167,7 @@ struct TodayView: View {
                         .foregroundStyle(.secondary)
                     Text(task.title)
                         .font(.headline)
+                    NavigationLink(task.snoozeCount >= 3 ? "Still important? Schedule or let go" : "Edit or schedule") { TaskDetailView(task: task) }
                     HStack {
                         Button("Done") {
                             Task { await taskStore.complete(task) }
@@ -184,7 +192,8 @@ struct TodayView: View {
     }
 
     private var remainingResurfacedTasks: [TenoraTask] {
-        taskStore.resurfacedTasks.filter { $0.id != recommendation?.id }
+        let context = TaskPriorityEngine.Context(now: calendarStore.currentDate, availableMinutes: calendarStore.availability?.availableMinutes, workingHours: AttentionPreferences.workingHours)
+        return Array(taskStore.resurfacedTasks.filter { $0.id != recommendation?.id && TaskPriorityEngine().isEligible($0, context: context) }.prefix(2))
     }
 
     private var recommendation: TenoraTask? {

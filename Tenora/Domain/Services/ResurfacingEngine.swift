@@ -23,6 +23,7 @@ struct ResurfacingEngine: Sendable {
             .filter { task in
                 guard [.inbox, .active, .scheduled].contains(task.status),
                       let nextSurfaceAt = task.nextSurfaceAt else { return false }
+                if let scheduled = task.scheduledDate, scheduled > date { return false }
                 return nextSurfaceAt <= date
             }
             .sorted {

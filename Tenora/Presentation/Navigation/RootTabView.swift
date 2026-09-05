@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct RootTabView: View {
+    @Environment(\.scenePhase) private var scenePhase
+    @AppStorage("workStart") private var workStart = 8
+    @AppStorage("workEnd") private var workEnd = 18
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
     @State private var isAddingTask = false
@@ -57,17 +60,24 @@ struct RootTabView: View {
         .alert("This task is no longer available", isPresented: $missingTask) { Button("OK", role: .cancel) {} }
         .sheet(item: $openedTask) { task in NavigationStack { TaskDetailView(task: task) } }
         .onChange(of: reminders.openedTaskID) { _, id in
+            guard let id else { return }
             Task {
                 await taskStore.load()
                 openedTask = taskStore.tasks.first { $0.id == id }
                 reminders.openedTaskID = nil
             }
         }
-        .task {
-            await taskStore.load()
-            await calendarStore.refresh()
-            await reminders.drainActions()
-            if let id = reminders.openedTaskID { openedTask = taskStore.tasks.first { $0.id == id }; reminders.openedTaskID = nil }
+        .onChange(of: workStart) { _, _ in Task { await calendarStore.refresh() } }
+        .onChange(of: workEnd) { _, _ in Task { await calendarStore.refresh() } }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            repeat {
+                await taskStore.load()
+                await calendarStore.refresh()
+                await reminders.drainActions()
+                if let id = reminders.openedTaskID { openedTask = taskStore.tasks.first { $0.id == id }; reminders.openedTaskID = nil }
+                do { try await Task.sleep(for: .seconds(60)) } catch { return }
+            } while !Task.isCancelled
         }
     }
 

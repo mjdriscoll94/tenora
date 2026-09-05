@@ -4,6 +4,7 @@ import Foundation
 final class TaskStore: ObservableObject {
     @Published private(set) var tasks: [TenoraTask] = []
     @Published private(set) var errorMessage: String?
+    @Published private(set) var focusedTaskID: UUID?
 
     private let repository: any TaskRepository
     private let clock: any TenoraClock
@@ -17,13 +18,14 @@ final class TaskStore: ObservableObject {
         clock: any TenoraClock = SystemClock(),
         priorityEngine: TaskPriorityEngine = TaskPriorityEngine(),
         resurfacingEngine: ResurfacingEngine = ResurfacingEngine(),
-        calendar: Calendar = .current
+        calendar: Calendar = .autoupdatingCurrent
     ) {
         self.repository = repository
         self.clock = clock
         self.priorityEngine = priorityEngine
         self.resurfacingEngine = resurfacingEngine
         self.calendar = calendar
+        focusedTaskID = UserDefaults.standard.string(forKey: "focusedTask").flatMap(UUID.init(uuidString:))
     }
 
     var inboxTasks: [TenoraTask] {
@@ -35,14 +37,33 @@ final class TaskStore: ObservableObject {
     }
 
     func recommendation(availableMinutes: Int?) -> TenoraTask? {
-        priorityEngine.recommendation(
-            from: tasks,
-            context: .init(
-                now: clock.now,
-                availableMinutes: availableMinutes,
-                calendar: calendar
-            )
-        )
+        let context = priorityContext(availableMinutes)
+        if let focus = tasks.first(where: { $0.id == focusedTaskID }), priorityEngine.isEligible(focus, context: context) { return focus }
+        return priorityEngine.recommendation(from: tasks, context: context)
+    }
+
+    private func priorityContext(_ availableMinutes: Int?) -> TaskPriorityEngine.Context {
+        .init(now: clock.now, availableMinutes: availableMinutes, calendar: calendar, workingHours: AttentionPreferences.workingHours)
+    }
+
+    func reason(for task: TenoraTask, availableMinutes: Int?) -> String {
+        if task.id == focusedTaskID { return "You're working on this. Tenora is holding your place." }
+        return priorityEngine.reason(for: task, context: priorityContext(availableMinutes))
+    }
+
+    func start(_ task: TenoraTask) async {
+        guard var current = tasks.first(where: { $0.id == task.id }), ![.completed, .archived].contains(current.status) else { return }
+        current.status = .active
+        current.lastSurfacedAt = clock.now
+        current.surfaceCount += 1
+        let previousFocus = focusedTaskID
+        setFocus(current.id)
+        if !(await saveAndReload(current, failureMessage: "Tenora couldn't start this task.")) { setFocus(previousFocus) }
+    }
+
+    private func setFocus(_ id: UUID?) {
+        focusedTaskID = id
+        UserDefaults.standard.set(id?.uuidString, forKey: "focusedTask")
     }
 
     var resurfacedTasks: [TenoraTask] {
@@ -92,7 +113,8 @@ final class TaskStore: ObservableObject {
     }
 
     func postpone(_ task: TenoraTask) async {
-        let postponedTask = resurfacingEngine.postpone(task, at: clock.now, calendar: calendar)
+        guard let current = tasks.first(where: { $0.id == task.id }), ![.completed, .archived].contains(current.status) else { return }
+        let postponedTask = resurfacingEngine.postpone(current, at: clock.now, calendar: calendar)
         await saveAndReload(postponedTask, failureMessage: "Tenora couldn't bring that task back later.")
     }
 
@@ -132,6 +154,7 @@ final class TaskStore: ObservableObject {
     func delete(_ id: UUID) async -> Bool {
         do {
             try await repository.delete(id: id)
+            if focusedTaskID == id { setFocus(nil) }
             await load()
             return errorMessage == nil
         } catch { errorMessage = "Tenora couldn't delete that task."; return false }
@@ -141,6 +164,7 @@ final class TaskStore: ObservableObject {
     private func saveAndReload(_ task: TenoraTask, failureMessage: String) async -> Bool {
         do {
             try await repository.save(task)
+            if task.id == focusedTaskID && ([.completed, .archived, .scheduled].contains(task.status) || (task.nextSurfaceAt ?? .distantPast) > clock.now && task.snoozeCount > 0) { setFocus(nil) }
             tasks = try await repository.fetchTasks()
             errorMessage = nil
             await didChange?(tasks)

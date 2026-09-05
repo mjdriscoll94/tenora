@@ -17,9 +17,11 @@
 		14980D8B2E14247D8B06B1AB /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4274B603B59539ED701D1BFE /* TodayView.swift */; };
 		16783E6F47FFA852B411F15C /* ReviewEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09D1338468E0A708CBA17ED /* ReviewEngineTests.swift */; };
 		1C07AAAF9D1A6B4084EAB9F6 /* TenoraTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1939D430BE027D318ECB2 /* TenoraTask.swift */; };
+		1DF2C61F7C28443C32F2C205 /* TaskStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8433CE527CC435A423A25CA0 /* TaskStoreTests.swift */; };
 		20AD5872EEADE2F4FB61C54B /* AvailabilityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD3A86FF0217FBDF1AC7F96 /* AvailabilityEngine.swift */; };
 		2BEA67D92CE64346ED4DC289 /* TenoraTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1939D430BE027D318ECB2 /* TenoraTask.swift */; };
 		30A3174F03A6B85D55EE2E92 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6933A55158FECF10EF2EEB92 /* ReminderService.swift */; };
+		32AF791F93D1EF37ADF8E186 /* AttentionPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA5F503C74A21E3C107415 /* AttentionPreferences.swift */; };
 		372A8421BFC36C8C8CF0B8B2 /* TaskStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7103B4F45D830AB456714BEE /* TaskStore.swift */; };
 		3DFA95E7E87EACD8FB4AE016 /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A53CB65C882B6D7CF17EFEB /* InboxView.swift */; };
 		445BDF798448384F201194CD /* WidgetSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FBBC66681C734960039382 /* WidgetSnapshotTests.swift */; };
@@ -28,6 +30,7 @@
 		5A4BAFCB67FF377485A1FC59 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C62C833A4A9B5283A2A3A0C /* Assets.xcassets */; };
 		5A5AD50A65F5686658A16919 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8853A90211A4B982F760F2 /* SettingsView.swift */; };
 		60FEFCA2E15B9D0201854426 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604F3CF4EBF37F94368BCFC9 /* AddTaskView.swift */; };
+		6329FB0E673FA5E466B8EB3E /* AttentionLoopUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542383F66EBA91110223583F /* AttentionLoopUITests.swift */; };
 		661C4A214173857BA3C21967 /* ReminderPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF88060CCA737FB8B089CB /* ReminderPlanner.swift */; };
 		6BA8BE22E0DBE0037ED1B3A7 /* TaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8F837184BFD98E3459E985 /* TaskRepository.swift */; };
 		6C72525EB19B50DA6209BD56 /* TenoraRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */; };
@@ -60,6 +63,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3B80A379D9BE114484A4E9E9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1DEB33B7E57D9DEB94FFE18E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CCF09C66E1D46695BF16BBCF;
+			remoteInfo = Tenora;
+		};
 		3D218F2736E2D9E040C99296 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 1DEB33B7E57D9DEB94FFE18E /* Project object */;
@@ -95,6 +105,7 @@
 		0CCF9D44CFCCC227BF002888 /* ReminderPlannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderPlannerTests.swift; sourceTree = "<group>"; };
 		163306FCA5F71DD4F1C6B8DF /* TenoraWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TenoraWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		280A223B544BC7B3F89E81C8 /* TaskEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditor.swift; sourceTree = "<group>"; };
+		314C15E4DE51716B6CF64291 /* TenoraUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TenoraUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		37321E3F7287D21A2716E2BC /* ResurfacingEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResurfacingEngineTests.swift; sourceTree = "<group>"; };
 		3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEvent.swift; sourceTree = "<group>"; };
 		3F72AA20E4FD3F2F0588C1D0 /* TenoraTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraTheme.swift; sourceTree = "<group>"; };
@@ -105,8 +116,10 @@
 		4C66726052401F713836DD7E /* TaskPriorityEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPriorityEngineTests.swift; sourceTree = "<group>"; };
 		51F19E6E8CD40C49962E57D3 /* AppRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRuntime.swift; sourceTree = "<group>"; };
 		5371FB5D531D33CDDCD675F1 /* TenoraRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraRouteTests.swift; sourceTree = "<group>"; };
+		542383F66EBA91110223583F /* AttentionLoopUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttentionLoopUITests.swift; sourceTree = "<group>"; };
 		573A0DBF08C57424EF79BACA /* CalendarRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarRepository.swift; sourceTree = "<group>"; };
 		59FBBC66681C734960039382 /* WidgetSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotTests.swift; sourceTree = "<group>"; };
+		5BEA5F503C74A21E3C107415 /* AttentionPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttentionPreferences.swift; sourceTree = "<group>"; };
 		5CEBD60058A122871403AEA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResurfacingEngine.swift; sourceTree = "<group>"; };
 		604F3CF4EBF37F94368BCFC9 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
@@ -121,6 +134,7 @@
 		7A53CB65C882B6D7CF17EFEB /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
 		7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPriorityEngine.swift; sourceTree = "<group>"; };
 		836E8036D961E35CBBDF538C /* WidgetPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPublisher.swift; sourceTree = "<group>"; };
+		8433CE527CC435A423A25CA0 /* TaskStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStoreTests.swift; sourceTree = "<group>"; };
 		8B3B79C90A2DD2800B812252 /* CalendarStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStoreTests.swift; sourceTree = "<group>"; };
 		90B8721CBD26427721185F52 /* CalendarStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStore.swift; sourceTree = "<group>"; };
 		925B32348C57BAF1E50224E4 /* ReviewEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewEngine.swift; sourceTree = "<group>"; };
@@ -150,6 +164,7 @@
 			children = (
 				E60B9C1E87BB4040D684F879 /* Tenora.app */,
 				67A21DB4A81A3680B2429D5E /* TenoraTests.xctest */,
+				314C15E4DE51716B6CF64291 /* TenoraUITests.xctest */,
 				163306FCA5F71DD4F1C6B8DF /* TenoraWidgets.appex */,
 			);
 			name = Products;
@@ -190,6 +205,7 @@
 		1A1F6DC03AEDAC4666D21CFD /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				5BEA5F503C74A21E3C107415 /* AttentionPreferences.swift */,
 				ECD3A86FF0217FBDF1AC7F96 /* AvailabilityEngine.swift */,
 				F7FF88060CCA737FB8B089CB /* ReminderPlanner.swift */,
 				5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */,
@@ -286,6 +302,7 @@
 				1A0B1F9FC9F88AA8C0FBF569 /* Shared */,
 				9C101192B7838B35AC06BBC7 /* Tenora */,
 				E491BA617F63EC5CE7AFC692 /* TenoraTests */,
+				BB83F931524879163112B7C2 /* TenoraUITests */,
 				DAAC8C455F96909CFFA36980 /* TenoraWidgets */,
 				02132AE1B9CEEDE5FF8E0948 /* Products */,
 			);
@@ -304,6 +321,7 @@
 			isa = PBXGroup;
 			children = (
 				8B3B79C90A2DD2800B812252 /* CalendarStoreTests.swift */,
+				8433CE527CC435A423A25CA0 /* TaskStoreTests.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -366,6 +384,14 @@
 				59FBBC66681C734960039382 /* WidgetSnapshotTests.swift */,
 			);
 			path = Domain;
+			sourceTree = "<group>";
+		};
+		BB83F931524879163112B7C2 /* TenoraUITests */ = {
+			isa = PBXGroup;
+			children = (
+				542383F66EBA91110223583F /* AttentionLoopUITests.swift */,
+			);
+			path = TenoraUITests;
 			sourceTree = "<group>";
 		};
 		C072C249E8CD9CB126C6196F /* App */ = {
@@ -469,6 +495,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		23B8336F44AFCD51D07FEDC7 /* TenoraUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7EC76113E6FA5D1711393537 /* Build configuration list for PBXNativeTarget "TenoraUITests" */;
+			buildPhases = (
+				0B733F031ACEE175A65EADF1 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8774C8B8935291728DD201CB /* PBXTargetDependency */,
+			);
+			name = TenoraUITests;
+			packageProductDependencies = (
+			);
+			productName = TenoraUITests;
+			productReference = 314C15E4DE51716B6CF64291 /* TenoraUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		B2F926ADB2D538701BFA5A19 /* TenoraTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3379080C24451F893D1CF745 /* Build configuration list for PBXNativeTarget "TenoraTests" */;
@@ -533,6 +577,10 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					23B8336F44AFCD51D07FEDC7 = {
+						DevelopmentTeam = "";
+						TestTargetID = CCF09C66E1D46695BF16BBCF;
+					};
 					B2F926ADB2D538701BFA5A19 = {
 						DevelopmentTeam = "";
 					};
@@ -561,6 +609,7 @@
 			targets = (
 				CCF09C66E1D46695BF16BBCF /* Tenora */,
 				B2F926ADB2D538701BFA5A19 /* TenoraTests */,
+				23B8336F44AFCD51D07FEDC7 /* TenoraUITests */,
 				FF99FE73B8311E98F6452418 /* TenoraWidgets */,
 			);
 		};
@@ -590,6 +639,7 @@
 				F87D76931A25DFDC59728325 /* SwiftDataTaskRepositoryTests.swift in Sources */,
 				0B3345A3678763E36A1D274A /* TaskEditorTests.swift in Sources */,
 				8D3F3E31B17B93DA3C8586C1 /* TaskPriorityEngineTests.swift in Sources */,
+				1DF2C61F7C28443C32F2C205 /* TaskStoreTests.swift in Sources */,
 				A7C681922BB2A03C67CF1CBF /* TenoraRouteTests.swift in Sources */,
 				445BDF798448384F201194CD /* WidgetSnapshotTests.swift in Sources */,
 			);
@@ -608,6 +658,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		0B733F031ACEE175A65EADF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6329FB0E673FA5E466B8EB3E /* AttentionLoopUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7E46F36B062E0CC867246945 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -615,6 +673,7 @@
 				60FEFCA2E15B9D0201854426 /* AddTaskView.swift in Sources */,
 				E3C46AB9F2CEA716A6B93023 /* AddTenoraTaskIntent.swift in Sources */,
 				6F083C1DCD34E705F67D4028 /* AppRuntime.swift in Sources */,
+				32AF791F93D1EF37ADF8E186 /* AttentionPreferences.swift in Sources */,
 				20AD5872EEADE2F4FB61C54B /* AvailabilityEngine.swift in Sources */,
 				FB4E2F41072050CF199FD9BD /* CalendarEvent.swift in Sources */,
 				4E2D9277EEC04F3F3A5271E6 /* CalendarRepository.swift in Sources */,
@@ -660,9 +719,48 @@
 			target = FF99FE73B8311E98F6452418 /* TenoraWidgets */;
 			targetProxy = 52353D2DED4361C81DF20A60 /* PBXContainerItemProxy */;
 		};
+		8774C8B8935291728DD201CB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CCF09C66E1D46695BF16BBCF /* Tenora */;
+			targetProxy = 3B80A379D9BE114484A4E9E9 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0C890623E7E25F9644B8C9A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tenora.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Tenora;
+			};
+			name = Release;
+		};
+		1C8DDA6E3318756F7B6AC7FB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tenora.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Tenora;
+			};
+			name = Debug;
+		};
 		337D6FA8C31B0B2E0015B276 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -918,6 +1016,15 @@
 			buildConfigurations = (
 				DDB9BD43B9A805A181F6F1E1 /* Debug */,
 				F111775B514B513F79DA236E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7EC76113E6FA5D1711393537 /* Build configuration list for PBXNativeTarget "TenoraUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1C8DDA6E3318756F7B6AC7FB /* Debug */,
+				0C890623E7E25F9644B8C9A3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

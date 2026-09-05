@@ -16,6 +16,10 @@ enum TaskEditor {
                 task.nextSurfaceAt = task.scheduledDate ?? task.dueDate ?? now.addingTimeInterval(4 * 3600)
                 task.snoozeCount = 0
             }
+            if draft.nextSurfaceAt != previous.nextSurfaceAt {
+                task.nextSurfaceAt = draft.nextSurfaceAt
+                task.snoozeCount = (draft.nextSurfaceAt ?? .distantPast) > now ? max(1, previous.snoozeCount) : 0
+            }
         }
         return task
     }

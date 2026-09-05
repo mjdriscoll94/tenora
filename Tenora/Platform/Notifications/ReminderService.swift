@@ -13,6 +13,10 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
     private var synchronizing = false
     private var latestTasks: [TenoraTask] = []
     private var revision = 0
+    private var lastSignature: Data?
+    private var lastDay: Date?
+    private var lastZone: String?
+    private var lastStatus: UNAuthorizationStatus?
 
     func configure() {
         center.delegate = self
@@ -42,7 +46,14 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
             let currentRevision = revision
             let snapshot = latestTasks
             await refreshStatus()
-            guard [.authorized, .provisional, .ephemeral].contains(status) else { return }
+            guard [.authorized, .provisional, .ephemeral].contains(status) else { lastSignature = nil; return }
+            let signature = try? JSONEncoder().encode(snapshot)
+            let day = Calendar.current.startOfDay(for: Date())
+            let zone = TimeZone.current.identifier
+            if signature == lastSignature && day == lastDay && zone == lastZone && status == lastStatus {
+                if currentRevision != revision { continue }
+                return
+            }
             let pending = await center.pendingNotificationRequests()
             center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.identifier.hasPrefix("tenora.") }.map(\.identifier))
             let delivered = await center.deliveredNotifications()
@@ -69,6 +80,7 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
                 do { try await center.add(UNNotificationRequest(identifier: "tenora.\(reminder.taskID).\(index)", content: content, trigger: trigger)) }
                 catch { errorMessage = "Some reminders couldn't be scheduled. Open Tenora to try again." }
             }
+            if errorMessage == nil { lastSignature = signature; lastDay = day; lastZone = zone; lastStatus = status }
             if currentRevision == revision { break }
         } while true
     }

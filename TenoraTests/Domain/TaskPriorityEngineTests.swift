@@ -30,6 +30,32 @@ final class TaskPriorityEngineTests: XCTestCase {
         XCTAssertEqual(engine.score(for: critical, context: context) - engine.score(for: normal, context: context), 60)
     }
 
+    func testLaterHidesTaskUntilReturnTime() {
+        var task = TenoraTask(title: "Later", createdAt: now)
+        task.snoozeCount = 1
+        task.nextSurfaceAt = now.addingTimeInterval(600)
+        XCTAssertNil(engine.recommendation(from: [task], context: .init(now: now, calendar: calendar)))
+        XCTAssertNotNil(engine.recommendation(from: [task], context: .init(now: now.addingTimeInterval(600), calendar: calendar)))
+    }
+
+    func testFutureScheduleWinsOverOverdueDeadline() {
+        let task = TenoraTask(title: "Scheduled", createdAt: now, status: .scheduled, dueDate: now.addingTimeInterval(-3600), scheduledDate: now.addingTimeInterval(600))
+        XCTAssertNil(engine.recommendation(from: [task], context: .init(now: now, calendar: calendar)))
+    }
+
+    func testMeetingAndWorkingHoursSuppressRecommendations() {
+        let task = TenoraTask(title: "Held", createdAt: now)
+        XCTAssertNil(engine.recommendation(from: [task], context: .init(now: now, availableMinutes: 0, calendar: calendar)))
+        let night = calendar.date(bySettingHour: 23, minute: 0, second: 0, of: now)!
+        XCTAssertNil(engine.recommendation(from: [task], context: .init(now: night, calendar: calendar)))
+    }
+
+    func testTaskLongerThanGapIsHeldBack() {
+        let task = TenoraTask(title: "Long", createdAt: now, estimatedDurationMinutes: 60)
+        XCTAssertNil(engine.recommendation(from: [task], context: .init(now: now, availableMinutes: 15, calendar: calendar)))
+        XCTAssertNotNil(engine.recommendation(from: [task], context: .init(now: now, availableMinutes: 60, calendar: calendar)))
+    }
+
     func testTaskThatFitsAvailableTimeReceivesAvailabilityBoost() {
         let fitting = TenoraTask(title: "Short", createdAt: now, estimatedDurationMinutes: 15)
         let tooLong = TenoraTask(title: "Long", createdAt: now, estimatedDurationMinutes: 60)
@@ -55,4 +81,3 @@ final class TaskPriorityEngineTests: XCTestCase {
         XCTAssertNil(result)
     }
 }
-

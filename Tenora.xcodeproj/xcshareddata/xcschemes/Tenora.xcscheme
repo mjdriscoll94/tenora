@@ -50,6 +50,17 @@
                ReferencedContainer = "container:Tenora.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "23B8336F44AFCD51D07FEDC7"
+               BuildableName = "TenoraUITests.xctest"
+               BlueprintName = "TenoraUITests"
+               ReferencedContainer = "container:Tenora.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

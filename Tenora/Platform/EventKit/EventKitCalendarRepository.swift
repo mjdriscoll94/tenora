@@ -4,10 +4,17 @@ import Foundation
 @MainActor
 final class EventKitCalendarRepository: CalendarRepository {
     private let eventStore: EKEventStore
+    var onChange: (() -> Void)?
+    private var observer: NSObjectProtocol?
 
     init(eventStore: EKEventStore = EKEventStore()) {
         self.eventStore = eventStore
+        observer = NotificationCenter.default.addObserver(forName: .EKEventStoreChanged, object: eventStore, queue: .main) { [weak self] _ in
+            Task { @MainActor in self?.onChange?() }
+        }
     }
+
+    deinit { if let observer { NotificationCenter.default.removeObserver(observer) } }
 
     func authorizationStatus() -> CalendarAuthorization {
         Self.mapAuthorization(EKEventStore.authorizationStatus(for: .event))
