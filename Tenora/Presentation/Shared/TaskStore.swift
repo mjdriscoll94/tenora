@@ -10,6 +10,7 @@ final class TaskStore: ObservableObject {
     private let priorityEngine: TaskPriorityEngine
     private let resurfacingEngine: ResurfacingEngine
     private let calendar: Calendar
+    var didChange: (([TenoraTask]) async -> Void)?
 
     init(
         repository: any TaskRepository,
@@ -52,6 +53,7 @@ final class TaskStore: ObservableObject {
         do {
             tasks = try await repository.fetchTasks()
             errorMessage = nil
+            await didChange?(tasks)
         } catch {
             errorMessage = "Tenora couldn't load your tasks."
         }
@@ -72,6 +74,7 @@ final class TaskStore: ObservableObject {
             try await repository.save(task)
             tasks = try await repository.fetchTasks()
             errorMessage = nil
+            await didChange?(tasks)
             return true
         } catch {
             errorMessage = "Tenora couldn't save that task."
@@ -89,6 +92,23 @@ final class TaskStore: ObservableObject {
     func postpone(_ task: TenoraTask) async {
         let postponedTask = resurfacingEngine.postpone(task, at: clock.now, calendar: calendar)
         await saveAndReload(postponedTask, failureMessage: "Tenora couldn't bring that task back later.")
+    }
+
+    func notificationAction(id: UUID, action: String) async -> Bool {
+        do { tasks = try await repository.fetchTasks() } catch { return false }
+        guard var task = tasks.first(where: { $0.id == id }) else { return true }
+        guard ![.completed, .archived].contains(task.status) else { return true }
+        switch action {
+        case "DONE": task.complete(at: clock.now)
+        case "LATER": task = resurfacingEngine.postpone(task, at: clock.now, calendar: calendar)
+        case "TOMORROW":
+            let tomorrow = calendar.date(byAdding: .day, value: 1, to: clock.now)!
+            task.scheduledDate = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)!
+            task.nextSurfaceAt = task.scheduledDate
+            task.status = .scheduled
+        default: return false
+        }
+        return await saveAndReload(task, failureMessage: "Your reminder decision couldn't be saved.")
     }
 
     func update(_ draft: TenoraTask) async -> Bool {
@@ -113,6 +133,7 @@ final class TaskStore: ObservableObject {
             try await repository.save(task)
             tasks = try await repository.fetchTasks()
             errorMessage = nil
+            await didChange?(tasks)
             return true
         } catch {
             errorMessage = failureMessage

@@ -4,6 +4,8 @@ struct RootTabView: View {
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
     @State private var isAddingTask = false
+    @ObservedObject private var reminders = ReminderService.shared
+    @State private var openedTask: TenoraTask?
 
     var body: some View {
         TabView {
@@ -29,14 +31,27 @@ struct RootTabView: View {
             AddTaskView()
         }
         .tint(.tenoraBlue)
+        .sheet(item: $openedTask) { task in NavigationStack { TaskDetailView(task: task) } }
+        .onChange(of: reminders.openedTaskID) { _, id in
+            Task {
+                await taskStore.load()
+                openedTask = taskStore.tasks.first { $0.id == id }
+                reminders.openedTaskID = nil
+            }
+        }
         .task {
             await taskStore.load()
             await calendarStore.refresh()
+            await reminders.drainActions()
+            if let id = reminders.openedTaskID { openedTask = taskStore.tasks.first { $0.id == id }; reminders.openedTaskID = nil }
         }
     }
 
     @ToolbarContentBuilder
     private var addButton: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            NavigationLink { SettingsView() } label: { Label("Settings", systemImage: "gearshape") }
+        }
         ToolbarItem(placement: .primaryAction) {
             Button {
                 isAddingTask = true
