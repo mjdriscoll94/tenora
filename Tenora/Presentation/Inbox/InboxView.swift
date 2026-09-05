@@ -24,7 +24,7 @@ struct InboxView: View {
                         .buttonStyle(.plain)
                         .accessibilityLabel("Complete \(task.title)")
 
-                        VStack(alignment: .leading, spacing: 3) {
+                        NavigationLink { TaskDetailView(task: task) } label: { VStack(alignment: .leading, spacing: 3) {
                             Text(task.title)
                             if !task.notes.isEmpty {
                                 Text(task.notes)
@@ -32,7 +32,10 @@ struct InboxView: View {
                                     .foregroundStyle(.secondary)
                                     .lineLimit(1)
                             }
-                        }
+                            if let date = task.scheduledDate {
+                                Text(date, style: .date).font(.caption).foregroundStyle(.secondary)
+                            }
+                        } }
                     }
                     .padding(.vertical, 4)
                 }

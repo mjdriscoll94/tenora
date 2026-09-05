@@ -53,6 +53,9 @@ struct TodayView: View {
                         .font(.system(.title2, design: .rounded, weight: .semibold))
                         .foregroundStyle(.white)
 
+                    NavigationLink("Edit or schedule") { TaskDetailView(task: task) }
+                        .font(.subheadline).foregroundStyle(.white)
+
                     if let duration = task.estimatedDurationMinutes {
                         Label("About \(duration) minutes", systemImage: "clock")
                             .font(.subheadline)

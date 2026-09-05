@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04C66F964F31ADC4F8123C8A /* TaskDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7896AE69EBCE9FAF58815FD6 /* TaskDetailView.swift */; };
 		06841887A9C11964FCC806EF /* EventKitCalendarRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6544FC5F9EDC67110D2CC9 /* EventKitCalendarRepository.swift */; };
 		0B0DFADD94148FE03736D015 /* AvailabilityEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A59288033B3920E4AA9539 /* AvailabilityEngineTests.swift */; };
+		0B3345A3678763E36A1D274A /* TaskEditorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEADB9C842341BBFE93BAC7 /* TaskEditorTests.swift */; };
 		0C819A0AA3A325B5809D5AFC /* TenoraTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F72AA20E4FD3F2F0588C1D0 /* TenoraTheme.swift */; };
 		0F2F1BEC60C274416F49AA3D /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B5DF93911830F780A3C6D2F /* RootTabView.swift */; };
 		14980D8B2E14247D8B06B1AB /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4274B603B59539ED701D1BFE /* TodayView.swift */; };
@@ -26,6 +28,7 @@
 		97D1587772CADDAC643B6E37 /* TaskPriorityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */; };
 		9E868298E79D04132FA3238A /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEBBB461D5EE714B551CAA2 /* CalendarView.swift */; };
 		A8854A3DFFC27EC0654F923D /* StoredTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32C111D0AB90057D68F77C2 /* StoredTask.swift */; };
+		C6F2A596E352B76CC0163AE7 /* TaskEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280A223B544BC7B3F89E81C8 /* TaskEditor.swift */; };
 		D38B1A595D4B0BDBD2BB0C7D /* CalendarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B8721CBD26427721185F52 /* CalendarStore.swift */; };
 		E2A67032527C1684336B0BBC /* SwiftDataTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D4AC1B40D0945D73975D96 /* SwiftDataTaskRepository.swift */; };
 		E5C547BC8E8E140AC6966DF8 /* CalendarStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3B79C90A2DD2800B812252 /* CalendarStoreTests.swift */; };
@@ -46,6 +49,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		280A223B544BC7B3F89E81C8 /* TaskEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditor.swift; sourceTree = "<group>"; };
 		37321E3F7287D21A2716E2BC /* ResurfacingEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResurfacingEngineTests.swift; sourceTree = "<group>"; };
 		3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEvent.swift; sourceTree = "<group>"; };
 		3F72AA20E4FD3F2F0588C1D0 /* TenoraTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraTheme.swift; sourceTree = "<group>"; };
@@ -59,7 +63,9 @@
 		675BBBBAD84FAABC4FC78C11 /* TenoraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraApp.swift; sourceTree = "<group>"; };
 		67A21DB4A81A3680B2429D5E /* TenoraTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TenoraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D4D308B84A73C48483E0987 /* TenoraClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraClock.swift; sourceTree = "<group>"; };
+		6FEADB9C842341BBFE93BAC7 /* TaskEditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditorTests.swift; sourceTree = "<group>"; };
 		7103B4F45D830AB456714BEE /* TaskStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStore.swift; sourceTree = "<group>"; };
+		7896AE69EBCE9FAF58815FD6 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
 		7A53CB65C882B6D7CF17EFEB /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
 		7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPriorityEngine.swift; sourceTree = "<group>"; };
 		8B3B79C90A2DD2800B812252 /* CalendarStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStoreTests.swift; sourceTree = "<group>"; };
@@ -115,6 +121,7 @@
 			children = (
 				ECD3A86FF0217FBDF1AC7F96 /* AvailabilityEngine.swift */,
 				5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */,
+				280A223B544BC7B3F89E81C8 /* TaskEditor.swift */,
 				7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */,
 			);
 			path = Services;
@@ -175,6 +182,7 @@
 				CC38C5AD55C55CBB4EA24B31 /* Navigation */,
 				83B51FE6303480359FAC95ED /* Shared */,
 				E4CE00ACC1E9C63D1EBC59BB /* TaskCapture */,
+				C9D621C96EF171D44E1EE815 /* TaskDetail */,
 				0FFA30F4C2BFA1E36F6D209C /* Today */,
 			);
 			path = Presentation;
@@ -248,6 +256,7 @@
 			children = (
 				F1A59288033B3920E4AA9539 /* AvailabilityEngineTests.swift */,
 				37321E3F7287D21A2716E2BC /* ResurfacingEngineTests.swift */,
+				6FEADB9C842341BBFE93BAC7 /* TaskEditorTests.swift */,
 				4C66726052401F713836DD7E /* TaskPriorityEngineTests.swift */,
 			);
 			path = Domain;
@@ -267,6 +276,14 @@
 				0B2320877134A0E3B2424C15 /* EventKit */,
 			);
 			path = Platform;
+			sourceTree = "<group>";
+		};
+		C9D621C96EF171D44E1EE815 /* TaskDetail */ = {
+			isa = PBXGroup;
+			children = (
+				7896AE69EBCE9FAF58815FD6 /* TaskDetailView.swift */,
+			);
+			path = TaskDetail;
 			sourceTree = "<group>";
 		};
 		CC38C5AD55C55CBB4EA24B31 /* Navigation */ = {
@@ -408,6 +425,7 @@
 				E5C547BC8E8E140AC6966DF8 /* CalendarStoreTests.swift in Sources */,
 				FD2795F09FD35262B448FD83 /* ResurfacingEngineTests.swift in Sources */,
 				F87D76931A25DFDC59728325 /* SwiftDataTaskRepositoryTests.swift in Sources */,
+				0B3345A3678763E36A1D274A /* TaskEditorTests.swift in Sources */,
 				8D3F3E31B17B93DA3C8586C1 /* TaskPriorityEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -428,6 +446,8 @@
 				0F2F1BEC60C274416F49AA3D /* RootTabView.swift in Sources */,
 				A8854A3DFFC27EC0654F923D /* StoredTask.swift in Sources */,
 				E2A67032527C1684336B0BBC /* SwiftDataTaskRepository.swift in Sources */,
+				04C66F964F31ADC4F8123C8A /* TaskDetailView.swift in Sources */,
+				C6F2A596E352B76CC0163AE7 /* TaskEditor.swift in Sources */,
 				97D1587772CADDAC643B6E37 /* TaskPriorityEngine.swift in Sources */,
 				6BA8BE22E0DBE0037ED1B3A7 /* TaskRepository.swift in Sources */,
 				372A8421BFC36C8C8CF0B8B2 /* TaskStore.swift in Sources */,

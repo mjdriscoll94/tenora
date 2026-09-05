@@ -26,7 +26,7 @@ final class TaskStore: ObservableObject {
     }
 
     var inboxTasks: [TenoraTask] {
-        tasks.filter { $0.status == .inbox }
+        tasks.filter { ![.completed, .archived].contains($0.status) }
     }
 
     var nowRecommendation: TenoraTask? {
@@ -79,10 +79,11 @@ final class TaskStore: ObservableObject {
         }
     }
 
-    func complete(_ task: TenoraTask) async {
-        var completedTask = task
+    @discardableResult
+    func complete(_ task: TenoraTask) async -> Bool {
+        guard var completedTask = tasks.first(where: { $0.id == task.id }) else { return false }
         completedTask.complete(at: clock.now)
-        await saveAndReload(completedTask, failureMessage: "Tenora couldn't complete that task.")
+        return await saveAndReload(completedTask, failureMessage: "Tenora couldn't complete that task.")
     }
 
     func postpone(_ task: TenoraTask) async {
@@ -90,13 +91,32 @@ final class TaskStore: ObservableObject {
         await saveAndReload(postponedTask, failureMessage: "Tenora couldn't bring that task back later.")
     }
 
-    private func saveAndReload(_ task: TenoraTask, failureMessage: String) async {
+    func update(_ draft: TenoraTask) async -> Bool {
+        guard let previous = tasks.first(where: { $0.id == draft.id }) else { return false }
+        do {
+            let task = try TaskEditor.validated(draft, previous: previous, now: clock.now)
+            return await saveAndReload(task, failureMessage: "Tenora couldn't save your changes.")
+        } catch { errorMessage = error.localizedDescription; return false }
+    }
+
+    func delete(_ id: UUID) async -> Bool {
+        do {
+            try await repository.delete(id: id)
+            await load()
+            return errorMessage == nil
+        } catch { errorMessage = "Tenora couldn't delete that task."; return false }
+    }
+
+    @discardableResult
+    private func saveAndReload(_ task: TenoraTask, failureMessage: String) async -> Bool {
         do {
             try await repository.save(task)
             tasks = try await repository.fetchTasks()
             errorMessage = nil
+            return true
         } catch {
             errorMessage = failureMessage
+            return false
         }
     }
 }
