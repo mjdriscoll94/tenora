@@ -7,6 +7,9 @@ struct AddTaskView: View {
     @State private var notes = ""
     @State private var estimatedDurationMinutes: Int?
     @FocusState private var isTitleFocused: Bool
+    @State private var saving = false
+
+    init(initialTitle: String = "") { _title = State(initialValue: initialTitle) }
 
     var body: some View {
         NavigationStack {
@@ -29,6 +32,7 @@ struct AddTaskView: View {
                         }
                     }
                 }
+                if let error = taskStore.errorMessage { Section { Text(error) } }
             }
             .scrollContentBackground(.hidden)
             .background(Color.tenoraSurface)
@@ -41,7 +45,7 @@ struct AddTaskView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add", action: save)
-                        .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        .disabled(saving || title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
             }
             .onAppear { isTitleFocused = true }
@@ -49,6 +53,8 @@ struct AddTaskView: View {
     }
 
     private func save() {
+        guard !saving else { return }
+        saving = true
         Task {
             if await taskStore.createTask(
                 title: title,
@@ -57,6 +63,7 @@ struct AddTaskView: View {
             ) {
                 dismiss()
             }
+            saving = false
         }
     }
 

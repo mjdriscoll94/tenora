@@ -12,6 +12,12 @@ targets:
   Tenora:
     type: application
     platform: iOS
+    info:
+      path: Tenora/Resources/Info.plist
+      properties:
+        CFBundleURLTypes:
+          - CFBundleURLName: com.tenora.app
+            CFBundleURLSchemes: [tenora]
     sources:
       - path: Tenora
     settings:

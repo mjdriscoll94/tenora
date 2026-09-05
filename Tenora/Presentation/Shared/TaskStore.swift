@@ -62,7 +62,8 @@ final class TaskStore: ObservableObject {
     func createTask(
         title: String,
         notes: String = "",
-        estimatedDurationMinutes: Int? = nil
+        estimatedDurationMinutes: Int? = nil,
+        source: TaskSource = .manual
     ) async -> Bool {
         let cleanTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanTitle.isEmpty else { return false }
@@ -70,6 +71,7 @@ final class TaskStore: ObservableObject {
         do {
             var task = TenoraTask(title: cleanTitle, notes: notes, createdAt: clock.now)
             task.estimatedDurationMinutes = estimatedDurationMinutes
+            task.source = source
             task.nextSurfaceAt = resurfacingEngine.initialSurfaceDate(for: task, calendar: calendar)
             try await repository.save(task)
             tasks = try await repository.fetchTasks()

@@ -16,3 +16,7 @@ All task data remains local. Calendar availability is a snapshot, not a guarante
 Enable notifications from Settings. The planner schedules a rolling seven-day queue with at most 21 pending reminders, three per local day, separated by two hours and constrained to 09:00–20:00. Previously due reservations remain spent when the queue is rebuilt, so editing tasks cannot reset the daily cap. Explicit postponements override a missed deadline. Completing or deleting tasks removes their future reminders on the next synchronization.
 
 Background notification actions save through the repository and rebuild the queue. Failed decisions are retained locally for retry when the app opens. Open a task from a notification to edit it. iOS may delay or suppress delivery through Focus, notification settings, or system policy; a seven-day queue does not imply indefinite background execution.
+
+## Capture
+
+The Add task to Tenora App Intent is available to Shortcuts and through the phrases “Add a task to Tenora” and “Remember something in Tenora.” It opens the app to keep task storage and reminder updates in one process. A Shortcuts workflow can pass text from its Share Sheet input to this intent. Deep links `tenora://add?title=...`, `tenora://today`, and `tenora://task/<UUID>` support widgets and other local workflows. Capture links prefill a draft and require the user to tap Add. Invalid task links never create tasks.

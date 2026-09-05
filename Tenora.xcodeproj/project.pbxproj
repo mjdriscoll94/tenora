@@ -26,15 +26,19 @@
 		60FEFCA2E15B9D0201854426 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604F3CF4EBF37F94368BCFC9 /* AddTaskView.swift */; };
 		661C4A214173857BA3C21967 /* ReminderPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF88060CCA737FB8B089CB /* ReminderPlanner.swift */; };
 		6BA8BE22E0DBE0037ED1B3A7 /* TaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8F837184BFD98E3459E985 /* TaskRepository.swift */; };
+		6C72525EB19B50DA6209BD56 /* TenoraRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */; };
 		6D48EF0408EBBA662E06234D /* ResurfacingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */; };
+		6F083C1DCD34E705F67D4028 /* AppRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F19E6E8CD40C49962E57D3 /* AppRuntime.swift */; };
 		7B2D12CDB9E604B6A87BDFF8 /* TenoraClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D308B84A73C48483E0987 /* TenoraClock.swift */; };
 		8D3F3E31B17B93DA3C8586C1 /* TaskPriorityEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C66726052401F713836DD7E /* TaskPriorityEngineTests.swift */; };
 		97D1587772CADDAC643B6E37 /* TaskPriorityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */; };
 		9E868298E79D04132FA3238A /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEBBB461D5EE714B551CAA2 /* CalendarView.swift */; };
+		A7C681922BB2A03C67CF1CBF /* TenoraRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371FB5D531D33CDDCD675F1 /* TenoraRouteTests.swift */; };
 		A8854A3DFFC27EC0654F923D /* StoredTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32C111D0AB90057D68F77C2 /* StoredTask.swift */; };
 		C6F2A596E352B76CC0163AE7 /* TaskEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280A223B544BC7B3F89E81C8 /* TaskEditor.swift */; };
 		D38B1A595D4B0BDBD2BB0C7D /* CalendarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B8721CBD26427721185F52 /* CalendarStore.swift */; };
 		E2A67032527C1684336B0BBC /* SwiftDataTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D4AC1B40D0945D73975D96 /* SwiftDataTaskRepository.swift */; };
+		E3C46AB9F2CEA716A6B93023 /* AddTenoraTaskIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DEC2E47D1ECE34CF3BD9F1 /* AddTenoraTaskIntent.swift */; };
 		E5C547BC8E8E140AC6966DF8 /* CalendarStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3B79C90A2DD2800B812252 /* CalendarStoreTests.swift */; };
 		F0F2676A336AA0641FDAC392 /* TenoraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675BBBBAD84FAABC4FC78C11 /* TenoraApp.swift */; };
 		F87D76931A25DFDC59728325 /* SwiftDataTaskRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61958874194B7B375841513D /* SwiftDataTaskRepositoryTests.swift */; };
@@ -62,7 +66,10 @@
 		4274B603B59539ED701D1BFE /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
 		49D4AC1B40D0945D73975D96 /* SwiftDataTaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataTaskRepository.swift; sourceTree = "<group>"; };
 		4C66726052401F713836DD7E /* TaskPriorityEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPriorityEngineTests.swift; sourceTree = "<group>"; };
+		51F19E6E8CD40C49962E57D3 /* AppRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRuntime.swift; sourceTree = "<group>"; };
+		5371FB5D531D33CDDCD675F1 /* TenoraRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraRouteTests.swift; sourceTree = "<group>"; };
 		573A0DBF08C57424EF79BACA /* CalendarRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarRepository.swift; sourceTree = "<group>"; };
+		5CEBD60058A122871403AEA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResurfacingEngine.swift; sourceTree = "<group>"; };
 		604F3CF4EBF37F94368BCFC9 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		61958874194B7B375841513D /* SwiftDataTaskRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataTaskRepositoryTests.swift; sourceTree = "<group>"; };
@@ -81,9 +88,11 @@
 		9C62C833A4A9B5283A2A3A0C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9C8F837184BFD98E3459E985 /* TaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepository.swift; sourceTree = "<group>"; };
 		A32C111D0AB90057D68F77C2 /* StoredTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredTask.swift; sourceTree = "<group>"; };
+		A8DEC2E47D1ECE34CF3BD9F1 /* AddTenoraTaskIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTenoraTaskIntent.swift; sourceTree = "<group>"; };
 		AFEBBB461D5EE714B551CAA2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		BA6544FC5F9EDC67110D2CC9 /* EventKitCalendarRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventKitCalendarRepository.swift; sourceTree = "<group>"; };
 		CFB1939D430BE027D318ECB2 /* TenoraTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraTask.swift; sourceTree = "<group>"; };
+		D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraRoute.swift; sourceTree = "<group>"; };
 		E60B9C1E87BB4040D684F879 /* Tenora.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tenora.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECD3A86FF0217FBDF1AC7F96 /* AvailabilityEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityEngine.swift; sourceTree = "<group>"; };
 		F1A59288033B3920E4AA9539 /* AvailabilityEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityEngineTests.swift; sourceTree = "<group>"; };
@@ -169,9 +178,18 @@
 			isa = PBXGroup;
 			children = (
 				3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */,
+				D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */,
 				CFB1939D430BE027D318ECB2 /* TenoraTask.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		40F43A14C87877A63800F68D /* AppIntents */ = {
+			isa = PBXGroup;
+			children = (
+				A8DEC2E47D1ECE34CF3BD9F1 /* AddTenoraTaskIntent.swift */,
+			);
+			path = AppIntents;
 			sourceTree = "<group>";
 		};
 		4371043D5E70E72A22CB1FD8 /* DesignSystem */ = {
@@ -277,6 +295,7 @@
 				37321E3F7287D21A2716E2BC /* ResurfacingEngineTests.swift */,
 				6FEADB9C842341BBFE93BAC7 /* TaskEditorTests.swift */,
 				4C66726052401F713836DD7E /* TaskPriorityEngineTests.swift */,
+				5371FB5D531D33CDDCD675F1 /* TenoraRouteTests.swift */,
 			);
 			path = Domain;
 			sourceTree = "<group>";
@@ -284,6 +303,7 @@
 		C072C249E8CD9CB126C6196F /* App */ = {
 			isa = PBXGroup;
 			children = (
+				51F19E6E8CD40C49962E57D3 /* AppRuntime.swift */,
 				675BBBBAD84FAABC4FC78C11 /* TenoraApp.swift */,
 			);
 			path = App;
@@ -292,6 +312,7 @@
 		C81D3BCC785D55C8418C5D0A /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				40F43A14C87877A63800F68D /* AppIntents */,
 				0B2320877134A0E3B2424C15 /* EventKit */,
 				DAC30C38490F49F46F5AA645 /* Notifications */,
 			);
@@ -318,6 +339,7 @@
 			isa = PBXGroup;
 			children = (
 				9C62C833A4A9B5283A2A3A0C /* Assets.xcassets */,
+				5CEBD60058A122871403AEA8 /* Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -456,6 +478,7 @@
 				F87D76931A25DFDC59728325 /* SwiftDataTaskRepositoryTests.swift in Sources */,
 				0B3345A3678763E36A1D274A /* TaskEditorTests.swift in Sources */,
 				8D3F3E31B17B93DA3C8586C1 /* TaskPriorityEngineTests.swift in Sources */,
+				A7C681922BB2A03C67CF1CBF /* TenoraRouteTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -464,6 +487,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				60FEFCA2E15B9D0201854426 /* AddTaskView.swift in Sources */,
+				E3C46AB9F2CEA716A6B93023 /* AddTenoraTaskIntent.swift in Sources */,
+				6F083C1DCD34E705F67D4028 /* AppRuntime.swift in Sources */,
 				20AD5872EEADE2F4FB61C54B /* AvailabilityEngine.swift in Sources */,
 				FB4E2F41072050CF199FD9BD /* CalendarEvent.swift in Sources */,
 				4E2D9277EEC04F3F3A5271E6 /* CalendarRepository.swift in Sources */,
@@ -485,6 +510,7 @@
 				372A8421BFC36C8C8CF0B8B2 /* TaskStore.swift in Sources */,
 				F0F2676A336AA0641FDAC392 /* TenoraApp.swift in Sources */,
 				7B2D12CDB9E604B6A87BDFF8 /* TenoraClock.swift in Sources */,
+				6C72525EB19B50DA6209BD56 /* TenoraRoute.swift in Sources */,
 				2BEA67D92CE64346ED4DC289 /* TenoraTask.swift in Sources */,
 				0C819A0AA3A325B5809D5AFC /* TenoraTheme.swift in Sources */,
 				14980D8B2E14247D8B06B1AB /* TodayView.swift in Sources */,
@@ -648,6 +674,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tenora/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Tenora;
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Tenora uses your calendar to show what is coming up and find time for tasks.";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Tenora uses your calendar to show what is coming up and find time for tasks.";
@@ -673,6 +700,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Tenora/Resources/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Tenora;
 				INFOPLIST_KEY_NSCalendarsFullAccessUsageDescription = "Tenora uses your calendar to show what is coming up and find time for tasks.";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Tenora uses your calendar to show what is coming up and find time for tasks.";
