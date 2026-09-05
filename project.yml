@@ -8,6 +8,8 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     DEVELOPMENT_TEAM: ""
+    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "0.1.0"
 targets:
   Tenora:
     type: application
@@ -15,15 +17,21 @@ targets:
     info:
       path: Tenora/Resources/Info.plist
       properties:
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleURLTypes:
           - CFBundleURLName: com.tenora.app
             CFBundleURLSchemes: [tenora]
     sources:
       - path: Tenora
+      - path: Shared
+    dependencies:
+      - target: TenoraWidgets
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tenora.app
         PRODUCT_NAME: Tenora
+        CODE_SIGN_ENTITLEMENTS: Tenora/Resources/Tenora.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         GENERATE_INFOPLIST_FILE: YES
@@ -38,6 +46,30 @@ targets:
     scheme:
       testTargets:
         - TenoraTests
+  TenoraWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: TenoraWidgets
+      - path: Shared
+      - path: Tenora/Domain/Models/TenoraTask.swift
+      - path: Tenora/Domain/Models/CalendarEvent.swift
+      - path: Tenora/Domain/Services/TaskPriorityEngine.swift
+      - path: Tenora/Domain/Services/AvailabilityEngine.swift
+    info:
+      path: TenoraWidgets/Info.plist
+      properties:
+        CFBundleDisplayName: Tenora
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tenora.app.widgets
+        CODE_SIGN_ENTITLEMENTS: TenoraWidgets/TenoraWidgets.entitlements
+        TARGETED_DEVICE_FAMILY: "1"
+        SKIP_INSTALL: YES
   TenoraTests:
     type: bundle.unit-test
     platform: iOS

@@ -20,3 +20,9 @@ Background notification actions save through the repository and rebuild the queu
 ## Capture
 
 The Add task to Tenora App Intent is available to Shortcuts and through the phrases “Add a task to Tenora” and “Remember something in Tenora.” It opens the app to keep task storage and reminder updates in one process. A Shortcuts workflow can pass text from its Share Sheet input to this intent. Deep links `tenora://add?title=...`, `tenora://today`, and `tenora://task/<UUID>` support widgets and other local workflows. Capture links prefill a draft and require the user to tap Add. Invalid task links never create tasks.
+
+## Widgets
+
+The embedded TenoraWidgets extension provides small and medium Home Screen widgets. Both deep-link to the recommended task; medium also shows the next timed event and a capture link. Tasks remain in the original SwiftData store. Only a Codable snapshot is shared through `group.com.tenora.app`, avoiding a database migration. Timelines recompute around event boundaries and every 15 minutes; snapshots older than six hours show a refresh prompt. iOS decides actual widget reload timing.
+
+For a physical device or distribution archive, choose your Apple development team and enable the same App Group (`group.com.tenora.app`, or your own identifier changed in both entitlements and WidgetSnapshot) for the app and extension. Unsigned builds verify compilation, not provisioning or Home Screen refresh delivery.

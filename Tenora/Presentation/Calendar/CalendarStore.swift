@@ -12,6 +12,7 @@ final class CalendarStore: ObservableObject {
     private let clock: any TenoraClock
     private let calendar: Calendar
     private let workingHours: WorkingHours
+    var didChange: (() -> Void)?
 
     init(
         repository: any CalendarRepository,
@@ -50,6 +51,7 @@ final class CalendarStore: ObservableObject {
     }
 
     func refresh() async {
+        defer { didChange?() }
         authorization = repository.authorizationStatus()
         guard authorization == .fullAccess else {
             events = []
@@ -61,7 +63,7 @@ final class CalendarStore: ObservableObject {
     func requestAccess() async {
         guard !isRequestingAccess else { return }
         isRequestingAccess = true
-        defer { isRequestingAccess = false }
+        defer { isRequestingAccess = false; didChange?() }
 
         do {
             authorization = try await repository.requestAccess()

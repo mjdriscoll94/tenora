@@ -1,6 +1,6 @@
 import Foundation
 
-struct CalendarEvent: Identifiable, Equatable, Sendable {
+struct CalendarEvent: Identifiable, Equatable, Sendable, Codable {
     let externalIdentifier: String
     let title: String
     let startDate: Date

@@ -1,6 +1,6 @@
 import Foundation
 
-struct TenoraTask: Identifiable, Equatable, Sendable {
+struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
     let id: UUID
     var title: String
     var notes: String
@@ -84,4 +84,3 @@ enum TaskSource: String, CaseIterable, Codable, Sendable {
     case shortcut
     case shareExtension
 }
-
