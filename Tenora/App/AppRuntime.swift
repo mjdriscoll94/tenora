@@ -24,7 +24,14 @@ final class AppRuntime {
             tasks = TaskStore(repository: SwiftDataTaskRepository(modelContext: container.mainContext))
             let calendarRepository = EventKitCalendarRepository()
             calendar = CalendarStore(repository: calendarRepository)
-            if uiTesting { return }
+            if uiTesting {
+                if ProcessInfo.processInfo.arguments.contains("-continuity-fixture") {
+                    let task = TenoraTask(title: "Finish lesson notes", nextStep: "Write the opening paragraph", heldAt: Date(), holdReason: "Lunch")
+                    container.mainContext.insert(StoredTask(task: task))
+                    try container.mainContext.save()
+                }
+                return
+            }
             calendarRepository.onChange = { [weak calendar] in Task { await calendar?.refresh() } }
             tasks.didChange = { [weak self] tasks in
                 self?.publishWidget()

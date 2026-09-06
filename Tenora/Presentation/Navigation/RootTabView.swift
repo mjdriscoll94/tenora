@@ -40,7 +40,7 @@ struct RootTabView: View {
             .tag(2)
         }
         .sheet(isPresented: $isAddingTask) {
-            AddTaskView(initialTitle: captureTitle)
+            AddTaskView(initialTitle: captureTitle, onResume: { selectedTab = 0 })
         }
         .tint(.tenoraBlue)
         .sheet(isPresented: $showingResume) { ResumeView(since: returnSince, onResume: { selectedTab = 0 }) }

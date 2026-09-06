@@ -13,8 +13,12 @@ struct AddTenoraTaskIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ProvidesDialog {
+        await AppRuntime.shared.tasks.load()
         let saved = await AppRuntime.shared.tasks.createTask(title: title, source: .shortcut)
         guard saved else { throw CaptureError.couldNotSave }
+        if let current = AppRuntime.shared.tasks.currentTask {
+            return .result(dialog: "Saved. Back to: \(current.title).")
+        }
         return .result(dialog: "Saved to Tenora.")
     }
 

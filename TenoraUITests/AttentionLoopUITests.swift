@@ -2,6 +2,36 @@ import XCTest
 
 final class AttentionLoopUITests: XCTestCase {
     @MainActor
+    func testResumeCaptureAndHoldPreserveTheThread() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-continuity-fixture"]
+        app.launch()
+        app.buttons["What was I doing?"].tap()
+        XCTAssertTrue(app.staticTexts["Write the opening paragraph"].waitForExistence(timeout: 5))
+        app.buttons["Resume"].tap()
+        app.buttons["Add task"].tap()
+        let title = app.textFields["What do you need to remember?"]
+        XCTAssertTrue(title.waitForExistence(timeout: 5))
+        title.typeText("Order camp shirts")
+        app.buttons["Add"].tap()
+        XCTAssertTrue(app.staticTexts["Back to: Finish lesson notes"].waitForExistence(timeout: 5))
+        app.buttons["Resume"].tap()
+        app.tabBars.buttons["Inbox"].tap()
+        app.staticTexts["Finish lesson notes"].tap()
+        app.swipeUp()
+        app.buttons["Hold my place"].tap()
+        let reason = app.textFields["Why are you stopping?"]
+        XCTAssertTrue(reason.waitForExistence(timeout: 5))
+        reason.tap()
+        reason.typeText("Meeting")
+        app.buttons["Hold"].tap()
+        app.buttons["Save"].tap()
+        app.tabBars.buttons["Today"].tap()
+        app.buttons["What was I doing?"].tap()
+        XCTAssertTrue(app.staticTexts["You paused because: Meeting"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Write the opening paragraph"].exists)
+    }
+    @MainActor
     func testCaptureScheduleCompleteAndOpenReview() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]

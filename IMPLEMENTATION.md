@@ -39,6 +39,18 @@ The foreground app refreshes every minute and on activation; EventKit changes re
 
 ## Device acceptance checks
 
-Validation: 39 unit tests and one isolated simulator UI test cover the domain/store rules and capture → schedule → complete → review navigation. The UI test uses an in-memory task store. An unsigned iOS device build checks compilation of the app and widget.
+Validation: 43 unit tests and two isolated simulator UI tests cover the domain/store rules, capture → schedule → complete → review navigation, and resume → interruption capture → hold context. The UI tests use an in-memory task store. An unsigned iOS device build checks compilation of the app and widget.
 
 Before release, verify notification permission, delivery and cold-launch actions; Siri phrase discovery; Share Sheet capture through a configured Shortcut; and small/medium widgets on a signed physical device with the App Group enabled. No native Share extension is included. Automated domain/store tests and unsigned builds do not replace those device checks.
+
+## Preserving your place
+
+Tasks can store a smallest next step, the time they were held, an optional reason for stopping, and the last time work intentionally resumed. These are optional persisted fields; older widget snapshots without them still decode.
+
+Hold my place is available from NOW and task details. It preserves the next step and releases active focus. Choose a return time, or let Tenora resurface the task after four hours under the existing reminder limits. Resume deliberately clears scheduling and snooze dates while preserving the actual deadline.
+
+Today keeps “What was I doing?” available even outside working hours. After at least 15 minutes in the background, returning to the app presents the Resume screen when an unresolved current or held task exists. It shows the next step, pause reason, and the number of unfinished items whose deadline or return time passed while away. Explicit task/capture links take precedence. Completed and deleted tasks are excluded.
+
+Capturing while a task is current shows “Captured. Back to…” and a Resume action. It saves the new intention without replacing focus. Siri capture also names the current task in its confirmation; the medium widget shows the next step when present.
+
+This phase implements next steps, Hold My Place, Resume, and interruption capture. Just Start sessions, additional return triggers, transition planning, day rebuilding, location integration, Lock Screen controls, and Live Activities remain future phases.

@@ -50,6 +50,9 @@ struct TenoraWidgetView: View {
                 Text(entry.task?.title ?? "Open Tenora to find your next step")
                     .font(.headline).lineLimit(3).frame(maxWidth: .infinity, alignment: .leading)
             }
+            if family == .systemMedium, let step = entry.task?.nextStep, !step.isEmpty {
+                Text("Next: \(step)").font(.caption).lineLimit(2)
+            }
             Spacer(minLength: 0)
             if family == .systemMedium, let event = entry.nextEvent {
                 Text("UP NEXT").font(.caption2.weight(.bold)).foregroundStyle(.white.opacity(0.75))
