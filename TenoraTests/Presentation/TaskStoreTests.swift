@@ -3,6 +3,47 @@ import XCTest
 
 @MainActor
 final class TaskStoreTests: XCTestCase {
+    func testHoldSurvivesReloadAndResumeClearsReturnTime() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let task = TenoraTask(title: "Slides", dueDate: Date())
+        let repository = MemoryTasks(tasks: [task])
+        let store = TaskStore(repository: repository)
+        await store.load()
+        await store.start(task)
+        let returnAt = Date().addingTimeInterval(3600)
+        let held = await store.hold(task.id, nextStep: "  Find image  ", reason: "Meeting", returnAt: returnAt)
+        XCTAssertTrue(held)
+        XCTAssertNil(store.focusedTaskID)
+        let reopened = TaskStore(repository: repository)
+        await reopened.load()
+        let resume = try! XCTUnwrap(reopened.resumeTask)
+        XCTAssertEqual(resume.nextStep, "Find image")
+        XCTAssertEqual(resume.holdReason, "Meeting")
+        XCTAssertEqual(resume.nextSurfaceAt, returnAt)
+        await reopened.start(resume)
+        XCTAssertEqual(reopened.currentTask?.id, task.id)
+        XCTAssertNil(reopened.currentTask?.scheduledDate)
+        XCTAssertNil(reopened.currentTask?.nextSurfaceAt)
+        XCTAssertEqual(reopened.currentTask?.dueDate, task.dueDate)
+        await reopened.complete(resume)
+        XCTAssertNil(reopened.resumeTask)
+    }
+
+    func testFailedHoldRetainsCurrentTask() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let task = TenoraTask(title: "Focus")
+        let repository = MemoryTasks(tasks: [task])
+        let store = TaskStore(repository: repository)
+        await store.load()
+        await store.start(task)
+        repository.failSave = true
+        let held = await store.hold(task.id, nextStep: "Next", reason: "", returnAt: nil)
+        XCTAssertFalse(held)
+        XCTAssertEqual(store.currentTask?.id, task.id)
+        XCTAssertNil(store.currentTask?.heldAt)
+    }
     func testStartPinsAndLaterReleasesPersistedTask() async {
         let defaults = UserDefaults.standard
         let previous = defaults.string(forKey: "focusedTask")

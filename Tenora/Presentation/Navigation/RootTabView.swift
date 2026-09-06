@@ -12,6 +12,9 @@ struct RootTabView: View {
     @State private var captureTitle = ""
     @State private var selectedTab = 0
     @State private var missingTask = false
+    @AppStorage("lastLeftTenora") private var lastLeft = 0.0
+    @State private var showingResume = false
+    @State private var returnSince: Date?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -40,8 +43,10 @@ struct RootTabView: View {
             AddTaskView(initialTitle: captureTitle)
         }
         .tint(.tenoraBlue)
+        .sheet(isPresented: $showingResume) { ResumeView(since: returnSince, onResume: { selectedTab = 0 }) }
         .onOpenURL { url in
             guard let route = TenoraRoute(url: url) else { return }
+            showingResume = false
             Task {
                 await taskStore.load()
                 switch route {
@@ -61,6 +66,7 @@ struct RootTabView: View {
         .sheet(item: $openedTask) { task in NavigationStack { TaskDetailView(task: task) } }
         .onChange(of: reminders.openedTaskID) { _, id in
             guard let id else { return }
+            showingResume = false
             Task {
                 await taskStore.load()
                 openedTask = taskStore.tasks.first { $0.id == id }
@@ -69,8 +75,18 @@ struct RootTabView: View {
         }
         .onChange(of: workStart) { _, _ in Task { await calendarStore.refresh() } }
         .onChange(of: workEnd) { _, _ in Task { await calendarStore.refresh() } }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .background { lastLeft = Date().timeIntervalSince1970 }
+        }
         .task(id: scenePhase) {
             guard scenePhase == .active else { return }
+            await taskStore.load()
+            if lastLeft > 0, Date().timeIntervalSince1970 - lastLeft >= 15 * 60,
+               taskStore.resumeTask != nil, !isAddingTask, openedTask == nil, reminders.openedTaskID == nil {
+                returnSince = Date(timeIntervalSince1970: lastLeft)
+                showingResume = true
+            }
+            lastLeft = 0
             repeat {
                 await taskStore.load()
                 await calendarStore.refresh()

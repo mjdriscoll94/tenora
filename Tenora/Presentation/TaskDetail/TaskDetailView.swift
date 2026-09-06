@@ -6,6 +6,7 @@ struct TaskDetailView: View {
     @State private var draft: TenoraTask
     @State private var saving = false
     @State private var confirmingDelete = false
+    @State private var holding = false
 
     init(task: TenoraTask) { _draft = State(initialValue: task) }
 
@@ -33,6 +34,15 @@ struct TaskDetailView: View {
             }
             if let error = store.errorMessage { Section { Text(error).foregroundStyle(.secondary) } }
             Section {
+                Button("Hold my place") {
+                    saving = true
+                    Task {
+                        if await store.update(draft) { holding = true }
+                        saving = false
+                    }
+                }.disabled(saving || draft.status == .completed)
+                Button("Resume task") { Task { if await store.start(draft) { dismiss() } } }
+                    .disabled(saving || draft.status == .completed)
                 Button("Complete task") {
                     Task { if await store.complete(draft) { dismiss() } }
                 }.disabled(saving || draft.status == .completed)
@@ -40,6 +50,9 @@ struct TaskDetailView: View {
             }
         }
         .navigationTitle("Task")
+        .sheet(isPresented: $holding, onDismiss: {
+            if let latest = store.tasks.first(where: { $0.id == draft.id }) { draft = latest }
+        }) { HoldPlaceView(task: draft) }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {

@@ -4,6 +4,8 @@ struct TodayView: View {
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
     @State private var reviewKind: ReviewKind?
+    @State private var holdingTask: TenoraTask?
+    @State private var showingResume = false
 
     var body: some View {
         ScrollView {
@@ -12,6 +14,14 @@ struct TodayView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
+                if let task = taskStore.resumeTask {
+                    VStack(alignment: .leading, spacing: 10) {
+                        sectionLabel("YOUR PLACE IS HELD")
+                        Text(task.title).font(.headline)
+                        if let step = task.nextStep, !step.isEmpty { Text("Next: \(step)").foregroundStyle(.secondary) }
+                        Button("What was I doing?") { showingResume = true }.buttonStyle(.bordered)
+                    }
+                }
                 nowSection
 
                 if !calendarStore.upcomingEvents.isEmpty {
@@ -33,6 +43,8 @@ struct TodayView: View {
         .background(Color.tenoraSurface.ignoresSafeArea())
         .navigationTitle("Today")
         .sheet(item: $reviewKind) { ReviewView(kind: $0) }
+        .sheet(item: $holdingTask) { HoldPlaceView(task: $0) }
+        .sheet(isPresented: $showingResume) { ResumeView() }
         .overlay(alignment: .bottom) {
             if let errorMessage = taskStore.errorMessage {
                 Text(errorMessage)
@@ -79,6 +91,7 @@ struct TodayView: View {
                         Button("Start") { Task { await taskStore.start(task) } }
                             .buttonStyle(TenoraPrimaryButtonStyle())
                     }
+                    Button("Hold my place") { holdingTask = task }.tint(.white)
 
                     HStack {
                         Button("Complete") {

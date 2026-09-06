@@ -51,14 +51,42 @@ final class TaskStore: ObservableObject {
         return priorityEngine.reason(for: task, context: priorityContext(availableMinutes))
     }
 
-    func start(_ task: TenoraTask) async {
-        guard var current = tasks.first(where: { $0.id == task.id }), ![.completed, .archived].contains(current.status) else { return }
+    @discardableResult
+    func start(_ task: TenoraTask) async -> Bool {
+        guard var current = tasks.first(where: { $0.id == task.id }), ![.completed, .archived].contains(current.status) else { return false }
         current.status = .active
+        current.lastWorkedAt = clock.now
+        current.scheduledDate = nil
+        current.nextSurfaceAt = nil
+        current.snoozeCount = 0
         current.lastSurfacedAt = clock.now
         current.surfaceCount += 1
         let previousFocus = focusedTaskID
         setFocus(current.id)
-        if !(await saveAndReload(current, failureMessage: "Tenora couldn't start this task.")) { setFocus(previousFocus) }
+        if !(await saveAndReload(current, failureMessage: "Tenora couldn't start this task.")) { setFocus(previousFocus); return false }
+        return true
+    }
+
+    var currentTask: TenoraTask? {
+        tasks.first { $0.id == focusedTaskID && ![.completed, .archived].contains($0.status) }
+    }
+
+    var resumeTask: TenoraTask? {
+        if let currentTask { return currentTask }
+        return inboxTasks.filter { $0.lastWorkedAt != nil || $0.heldAt != nil }
+            .max { max($0.lastWorkedAt ?? .distantPast, $0.heldAt ?? .distantPast) < max($1.lastWorkedAt ?? .distantPast, $1.heldAt ?? .distantPast) }
+    }
+
+    func hold(_ id: UUID, nextStep: String, reason: String, returnAt: Date?) async -> Bool {
+        guard var task = tasks.first(where: { $0.id == id }), ![.completed, .archived].contains(task.status) else { return false }
+        task.nextStep = nextStep.trimmingCharacters(in: .whitespacesAndNewlines)
+        task.holdReason = reason.trimmingCharacters(in: .whitespacesAndNewlines)
+        task.heldAt = clock.now
+        task.scheduledDate = returnAt
+        task.nextSurfaceAt = returnAt ?? clock.now.addingTimeInterval(4 * 3600)
+        task.snoozeCount = max(1, task.snoozeCount)
+        task.status = returnAt == nil ? .inbox : .scheduled
+        return await saveAndReload(task, failureMessage: "Tenora couldn't hold your place. Please try again.")
     }
 
     private func setFocus(_ id: UUID?) {
