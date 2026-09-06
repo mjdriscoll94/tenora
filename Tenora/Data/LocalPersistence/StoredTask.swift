@@ -20,6 +20,10 @@ final class StoredTask {
     var completedAt: Date?
     var sourceValue: String
     var tags: [String]
+    var nextStep: String?
+    var heldAt: Date?
+    var holdReason: String?
+    var lastWorkedAt: Date?
 
     init(task: TenoraTask) {
         id = task.id
@@ -39,6 +43,10 @@ final class StoredTask {
         completedAt = task.completedAt
         sourceValue = task.source.rawValue
         tags = task.tags
+        nextStep = task.nextStep
+        heldAt = task.heldAt
+        holdReason = task.holdReason
+        lastWorkedAt = task.lastWorkedAt
     }
 
     func update(from task: TenoraTask) {
@@ -57,6 +65,10 @@ final class StoredTask {
         completedAt = task.completedAt
         sourceValue = task.source.rawValue
         tags = task.tags
+        nextStep = task.nextStep
+        heldAt = task.heldAt
+        holdReason = task.holdReason
+        lastWorkedAt = task.lastWorkedAt
     }
 
     var domainModel: TenoraTask {
@@ -77,8 +89,11 @@ final class StoredTask {
             snoozeCount: snoozeCount,
             completedAt: completedAt,
             source: TaskSource(rawValue: sourceValue) ?? .manual,
-            tags: tags
+            tags: tags,
+            nextStep: nextStep,
+            heldAt: heldAt,
+            holdReason: holdReason,
+            lastWorkedAt: lastWorkedAt
         )
     }
 }
-

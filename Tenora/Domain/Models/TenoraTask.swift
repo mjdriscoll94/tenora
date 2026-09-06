@@ -18,6 +18,10 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
     var completedAt: Date?
     var source: TaskSource
     var tags: [String]
+    var nextStep: String?
+    var heldAt: Date?
+    var holdReason: String?
+    var lastWorkedAt: Date?
 
     init(
         id: UUID = UUID(),
@@ -36,7 +40,11 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         snoozeCount: Int = 0,
         completedAt: Date? = nil,
         source: TaskSource = .manual,
-        tags: [String] = []
+        tags: [String] = [],
+        nextStep: String? = nil,
+        heldAt: Date? = nil,
+        holdReason: String? = nil,
+        lastWorkedAt: Date? = nil
     ) {
         self.id = id
         self.title = title
@@ -55,6 +63,10 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         self.completedAt = completedAt
         self.source = source
         self.tags = tags
+        self.nextStep = nextStep
+        self.heldAt = heldAt
+        self.holdReason = holdReason
+        self.lastWorkedAt = lastWorkedAt
     }
 
     mutating func complete(at date: Date = Date()) {

@@ -59,6 +59,9 @@ struct TodayView: View {
                     Text(task.title)
                         .font(.system(.title2, design: .rounded, weight: .semibold))
                         .foregroundStyle(.white)
+                    if let step = task.nextStep, !step.isEmpty {
+                        Text("Next: \(step)").foregroundStyle(.white.opacity(0.9))
+                    }
 
                     NavigationLink("Edit or schedule") { TaskDetailView(task: task) }
                         .font(.subheadline).foregroundStyle(.white)

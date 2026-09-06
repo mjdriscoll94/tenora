@@ -9,6 +9,8 @@ enum TaskEditor {
     static func validated(_ draft: TenoraTask, previous: TenoraTask, now: Date) throws -> TenoraTask {
         var task = draft
         task.title = draft.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        task.nextStep = draft.nextStep?.trimmingCharacters(in: .whitespacesAndNewlines)
+        if task.nextStep?.isEmpty == true { task.nextStep = nil }
         guard !task.title.isEmpty else { throw ValidationError.emptyTitle }
         if task.status != .completed && task.status != .archived {
             task.status = task.scheduledDate == nil ? .inbox : .scheduled

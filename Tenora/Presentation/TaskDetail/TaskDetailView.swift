@@ -27,6 +27,10 @@ struct TaskDetailView: View {
                     ForEach(TaskPriority.allCases, id: \.self) { Text($0.rawValue.capitalized).tag($0) }
                 }
             }
+            Section("Make this easier") {
+                TextField("Smallest next step", text: Binding(get: { draft.nextStep ?? "" }, set: { draft.nextStep = $0 }), axis: .vertical)
+                Text("What's the smallest physical thing you could do next?").font(.footnote).foregroundStyle(.secondary)
+            }
             if let error = store.errorMessage { Section { Text(error).foregroundStyle(.secondary) } }
             Section {
                 Button("Complete task") {

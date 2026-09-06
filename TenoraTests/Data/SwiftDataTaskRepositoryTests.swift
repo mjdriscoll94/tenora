@@ -26,6 +26,27 @@ final class SwiftDataTaskRepositoryTests: XCTestCase {
         XCTAssertEqual(fetched, [task])
     }
 
+    func testSavedContextSurvivesFetchAndEditing() async throws {
+        let repository = try makeRepository()
+        var task = TenoraTask(title: "Slides", nextStep: "Find slide seven image", heldAt: Date(), holdReason: "Meeting", lastWorkedAt: Date())
+        try await repository.save(task)
+        var fetched = try await repository.fetchTasks()
+        XCTAssertEqual(fetched, [task])
+        task.nextStep = "Add the caption"
+        try await repository.save(task)
+        fetched = try await repository.fetchTasks()
+        XCTAssertEqual(fetched, [task])
+    }
+
+    func testOldSnapshotWithoutContextStillDecodes() throws {
+        let task = TenoraTask(title: "Existing task")
+        let data = try JSONEncoder().encode(task)
+        var json = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        for key in ["nextStep", "heldAt", "holdReason", "lastWorkedAt"] { json.removeValue(forKey: key) }
+        let decoded = try JSONDecoder().decode(TenoraTask.self, from: JSONSerialization.data(withJSONObject: json))
+        XCTAssertEqual(decoded, task)
+    }
+
     func testSavingExistingTaskUpdatesInsteadOfDuplicating() async throws {
         let repository = try makeRepository()
         var task = TenoraTask(title: "Draft email")
