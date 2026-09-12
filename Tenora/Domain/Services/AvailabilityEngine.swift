@@ -35,13 +35,14 @@ struct AvailabilityEngine: Sendable {
         at now: Date,
         events: [CalendarEvent],
         workingHours: WorkingHours = WorkingHours(),
-        calendar: Calendar = .current
+        calendar: Calendar = .current,
+        schedule: WorkingSchedule? = nil
     ) -> AvailabilitySnapshot {
-        let workInterval = workingInterval(
+        let workIntervals = schedule?.intervals(around: now, calendar: calendar) ?? [workingInterval(
             containing: now,
             hours: workingHours,
             calendar: calendar
-        )
+        )]
         let timedBusyEvents = events
             .filter { !$0.isAllDay && $0.isBusy && $0.endDate > $0.startDate }
             .sorted { $0.startDate < $1.startDate }
@@ -53,22 +54,19 @@ struct AvailabilityEngine: Sendable {
         let minutesUntilNextEvent = nextEvent.map {
             max(0, Int($0.startDate.timeIntervalSince(now) / 60))
         }
-        let freeWindows = freeTimeWindows(
-            within: workInterval,
+        let freeWindows = workIntervals.flatMap { freeTimeWindows(
+            within: $0,
             busyEvents: timedBusyEvents
-        )
+        ) }
 
         let availableMinutes: Int?
-        if now < workInterval.start || now >= workInterval.end {
-            availableMinutes = nil
-        } else if currentEvent != nil {
-            availableMinutes = 0
-        } else {
-            let endOfCurrentGap = timedBusyEvents
-                .first { $0.startDate > now && $0.startDate < workInterval.end }?
-                .startDate ?? workInterval.end
-            availableMinutes = max(0, Int(endOfCurrentGap.timeIntervalSince(now) / 60))
-        }
+        if let interval = workIntervals.first(where: { $0.start <= now && now < $0.end }) {
+            if currentEvent != nil { availableMinutes = 0 }
+            else {
+                let gapEnd = timedBusyEvents.first { $0.startDate > now && $0.startDate < interval.end }?.startDate ?? interval.end
+                availableMinutes = max(0, Int(gapEnd.timeIntervalSince(now) / 60))
+            }
+        } else { availableMinutes = nil }
 
         return AvailabilitySnapshot(
             currentEvent: currentEvent,

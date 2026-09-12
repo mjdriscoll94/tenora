@@ -26,6 +26,11 @@ struct TenoraProvider: TimelineProvider {
         dates += (snapshot?.events ?? []).flatMap { [$0.startDate, $0.endDate] }.filter { $0 > now && $0 < now.addingTimeInterval(6 * 3600) }
         dates += (snapshot?.tasks ?? []).compactMap(\.nextSurfaceAt).filter { $0 > now && $0 < now.addingTimeInterval(6 * 3600) }
         dates += (snapshot?.tasks ?? []).compactMap(\.scheduledDate).filter { $0 > now && $0 < now.addingTimeInterval(6 * 3600) }
+        if let schedule = snapshot?.schedule {
+            let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) ?? now
+            dates += [now, tomorrow].flatMap { schedule.intervals(around: $0) }.flatMap { [$0.start, $0.end] }
+                .filter { $0 > now && $0 < now.addingTimeInterval(6 * 3600) }
+        }
         let entries = Set(dates).sorted().map { TenoraEntry(date: $0, snapshot: snapshot) }
         completion(Timeline(entries: entries, policy: .after(now.addingTimeInterval(1800))))
     }
@@ -56,7 +61,7 @@ struct TenoraWidgetView: View {
             Spacer(minLength: 0)
             if family == .systemMedium, let event = entry.nextEvent {
                 Text("UP NEXT").font(.caption2.weight(.bold)).foregroundStyle(.white.opacity(0.75))
-                Text("\(event.startDate.formatted(date: .omitted, time: .shortened))  \(event.title)")
+                Text("\(event.startDate.formatted(date: Calendar.current.isDate(event.startDate, inSameDayAs: entry.date) ? .omitted : .abbreviated, time: .shortened))  \(event.title)")
                     .font(.subheadline).lineLimit(1)
             }
             Text("TENORA").font(.caption2).tracking(2).foregroundStyle(.white.opacity(0.65))

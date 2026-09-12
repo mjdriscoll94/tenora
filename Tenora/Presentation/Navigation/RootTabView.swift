@@ -4,6 +4,7 @@ struct RootTabView: View {
     @Environment(\.scenePhase) private var scenePhase
     @AppStorage("workStart") private var workStart = 8
     @AppStorage("workEnd") private var workEnd = 18
+    @AppStorage(AttentionPreferences.scheduleKey) private var workingSchedule = ""
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
     @State private var isAddingTask = false
@@ -75,6 +76,7 @@ struct RootTabView: View {
         }
         .onChange(of: workStart) { _, _ in Task { await calendarStore.refresh() } }
         .onChange(of: workEnd) { _, _ in Task { await calendarStore.refresh() } }
+        .onChange(of: workingSchedule) { _, _ in Task { await calendarStore.refresh(); await taskStore.load() } }
         .onChange(of: scenePhase) { _, phase in
             if phase == .background { lastLeft = Date().timeIntervalSince1970 }
         }

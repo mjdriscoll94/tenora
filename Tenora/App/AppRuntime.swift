@@ -13,6 +13,9 @@ final class AppRuntime {
         do {
             #if DEBUG
             let uiTesting = ProcessInfo.processInfo.arguments.contains("-ui-testing")
+            if ProcessInfo.processInfo.arguments.contains("-reset-working-schedule") {
+                UserDefaults.standard.removeObject(forKey: AttentionPreferences.scheduleKey)
+            }
             #else
             let uiTesting = false
             #endif

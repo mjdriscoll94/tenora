@@ -146,7 +146,7 @@ struct TodayView: View {
             VStack(spacing: 0) {
                 ForEach(Array(calendarStore.upcomingEvents.prefix(3).enumerated()), id: \.element.id) { index, event in
                     HStack(alignment: .firstTextBaseline, spacing: 14) {
-                        Text(event.isAllDay ? "All day" : event.startDate.formatted(date: .omitted, time: .shortened))
+                        Text(event.isAllDay ? "All day" : event.startDate.formatted(date: Calendar.current.isDate(event.startDate, inSameDayAs: calendarStore.currentDate) ? .omitted : .abbreviated, time: .shortened))
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(Color.tenoraBlue)
                             .frame(width: 72, alignment: .leading)
@@ -208,7 +208,7 @@ struct TodayView: View {
     }
 
     private var remainingResurfacedTasks: [TenoraTask] {
-        let context = TaskPriorityEngine.Context(now: calendarStore.currentDate, availableMinutes: calendarStore.availability?.availableMinutes, workingHours: AttentionPreferences.workingHours)
+        let context = TaskPriorityEngine.Context(now: calendarStore.currentDate, availableMinutes: calendarStore.availability?.availableMinutes, schedule: AttentionPreferences.schedule)
         return Array(taskStore.resurfacedTasks.filter { $0.id != recommendation?.id && TaskPriorityEngine().isEligible($0, context: context) }.prefix(2))
     }
 

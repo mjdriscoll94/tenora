@@ -43,7 +43,7 @@ final class TaskStore: ObservableObject {
     }
 
     private func priorityContext(_ availableMinutes: Int?) -> TaskPriorityEngine.Context {
-        .init(now: clock.now, availableMinutes: availableMinutes, calendar: calendar, workingHours: AttentionPreferences.workingHours)
+        .init(now: clock.now, availableMinutes: availableMinutes, calendar: calendar, schedule: AttentionPreferences.schedule)
     }
 
     func reason(for task: TenoraTask, availableMinutes: Int?) -> String {

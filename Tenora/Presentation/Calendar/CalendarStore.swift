@@ -39,7 +39,8 @@ final class CalendarStore: ObservableObject {
             at: clock.now,
             events: events,
             workingHours: workingHoursOverride ?? AttentionPreferences.workingHours,
-            calendar: calendar
+            calendar: calendar,
+            schedule: workingHoursOverride == nil ? AttentionPreferences.schedule : nil
         )
     }
 
@@ -83,9 +84,12 @@ final class CalendarStore: ObservableObject {
     private func loadTodayEvents() async {
         let dayStart = calendar.startOfDay(for: clock.now)
         guard let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) else { return }
+        // An evening shift can need tomorrow's events before midnight arrives.
+        let shiftEnd = workingHoursOverride == nil ? AttentionPreferences.schedule.intervals(around: clock.now, calendar: calendar).map(\.end).max() : nil
+        let horizonEnd = max(dayEnd, shiftEnd ?? dayEnd)
 
         do {
-            events = try await repository.events(in: DateInterval(start: dayStart, end: dayEnd))
+            events = try await repository.events(in: DateInterval(start: dayStart, end: horizonEnd))
             loadedDay = dayStart
             errorMessage = nil
         } catch {

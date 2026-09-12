@@ -6,12 +6,14 @@ struct TaskPriorityEngine: Sendable {
         let availableMinutes: Int?
         let calendar: Calendar
         let workingHours: WorkingHours
+        let schedule: WorkingSchedule?
 
-        init(now: Date, availableMinutes: Int? = nil, calendar: Calendar = .current, workingHours: WorkingHours = WorkingHours()) {
+        init(now: Date, availableMinutes: Int? = nil, calendar: Calendar = .current, workingHours: WorkingHours = WorkingHours(), schedule: WorkingSchedule? = nil) {
             self.now = now
             self.availableMinutes = availableMinutes
             self.calendar = calendar
             self.workingHours = workingHours
+            self.schedule = schedule
         }
     }
 
@@ -42,7 +44,8 @@ struct TaskPriorityEngine: Sendable {
     func isEligible(_ task: TenoraTask, context: Context) -> Bool {
         guard [.inbox, .active, .scheduled].contains(task.status) else { return false }
         let hour = context.calendar.component(.hour, from: context.now)
-        guard hour >= context.workingHours.startHour && hour < context.workingHours.endHour,
+        let working = context.schedule?.isWorking(at: context.now, calendar: context.calendar) ?? (hour >= context.workingHours.startHour && hour < context.workingHours.endHour)
+        guard working,
               context.availableMinutes != 0 else { return false }
         if let scheduled = task.scheduledDate, scheduled > context.now { return false }
         if task.snoozeCount > 0, let next = task.nextSurfaceAt, next > context.now { return false }

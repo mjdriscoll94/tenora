@@ -2,6 +2,28 @@ import XCTest
 
 final class AttentionLoopUITests: XCTestCase {
     @MainActor
+    func testUserCanSetAnIndividualWeekdayAsOff() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-reset-working-schedule"]
+        app.launch()
+        app.buttons["Settings"].tap()
+        app.buttons["Weekly schedule"].tap()
+        XCTAssertTrue(app.buttons["workday-2"].waitForExistence(timeout: 5))
+        app.buttons["workday-2"].tap()
+        let dayOff = app.segmentedControls["workday-status"].buttons["Day off"]
+        XCTAssertTrue(dayOff.waitForExistence(timeout: 5))
+        dayOff.tap()
+        XCTAssertTrue(dayOff.isSelected)
+        app.terminate()
+        app.launchArguments = ["-ui-testing"]
+        app.launch()
+        app.buttons["Settings"].tap()
+        app.buttons["Weekly schedule"].tap()
+        app.buttons["workday-2"].tap()
+        XCTAssertTrue(app.segmentedControls["workday-status"].buttons["Day off"].isSelected)
+    }
+
+    @MainActor
     func testResumeCaptureAndHoldPreserveTheThread() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing", "-continuity-fixture"]

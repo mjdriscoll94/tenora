@@ -96,7 +96,8 @@ struct CalendarView: View {
     }
 
     private func eventTime(_ event: CalendarEvent) -> String {
-        if event.isAllDay { return "All day" }
-        return "\(event.startDate.formatted(date: .omitted, time: .shortened))–\(event.endDate.formatted(date: .omitted, time: .shortened))"
+        let today = Calendar.current.isDate(event.startDate, inSameDayAs: calendarStore.currentDate)
+        if event.isAllDay { return today ? "All day" : "\(event.startDate.formatted(date: .abbreviated, time: .omitted)) · All day" }
+        return "\(event.startDate.formatted(date: today ? .omitted : .abbreviated, time: .shortened))–\(event.endDate.formatted(date: .omitted, time: .shortened))"
     }
 }

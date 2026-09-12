@@ -55,6 +55,7 @@ targets:
       - path: Shared
       - path: Tenora/Domain/Models/TenoraTask.swift
       - path: Tenora/Domain/Models/CalendarEvent.swift
+      - path: Tenora/Domain/Models/WorkingSchedule.swift
       - path: Tenora/Domain/Services/TaskPriorityEngine.swift
       - path: Tenora/Domain/Services/AvailabilityEngine.swift
     info:

@@ -33,13 +33,13 @@ Today offers optional Morning review and Evening reset. Both present one unresol
 
 ## NOW
 
-Recommendations respect configurable working hours, future schedules, snooze return dates, active meetings, and estimated duration versus the available gap. Without calendar access, Tenora cannot check meetings or gap size. Start persists a focused task; completing, postponing, scheduling, or deleting it releases focus. Focused tasks are excluded from reminder scheduling. The card explains its recommendation, and resurfacing is limited to two additional eligible items.
+Recommendations respect a personal weekly work schedule, future schedules, snooze return dates, active meetings, and estimated duration versus the available gap. Each weekday can use different minute-level start and end times, be marked as a day off, or run overnight into the following day. The schedule repeats in local wall-clock time across time-zone and daylight-saving changes. Existing single-range settings initialize all seven days until the weekly schedule is edited. Without calendar access, Tenora cannot check meetings or gap size. Start persists a focused task; completing, postponing, scheduling, or deleting it releases focus. Focused tasks are excluded from reminder scheduling. The card explains its recommendation, and resurfacing is limited to two additional eligible items.
 
-The foreground app refreshes every minute and on activation; EventKit changes refresh calendar data. Failed calendar reads discard stale availability. Widgets share working hours and focus and add schedule/return boundaries to their timelines. Unchanged minute refreshes do not repeatedly move pending notification delivery times.
+The foreground app refreshes every minute and on activation; EventKit changes refresh calendar data. Failed calendar reads discard stale availability. Overnight calendar reads continue through the end of the active shift. Widgets share the weekly schedule and focus and add work, schedule, and return boundaries to their timelines. Unchanged minute refreshes do not repeatedly move pending notification delivery times.
 
 ## Device acceptance checks
 
-Validation: 43 unit tests and two isolated simulator UI tests cover the domain/store rules, capture → schedule → complete → review navigation, and resume → interruption capture → hold context. The UI tests use an in-memory task store. An unsigned iOS device build checks compilation of the app and widget.
+Validation: 51 unit tests and three isolated simulator UI tests cover the domain/store rules, per-day schedule persistence, capture → schedule → complete → review navigation, and resume → interruption capture → hold context. The UI tests use an in-memory task store. An unsigned iOS device build checks compilation of the app and widget.
 
 Before release, verify notification permission, delivery and cold-launch actions; Siri phrase discovery; Share Sheet capture through a configured Shortcut; and small/medium widgets on a signed physical device with the App Group enabled. No native Share extension is included. Automated domain/store tests and unsigned builds do not replace those device checks.
 
