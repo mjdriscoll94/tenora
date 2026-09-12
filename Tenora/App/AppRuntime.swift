@@ -38,6 +38,7 @@ final class AppRuntime {
             calendarRepository.onChange = { [weak calendar] in Task { await calendar?.refresh() } }
             tasks.didChange = { [weak self] tasks in
                 self?.publishWidget()
+                await ReminderService.shared.synchronizeJustStart(tasks: tasks)
                 await ReminderService.shared.synchronize(tasks: tasks.filter { $0.id != self?.tasks.focusedTaskID })
             }
             calendar.didChange = { [weak self] in self?.publishWidget() }

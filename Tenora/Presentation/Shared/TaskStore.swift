@@ -71,6 +71,56 @@ final class TaskStore: ObservableObject {
         tasks.first { $0.id == focusedTaskID && ![.completed, .archived].contains($0.status) }
     }
 
+    var activeJustStartTask: TenoraTask? {
+        guard let currentTask, currentTask.justStartEndsAt != nil else { return nil }
+        return currentTask
+    }
+
+    func beginJustStart(_ id: UUID, nextStep: String, durationSeconds: Int) async -> Bool {
+        let cleanStep = nextStep.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanStep.isEmpty, (1...3600).contains(durationSeconds),
+              var task = tasks.first(where: { $0.id == id }), ![.completed, .archived].contains(task.status) else { return false }
+        task.nextStep = cleanStep
+        task.justStartBeganAt = clock.now
+        task.justStartDurationSeconds = durationSeconds
+        task.status = .active
+        task.lastWorkedAt = clock.now
+        task.scheduledDate = nil
+        task.nextSurfaceAt = nil
+        task.snoozeCount = 0
+        let previousFocus = focusedTaskID
+        setFocus(id)
+        if !(await saveAndReload(task, failureMessage: "Tenora couldn't start this short session.")) {
+            setFocus(previousFocus)
+            return false
+        }
+        return true
+    }
+
+    func finishJustStart(_ id: UUID, keepGoing: Bool) async -> Bool {
+        guard var task = tasks.first(where: { $0.id == id }), task.justStartEndsAt != nil,
+              ![.completed, .archived].contains(task.status) else { return false }
+        task.clearJustStart()
+        task.lastWorkedAt = clock.now
+        let previousFocus = focusedTaskID
+        if keepGoing {
+            task.status = .active
+            setFocus(id)
+        } else {
+            task.status = .inbox
+            task.heldAt = clock.now
+            task.holdReason = "Finished a short start"
+            task.nextSurfaceAt = clock.now.addingTimeInterval(4 * 3600)
+            task.snoozeCount = 0
+            setFocus(nil)
+        }
+        if !(await saveAndReload(task, failureMessage: "Tenora couldn't save the end of this session.")) {
+            setFocus(previousFocus)
+            return false
+        }
+        return true
+    }
+
     var resumeTask: TenoraTask? {
         if let currentTask { return currentTask }
         return inboxTasks.filter { $0.lastWorkedAt != nil || $0.heldAt != nil }
@@ -86,6 +136,7 @@ final class TaskStore: ObservableObject {
         task.nextSurfaceAt = returnAt ?? clock.now.addingTimeInterval(4 * 3600)
         task.snoozeCount = max(1, task.snoozeCount)
         task.status = returnAt == nil ? .inbox : .scheduled
+        task.clearJustStart()
         return await saveAndReload(task, failureMessage: "Tenora couldn't hold your place. Please try again.")
     }
 
@@ -141,7 +192,8 @@ final class TaskStore: ObservableObject {
     }
 
     func postpone(_ task: TenoraTask) async {
-        guard let current = tasks.first(where: { $0.id == task.id }), ![.completed, .archived].contains(current.status) else { return }
+        guard var current = tasks.first(where: { $0.id == task.id }), ![.completed, .archived].contains(current.status) else { return }
+        current.clearJustStart()
         let postponedTask = resurfacingEngine.postpone(current, at: clock.now, calendar: calendar)
         await saveAndReload(postponedTask, failureMessage: "Tenora couldn't bring that task back later.")
     }
@@ -151,9 +203,12 @@ final class TaskStore: ObservableObject {
         guard var task = tasks.first(where: { $0.id == id }) else { return true }
         guard ![.completed, .archived].contains(task.status) else { return true }
         switch action {
+        case "KEEP_GOING": return await finishJustStart(id, keepGoing: true)
+        case "DONE_FOR_NOW": return await finishJustStart(id, keepGoing: false)
         case "DONE": task.complete(at: clock.now)
-        case "LATER": task = resurfacingEngine.postpone(task, at: clock.now, calendar: calendar)
+        case "LATER": task.clearJustStart(); task = resurfacingEngine.postpone(task, at: clock.now, calendar: calendar)
         case "TOMORROW":
+            task.clearJustStart()
             let tomorrow = calendar.date(byAdding: .day, value: 1, to: clock.now)!
             task.scheduledDate = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)!
             task.nextSurfaceAt = task.scheduledDate

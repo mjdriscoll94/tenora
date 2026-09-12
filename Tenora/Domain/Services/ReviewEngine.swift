@@ -14,6 +14,7 @@ struct ReviewEngine {
     func apply(_ decision: ReviewDecision, to task: TenoraTask, now: Date, calendar: Calendar = .current) -> TenoraTask {
         guard ![.completed, .archived].contains(task.status) else { return task }
         var result = task
+        result.clearJustStart()
         switch decision {
         case .complete: result.complete(at: now)
         case .today:

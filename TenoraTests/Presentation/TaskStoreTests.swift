@@ -3,6 +3,87 @@ import XCTest
 
 @MainActor
 final class TaskStoreTests: XCTestCase {
+    func testJustStartPersistsAndDoneForNowReturnsWithoutPenalty() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let now = Date(timeIntervalSince1970: 2_000_000_000)
+        let task = TenoraTask(title: "Taxes", dueDate: now.addingTimeInterval(86_400))
+        let repository = MemoryTasks(tasks: [task])
+        let store = TaskStore(repository: repository, clock: FixedClock(now: now))
+        await store.load()
+        let began = await store.beginJustStart(task.id, nextStep: "  Find the folder  ", durationSeconds: 180)
+        XCTAssertTrue(began)
+        XCTAssertEqual(store.activeJustStartTask?.nextStep, "Find the folder")
+        XCTAssertEqual(store.activeJustStartTask?.justStartEndsAt, now.addingTimeInterval(180))
+
+        let reopened = TaskStore(repository: repository, clock: FixedClock(now: now.addingTimeInterval(200)))
+        await reopened.load()
+        XCTAssertEqual(reopened.activeJustStartTask?.id, task.id)
+        let stopped = await reopened.finishJustStart(task.id, keepGoing: false)
+        XCTAssertTrue(stopped)
+        XCTAssertNil(reopened.focusedTaskID)
+        XCTAssertNil(reopened.tasks.first?.justStartEndsAt)
+        XCTAssertEqual(reopened.tasks.first?.status, .inbox)
+        XCTAssertEqual(reopened.tasks.first?.snoozeCount, 0)
+        XCTAssertEqual(reopened.tasks.first?.nextSurfaceAt, now.addingTimeInterval(200 + 4 * 3600))
+        XCTAssertEqual(reopened.tasks.first?.dueDate, task.dueDate)
+    }
+
+    func testKeepGoingRemovesTimerAndKeepsFocus() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let now = Date()
+        let task = TenoraTask(title: "Draft")
+        let repository = MemoryTasks(tasks: [task])
+        let store = TaskStore(repository: repository, clock: FixedClock(now: now))
+        await store.load()
+        let began = await store.beginJustStart(task.id, nextStep: "Open the draft", durationSeconds: 1)
+        XCTAssertTrue(began)
+        let continued = await store.finishJustStart(task.id, keepGoing: true)
+        XCTAssertTrue(continued)
+        XCTAssertEqual(store.currentTask?.id, task.id)
+        XCTAssertEqual(store.currentTask?.status, .active)
+        XCTAssertNil(store.currentTask?.justStartEndsAt)
+    }
+
+    func testJustStartNotificationActionsUseTheSameSessionDecisions() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let task = TenoraTask(title: "Start", nextStep: "Open it", justStartBeganAt: Date(), justStartDurationSeconds: 180)
+        let repository = MemoryTasks(tasks: [task])
+        let store = TaskStore(repository: repository)
+        let keptGoing = await store.notificationAction(id: task.id, action: "KEEP_GOING")
+        XCTAssertTrue(keptGoing)
+        XCTAssertEqual(store.currentTask?.id, task.id)
+        XCTAssertNil(store.currentTask?.justStartEndsAt)
+
+        let second = TenoraTask(title: "Stop", nextStep: "One line", justStartBeganAt: Date(), justStartDurationSeconds: 180)
+        repository.tasks = [second]
+        let stopped = await store.notificationAction(id: second.id, action: "DONE_FOR_NOW")
+        XCTAssertTrue(stopped)
+        XCTAssertNil(store.focusedTaskID)
+        XCTAssertEqual(store.tasks.first?.status, .inbox)
+        XCTAssertEqual(store.tasks.first?.snoozeCount, 0)
+    }
+
+    func testInvalidOrFailedJustStartDoesNotReplaceFocus() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let first = TenoraTask(title: "Current")
+        let second = TenoraTask(title: "Next")
+        let repository = MemoryTasks(tasks: [first, second])
+        let store = TaskStore(repository: repository)
+        await store.load()
+        await store.start(first)
+        let invalid = await store.beginJustStart(second.id, nextStep: "  ", durationSeconds: 180)
+        XCTAssertFalse(invalid)
+        repository.failSave = true
+        let failed = await store.beginJustStart(second.id, nextStep: "Open it", durationSeconds: 180)
+        XCTAssertFalse(failed)
+        XCTAssertEqual(store.focusedTaskID, first.id)
+        XCTAssertNil(repository.tasks.first(where: { $0.id == second.id })?.justStartEndsAt)
+    }
+
     func testHoldSurvivesReloadAndResumeClearsReturnTime() async {
         let previous = UserDefaults.standard.string(forKey: "focusedTask")
         defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
@@ -103,4 +184,8 @@ private final class MemoryTasks: TaskRepository {
         tasks.append(task)
     }
     func delete(id: UUID) async throws { tasks.removeAll { $0.id == id } }
+}
+
+private struct FixedClock: TenoraClock {
+    let now: Date
 }

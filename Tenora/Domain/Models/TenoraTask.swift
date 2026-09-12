@@ -22,6 +22,8 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
     var heldAt: Date?
     var holdReason: String?
     var lastWorkedAt: Date?
+    var justStartBeganAt: Date?
+    var justStartDurationSeconds: Int?
 
     init(
         id: UUID = UUID(),
@@ -44,7 +46,9 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         nextStep: String? = nil,
         heldAt: Date? = nil,
         holdReason: String? = nil,
-        lastWorkedAt: Date? = nil
+        lastWorkedAt: Date? = nil,
+        justStartBeganAt: Date? = nil,
+        justStartDurationSeconds: Int? = nil
     ) {
         self.id = id
         self.title = title
@@ -67,12 +71,25 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         self.heldAt = heldAt
         self.holdReason = holdReason
         self.lastWorkedAt = lastWorkedAt
+        self.justStartBeganAt = justStartBeganAt
+        self.justStartDurationSeconds = justStartDurationSeconds
+    }
+
+    var justStartEndsAt: Date? {
+        guard let began = justStartBeganAt, let seconds = justStartDurationSeconds, seconds > 0 else { return nil }
+        return began.addingTimeInterval(TimeInterval(seconds))
+    }
+
+    mutating func clearJustStart() {
+        justStartBeganAt = nil
+        justStartDurationSeconds = nil
     }
 
     mutating func complete(at date: Date = Date()) {
         status = .completed
         completedAt = date
         nextSurfaceAt = nil
+        clearJustStart()
     }
 }
 

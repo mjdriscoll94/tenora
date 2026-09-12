@@ -17,6 +17,7 @@ enum TaskEditor {
             if task.scheduledDate != previous.scheduledDate || task.dueDate != previous.dueDate {
                 task.nextSurfaceAt = task.scheduledDate ?? task.dueDate ?? now.addingTimeInterval(4 * 3600)
                 task.snoozeCount = 0
+                if task.scheduledDate != nil { task.clearJustStart() }
             }
             if draft.nextSurfaceAt != previous.nextSurfaceAt {
                 task.nextSurfaceAt = draft.nextSurfaceAt

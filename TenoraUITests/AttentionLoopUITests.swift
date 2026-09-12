@@ -2,6 +2,25 @@ import XCTest
 
 final class AttentionLoopUITests: XCTestCase {
     @MainActor
+    func testJustStartUsesTheSmallestStepAndCanStopWithoutCompleting() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-continuity-fixture"]
+        app.launch()
+        app.buttons["What was I doing?"].tap()
+        app.buttons["Resume"].tap()
+        XCTAssertTrue(app.buttons["Just Start"].waitForExistence(timeout: 5))
+        app.buttons["Just Start"].tap()
+        XCTAssertTrue(app.textFields["just-start-next-step"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.textFields["just-start-next-step"].value as? String, "Write the opening paragraph")
+        app.buttons["Start 3 minutes"].tap()
+        XCTAssertTrue(app.staticTexts["just-start-countdown"].waitForExistence(timeout: 5))
+        app.buttons["I'm done for now"].tap()
+        XCTAssertTrue(app.buttons["What was I doing?"].waitForExistence(timeout: 5))
+        app.buttons["What was I doing?"].tap()
+        XCTAssertTrue(app.staticTexts["Write the opening paragraph"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
     func testUserCanSetAnIndividualWeekdayAsOff() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing", "-reset-working-schedule"]

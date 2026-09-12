@@ -24,6 +24,8 @@ final class StoredTask {
     var heldAt: Date?
     var holdReason: String?
     var lastWorkedAt: Date?
+    var justStartBeganAt: Date?
+    var justStartDurationSeconds: Int?
 
     init(task: TenoraTask) {
         id = task.id
@@ -47,6 +49,8 @@ final class StoredTask {
         heldAt = task.heldAt
         holdReason = task.holdReason
         lastWorkedAt = task.lastWorkedAt
+        justStartBeganAt = task.justStartBeganAt
+        justStartDurationSeconds = task.justStartDurationSeconds
     }
 
     func update(from task: TenoraTask) {
@@ -69,6 +73,8 @@ final class StoredTask {
         heldAt = task.heldAt
         holdReason = task.holdReason
         lastWorkedAt = task.lastWorkedAt
+        justStartBeganAt = task.justStartBeganAt
+        justStartDurationSeconds = task.justStartDurationSeconds
     }
 
     var domainModel: TenoraTask {
@@ -93,7 +99,9 @@ final class StoredTask {
             nextStep: nextStep,
             heldAt: heldAt,
             holdReason: holdReason,
-            lastWorkedAt: lastWorkedAt
+            lastWorkedAt: lastWorkedAt,
+            justStartBeganAt: justStartBeganAt,
+            justStartDurationSeconds: justStartDurationSeconds
         )
     }
 }

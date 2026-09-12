@@ -17,7 +17,7 @@ struct SettingsView: View {
                 Button("Enable reminders") {
                     Task { await reminders.requestAccess(); await store.load() }
                 }
-                Text("Up to three per day, between 9 AM and 8 PM. Opening Tenora refreshes the next seven days of reminders.")
+                Text("Task reminders: up to three per day, between 9 AM and 8 PM. An active Just Start session adds one end prompt. Opening Tenora refreshes the next seven days of reminders.")
                     .font(.footnote).foregroundStyle(.secondary)
                 Text(reminders.status == .authorized || reminders.status == .provisional ? "Notifications allowed" : "Notifications are not enabled")
                 Button("Notification settings") { openURL(URL(string: UIApplication.openSettingsURLString)!) }

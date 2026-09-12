@@ -39,7 +39,7 @@ The foreground app refreshes every minute and on activation; EventKit changes re
 
 ## Device acceptance checks
 
-Validation: 51 unit tests and three isolated simulator UI tests cover the domain/store rules, per-day schedule persistence, capture → schedule → complete → review navigation, and resume → interruption capture → hold context. The UI tests use an in-memory task store. An unsigned iOS device build checks compilation of the app and widget.
+Validation: 55 unit tests and four isolated simulator UI tests cover the domain/store rules, per-day schedule persistence, Just Start, capture → schedule → complete → review navigation, and resume → interruption capture → hold context. The UI tests use an in-memory task store. An unsigned iOS device build checks compilation of the app and widget.
 
 Before release, verify notification permission, delivery and cold-launch actions; Siri phrase discovery; Share Sheet capture through a configured Shortcut; and small/medium widgets on a signed physical device with the App Group enabled. No native Share extension is included. Automated domain/store tests and unsigned builds do not replace those device checks.
 
@@ -53,4 +53,12 @@ Today keeps “What was I doing?” available even outside working hours. After 
 
 Capturing while a task is current shows “Captured. Back to…” and a Resume action. It saves the new intention without replacing focus. Siri capture also names the current task in its confirmation; the medium widget shows the next step when present.
 
-This phase implements next steps, Hold My Place, Resume, and interruption capture. Just Start sessions, additional return triggers, transition planning, day rebuilding, location integration, Lock Screen controls, and Live Activities remain future phases.
+This phase implements next steps, Hold My Place, Resume, and interruption capture. Additional return triggers, transition planning, day rebuilding, location integration, Lock Screen controls, and Live Activities remain future phases.
+
+## Just Start
+
+Just Start turns a task's smallest next step into a three, five, or ten-minute commitment. A session stores its absolute start and end time with the task, so locking the phone, leaving Tenora, or relaunching the app cannot reset the countdown. An active session remains available from Today even outside normal recommendation conditions.
+
+When time expires, Keep going removes the timer and leaves the task focused. I'm done for now releases focus, preserves the next step and deadline, adds no snooze penalty, and returns the task after four hours. Complete task resolves it normally. Holding, postponing, scheduling, reviewing, or completing a task clears any active short session.
+
+When notification access is enabled, Tenora schedules one session-end notification with Keep going, Done for now, and Complete task actions. Resolving the session removes its pending or delivered prompt. In-app and notification decisions share the same persisted actions.

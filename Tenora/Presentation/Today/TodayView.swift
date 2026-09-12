@@ -6,6 +6,7 @@ struct TodayView: View {
     @State private var reviewKind: ReviewKind?
     @State private var holdingTask: TenoraTask?
     @State private var showingResume = false
+    @State private var justStartTask: TenoraTask?
 
     var body: some View {
         ScrollView {
@@ -21,6 +22,14 @@ struct TodayView: View {
                         if let step = task.nextStep, !step.isEmpty { Text("Next: \(step)").foregroundStyle(.secondary) }
                         Button("What was I doing?") { showingResume = true }.buttonStyle(.bordered)
                     }
+                }
+                if let task = taskStore.activeJustStartTask {
+                    Button {
+                        justStartTask = task
+                    } label: {
+                        Label("Continue short start: \(task.nextStep ?? task.title)", systemImage: "timer")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }.buttonStyle(.borderedProminent)
                 }
                 nowSection
 
@@ -45,6 +54,7 @@ struct TodayView: View {
         .sheet(item: $reviewKind) { ReviewView(kind: $0) }
         .sheet(item: $holdingTask) { HoldPlaceView(task: $0) }
         .sheet(isPresented: $showingResume) { ResumeView() }
+        .sheet(item: $justStartTask) { JustStartView(task: $0) }
         .overlay(alignment: .bottom) {
             if let errorMessage = taskStore.errorMessage {
                 Text(errorMessage)
@@ -91,6 +101,8 @@ struct TodayView: View {
                         Button("Start") { Task { await taskStore.start(task) } }
                             .buttonStyle(TenoraPrimaryButtonStyle())
                     }
+                    Button(task.justStartEndsAt == nil ? "Just Start" : "Continue short start") { justStartTask = task }
+                        .buttonStyle(.bordered).tint(.white)
                     Button("Hold my place") { holdingTask = task }.tint(.white)
 
                     HStack {

@@ -20,12 +20,18 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
 
     func configure() {
         center.delegate = self
-        center.setNotificationCategories([UNNotificationCategory(identifier: "TASK", actions: [
+        let taskCategory = UNNotificationCategory(identifier: "TASK", actions: [
             UNNotificationAction(identifier: "DONE", title: "Done", options: []),
             UNNotificationAction(identifier: "LATER", title: "Later", options: []),
             UNNotificationAction(identifier: "TOMORROW", title: "Tomorrow", options: []),
             UNNotificationAction(identifier: "OPEN", title: "Open", options: [.foreground])
-        ], intentIdentifiers: [], options: [])])
+        ], intentIdentifiers: [], options: [])
+        let justStartCategory = UNNotificationCategory(identifier: "JUST_START", actions: [
+            UNNotificationAction(identifier: "KEEP_GOING", title: "Keep going", options: []),
+            UNNotificationAction(identifier: "DONE_FOR_NOW", title: "Done for now", options: []),
+            UNNotificationAction(identifier: "DONE", title: "Complete task", options: [])
+        ], intentIdentifiers: [], options: [])
+        center.setNotificationCategories([taskCategory, justStartCategory])
     }
 
     func requestAccess() async {
@@ -55,7 +61,9 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
                 return
             }
             let pending = await center.pendingNotificationRequests()
-            center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.identifier.hasPrefix("tenora.") }.map(\.identifier))
+            center.removePendingNotificationRequests(withIdentifiers: pending.filter {
+                $0.identifier.hasPrefix("tenora.reminder.") || ($0.identifier.hasPrefix("tenora.") && !$0.identifier.hasPrefix("tenora.juststart."))
+            }.map(\.identifier))
             let delivered = await center.deliveredNotifications()
             let unresolved = Set(snapshot.filter { ![.completed, .archived].contains($0.status) }.map { $0.id.uuidString })
             center.removeDeliveredNotifications(withIdentifiers: delivered.filter {
@@ -77,12 +85,39 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
                 content.categoryIdentifier = "TASK"
                 content.userInfo = ["taskID": reminder.taskID.uuidString]
                 let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, reminder.date.timeIntervalSinceNow), repeats: false)
-                do { try await center.add(UNNotificationRequest(identifier: "tenora.\(reminder.taskID).\(index)", content: content, trigger: trigger)) }
+                do { try await center.add(UNNotificationRequest(identifier: "tenora.reminder.\(reminder.taskID).\(index)", content: content, trigger: trigger)) }
                 catch { errorMessage = "Some reminders couldn't be scheduled. Open Tenora to try again." }
             }
             if errorMessage == nil { lastSignature = signature; lastDay = day; lastZone = zone; lastStatus = status }
             if currentRevision == revision { break }
         } while true
+    }
+
+    func synchronizeJustStart(tasks: [TenoraTask]) async {
+        await refreshStatus()
+        let sessions = tasks.filter { ![.completed, .archived].contains($0.status) && $0.justStartEndsAt != nil }
+        let identifiers = Set(sessions.map { "tenora.juststart.\($0.id)" })
+        let pending = await center.pendingNotificationRequests()
+        let stale = pending.filter { $0.identifier.hasPrefix("tenora.juststart.") && !identifiers.contains($0.identifier) }.map(\.identifier)
+        if !stale.isEmpty { center.removePendingNotificationRequests(withIdentifiers: stale) }
+        let delivered = await center.deliveredNotifications()
+        let obsoleteDelivered = delivered.filter { $0.request.identifier.hasPrefix("tenora.juststart.") && !identifiers.contains($0.request.identifier) }.map { $0.request.identifier }
+        if !obsoleteDelivered.isEmpty { center.removeDeliveredNotifications(withIdentifiers: obsoleteDelivered) }
+        guard [.authorized, .provisional, .ephemeral].contains(status) else { return }
+        let existing = Set(pending.map(\.identifier))
+        for task in sessions {
+            let identifier = "tenora.juststart.\(task.id)"
+            guard !existing.contains(identifier), let end = task.justStartEndsAt, end > Date() else { continue }
+            let content = UNMutableNotificationContent()
+            content.title = "Your short start is complete"
+            content.body = "Keep going, stop here for now, or complete the task."
+            content.sound = .default
+            content.categoryIdentifier = "JUST_START"
+            content.userInfo = ["taskID": task.id.uuidString]
+            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, end.timeIntervalSinceNow), repeats: false)
+            do { try await center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)) }
+            catch { errorMessage = "Tenora couldn't schedule the end of this short session." }
+        }
     }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
@@ -93,7 +128,7 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
 
     private func process(id: UUID, action: String) async {
         if action == UNNotificationDefaultActionIdentifier || action == "OPEN" { openedTaskID = id; return }
-        guard ["DONE", "LATER", "TOMORROW"].contains(action) else { return }
+        guard ["DONE", "LATER", "TOMORROW", "KEEP_GOING", "DONE_FOR_NOW"].contains(action) else { return }
         if await handleAction?(id, action) != true {
             // Keep the requested decision across a failed save or cold launch.
             var queued = UserDefaults.standard.array(forKey: "pendingReminderActions") as? [[String: String]] ?? []
