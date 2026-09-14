@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: tenora-agent-bridge
+    runtime: docker
+    plan: free
+    region: ohio
+    rootDir: AgentBridge
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: OAUTH_ISSUER
+        sync: false
+      - key: OAUTH_AUDIENCE
+        sync: false
+      - key: OAUTH_JWKS_URL
+        sync: false
+      - key: BRIDGE_BASE_URL
+        sync: false
+      - key: TENORA_APP_URL
+        sync: false

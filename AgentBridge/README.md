@@ -67,6 +67,20 @@ TENORA_OAUTH_CLIENT_ID = your-native-ios-client-id
 
 After installing that build, open Settings → ChatGPT Agent Bridge, connect the account, choose whether to include task notes and calendar context, and run the first sync.
 
+## Deploy on Render
+
+The repository-root `render.yaml` defines a free Docker web service in Render's Ohio region. Create a Blueprint from this repository and Render will prompt for the six environment values rather than storing credentials in Git.
+
+Before the first deploy, create the Neon database and apply `sql/001_initial.sql`, then enter its pooled connection string as `DATABASE_URL`. Create the Auth0 API and applications, then enter:
+
+- `OAUTH_ISSUER`: the Auth0 tenant issuer, including its trailing slash;
+- `OAUTH_AUDIENCE`: the Auth0 API identifier, equal to the bridge's public HTTPS URL;
+- `OAUTH_JWKS_URL`: the tenant's `/.well-known/jwks.json` URL;
+- `BRIDGE_BASE_URL`: the Render service's public HTTPS URL, with no trailing slash;
+- `TENORA_APP_URL`: the public Tenora product or support URL.
+
+Render supplies `PORT` automatically. Keep automatic deploys set to wait for GitHub checks so an unverified bridge build is not promoted.
+
 ## Connect ChatGPT
 
 Deploy the container to a stable HTTPS origin, then create a ChatGPT plugin/MCP connection using `https://bridge.example.com/mcp`. Use OAuth and request `tasks:read`; do not grant the ChatGPT client `tasks:sync`. The iOS native client receives both scopes because it owns snapshot publication.
