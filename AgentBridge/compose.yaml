@@ -1,0 +1,41 @@
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: tenora
+      POSTGRES_USER: tenora_bridge
+      POSTGRES_PASSWORD: local-development-only
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tenora_bridge -d tenora"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+    ports:
+      - "5432:5432"
+    volumes:
+      - tenora_bridge_data:/var/lib/postgresql/data
+      - ./sql/001_initial.sql:/docker-entrypoint-initdb.d/001_initial.sql:ro
+
+  bridge:
+    build: .
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgresql://tenora_bridge:local-development-only@database:5432/tenora
+      OAUTH_ISSUER: https://auth.local.example/
+      OAUTH_AUDIENCE: https://bridge.local.example
+      OAUTH_JWKS_URL: https://auth.local.example/.well-known/jwks.json
+      BRIDGE_BASE_URL: http://localhost:3000
+      TENORA_APP_URL: https://tenora.example
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/health"]
+      interval: 3s
+      timeout: 3s
+      retries: 15
+    ports:
+      - "3000:3000"
+
+volumes:
+  tenora_bridge_data:

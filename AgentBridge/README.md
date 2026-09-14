@@ -14,6 +14,18 @@ All tools are marked read-only, non-destructive, and closed-world. Every MCP req
 
 ## Run locally
 
+The quickest readiness check starts PostgreSQL, applies the schema, builds the bridge, and waits for both services to become healthy:
+
+```sh
+docker compose up --build --wait
+curl --fail http://localhost:3000/health
+docker compose down
+```
+
+The local OAuth URLs are intentionally non-functional placeholders. The health and metadata endpoints work, but authenticated sync and MCP calls require tokens from a real provider.
+
+For development without Docker:
+
 1. Create a PostgreSQL database and apply `sql/001_initial.sql` using a non-superuser deployment role.
 2. Copy `.env.example` to `.env` and enter the database and OAuth values.
 3. Install and verify the service:
@@ -70,3 +82,5 @@ The implementation follows the [OpenAI MCP server guide](https://developers.open
 - Rate-limit `/mcp` and `/v1/sync/tasks` at the edge.
 - Configure backups, retention, monitoring, and deletion/account-disconnect behavior.
 - Run MCP Inspector plus direct, indirect, invalid-input, and cross-user authorization tests.
+
+Every change under `AgentBridge/` is also checked in GitHub Actions with the unit tests, TypeScript compiler, and production Docker build.
