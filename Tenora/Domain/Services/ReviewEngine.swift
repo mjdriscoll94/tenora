@@ -15,6 +15,7 @@ struct ReviewEngine {
         guard ![.completed, .archived].contains(task.status) else { return task }
         var result = task
         result.clearJustStart()
+        result.returnTrigger = nil
         switch decision {
         case .complete: result.complete(at: now)
         case .today:

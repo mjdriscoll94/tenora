@@ -4,6 +4,7 @@ import UIKit
 struct CalendarView: View {
     @Environment(\.openURL) private var openURL
     @EnvironmentObject private var calendarStore: CalendarStore
+    @EnvironmentObject private var transitionStore: TransitionStore
 
     var body: some View {
         Group {
@@ -70,28 +71,36 @@ struct CalendarView: View {
             )
         } else {
             List(calendarStore.upcomingEvents) { event in
-                HStack(alignment: .top, spacing: 14) {
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(TenoraTheme.accentGradient)
-                        .frame(width: 4, height: 44)
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(event.title)
-                            .font(.headline)
-                        Text(eventTime(event))
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                        if !event.calendarName.isEmpty {
-                            Text(event.calendarName)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
+                Group {
+                    if event.isAllDay {
+                        eventRow(event)
+                    } else {
+                        NavigationLink {
+                            TransitionPlanView(event: event, existing: transitionStore.plan(for: event))
+                        } label: { eventRow(event) }
                     }
                 }
                 .padding(.vertical, 4)
                 .listRowBackground(Color.clear)
             }
             .scrollContentBackground(.hidden)
+        }
+    }
+
+    private func eventRow(_ event: CalendarEvent) -> some View {
+        HStack(alignment: .top, spacing: 14) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(TenoraTheme.accentGradient)
+                .frame(width: 4, height: 44)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(event.title).font(.headline)
+                Text(eventTime(event)).font(.subheadline).foregroundStyle(.secondary)
+                if !event.calendarName.isEmpty { Text(event.calendarName).font(.caption).foregroundStyle(.secondary) }
+                if transitionStore.plan(for: event) != nil {
+                    Label("Transition ready", systemImage: "figure.walk.departure")
+                        .font(.caption).foregroundStyle(Color.tenoraBlue)
+                }
+            }
         }
     }
 

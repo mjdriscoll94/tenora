@@ -24,6 +24,7 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
     var lastWorkedAt: Date?
     var justStartBeganAt: Date?
     var justStartDurationSeconds: Int?
+    var returnTrigger: ReturnTrigger?
 
     init(
         id: UUID = UUID(),
@@ -48,7 +49,8 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         holdReason: String? = nil,
         lastWorkedAt: Date? = nil,
         justStartBeganAt: Date? = nil,
-        justStartDurationSeconds: Int? = nil
+        justStartDurationSeconds: Int? = nil,
+        returnTrigger: ReturnTrigger? = nil
     ) {
         self.id = id
         self.title = title
@@ -73,6 +75,7 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         self.lastWorkedAt = lastWorkedAt
         self.justStartBeganAt = justStartBeganAt
         self.justStartDurationSeconds = justStartDurationSeconds
+        self.returnTrigger = returnTrigger
     }
 
     var justStartEndsAt: Date? {
@@ -89,7 +92,22 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         status = .completed
         completedAt = date
         nextSurfaceAt = nil
+        returnTrigger = nil
         clearJustStart()
+    }
+}
+
+enum ReturnTrigger: Equatable, Sendable, Codable {
+    case taskCompleted(taskID: UUID, title: String)
+    case calendarEventEnded(eventID: String, title: String, endDate: Date)
+    case freeWindow(minimumMinutes: Int, candidateDate: Date?)
+
+    var summary: String {
+        switch self {
+        case .taskCompleted(_, let title): "After \(title) is done"
+        case .calendarEventEnded(_, let title, _): "After \(title) ends"
+        case .freeWindow(let minutes, _): "When at least \(minutes) minutes opens up"
+        }
     }
 }
 

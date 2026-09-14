@@ -58,6 +58,7 @@ final class TaskStore: ObservableObject {
         current.lastWorkedAt = clock.now
         current.scheduledDate = nil
         current.nextSurfaceAt = nil
+        current.returnTrigger = nil
         current.snoozeCount = 0
         current.lastSurfacedAt = clock.now
         current.surfaceCount += 1
@@ -136,6 +137,7 @@ final class TaskStore: ObservableObject {
         task.nextSurfaceAt = returnAt ?? clock.now.addingTimeInterval(4 * 3600)
         task.snoozeCount = max(1, task.snoozeCount)
         task.status = returnAt == nil ? .inbox : .scheduled
+        task.returnTrigger = nil
         task.clearJustStart()
         return await saveAndReload(task, failureMessage: "Tenora couldn't hold your place. Please try again.")
     }
@@ -189,6 +191,51 @@ final class TaskStore: ObservableObject {
         guard var completedTask = tasks.first(where: { $0.id == task.id }) else { return false }
         completedTask.complete(at: clock.now)
         return await saveAndReload(completedTask, failureMessage: "Tenora couldn't complete that task.")
+    }
+
+    func setReturnTrigger(_ trigger: ReturnTrigger?, for id: UUID, availability: AvailabilitySnapshot? = nil) async -> Bool {
+        guard var task = tasks.first(where: { $0.id == id }), ![.completed, .archived].contains(task.status) else { return false }
+        task.returnTrigger = trigger
+        task.clearJustStart()
+        if let trigger {
+            let engine = ReturnTriggerEngine()
+            if engine.isReady(trigger, tasks: tasks, events: [], availability: availability, now: clock.now) {
+                task.returnTrigger = nil
+                task.nextSurfaceAt = clock.now
+                task.scheduledDate = nil
+                task.status = .inbox
+            } else {
+                let candidate = engine.nextCandidate(for: trigger, availability: availability, now: clock.now)
+                task.nextSurfaceAt = candidate
+                task.scheduledDate = candidate
+                task.status = candidate == nil ? .waiting : .scheduled
+            }
+        } else {
+            task.nextSurfaceAt = nil
+            task.scheduledDate = nil
+            task.status = .inbox
+        }
+        return await saveAndReload(task, failureMessage: "Tenora couldn't save that return condition.")
+    }
+
+    func resolveReturnTriggers(events: [CalendarEvent], availability: AvailabilitySnapshot?) async {
+        let engine = ReturnTriggerEngine()
+        let snapshot = tasks
+        for var task in snapshot where task.returnTrigger != nil && ![.completed, .archived].contains(task.status) {
+            guard let trigger = task.returnTrigger else { continue }
+            if engine.isReady(trigger, tasks: snapshot, events: events, availability: availability, now: clock.now) {
+                task.returnTrigger = nil
+                task.status = .inbox
+                task.scheduledDate = nil
+                task.nextSurfaceAt = clock.now
+                _ = await saveAndReload(task, failureMessage: "Tenora couldn't bring a task back yet.")
+            } else if let candidate = engine.nextCandidate(for: trigger, availability: availability, now: clock.now), candidate != task.nextSurfaceAt {
+                task.nextSurfaceAt = candidate
+                task.scheduledDate = candidate
+                task.status = .scheduled
+                _ = await saveAndReload(task, failureMessage: "Tenora couldn't update a return time.")
+            }
+        }
     }
 
     func postpone(_ task: TenoraTask) async {
@@ -251,6 +298,7 @@ final class TaskStore: ObservableObject {
             tasks = try await repository.fetchTasks()
             errorMessage = nil
             await didChange?(tasks)
+            if task.status == .completed { await resolveReturnTriggers(events: [], availability: nil) }
             return true
         } catch {
             errorMessage = failureMessage

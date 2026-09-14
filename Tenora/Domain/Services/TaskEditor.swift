@@ -15,6 +15,7 @@ enum TaskEditor {
         if task.status != .completed && task.status != .archived {
             task.status = task.scheduledDate == nil ? .inbox : .scheduled
             if task.scheduledDate != previous.scheduledDate || task.dueDate != previous.dueDate {
+                if task.scheduledDate != previous.scheduledDate { task.returnTrigger = nil }
                 task.nextSurfaceAt = task.scheduledDate ?? task.dueDate ?? now.addingTimeInterval(4 * 3600)
                 task.snoozeCount = 0
                 if task.scheduledDate != nil { task.clearJustStart() }

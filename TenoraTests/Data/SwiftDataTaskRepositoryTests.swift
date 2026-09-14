@@ -28,7 +28,8 @@ final class SwiftDataTaskRepositoryTests: XCTestCase {
 
     func testSavedContextSurvivesFetchAndEditing() async throws {
         let repository = try makeRepository()
-        var task = TenoraTask(title: "Slides", nextStep: "Find slide seven image", heldAt: Date(), holdReason: "Meeting", lastWorkedAt: Date(), justStartBeganAt: Date(), justStartDurationSeconds: 180)
+        let dependency = UUID()
+        var task = TenoraTask(title: "Slides", nextStep: "Find slide seven image", heldAt: Date(), holdReason: "Meeting", lastWorkedAt: Date(), justStartBeganAt: Date(), justStartDurationSeconds: 180, returnTrigger: .taskCompleted(taskID: dependency, title: "Outline"))
         try await repository.save(task)
         var fetched = try await repository.fetchTasks()
         XCTAssertEqual(fetched, [task])
@@ -42,7 +43,7 @@ final class SwiftDataTaskRepositoryTests: XCTestCase {
         let task = TenoraTask(title: "Existing task")
         let data = try JSONEncoder().encode(task)
         var json = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
-        for key in ["nextStep", "heldAt", "holdReason", "lastWorkedAt", "justStartBeganAt", "justStartDurationSeconds"] { json.removeValue(forKey: key) }
+        for key in ["nextStep", "heldAt", "holdReason", "lastWorkedAt", "justStartBeganAt", "justStartDurationSeconds", "returnTrigger"] { json.removeValue(forKey: key) }
         let decoded = try JSONDecoder().decode(TenoraTask.self, from: JSONSerialization.data(withJSONObject: json))
         XCTAssertEqual(decoded, task)
     }

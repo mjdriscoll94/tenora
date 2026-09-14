@@ -4,7 +4,7 @@ final class AttentionLoopUITests: XCTestCase {
     @MainActor
     func testJustStartUsesTheSmallestStepAndCanStopWithoutCompleting() {
         let app = XCUIApplication()
-        app.launchArguments = ["-ui-testing", "-continuity-fixture"]
+        app.launchArguments = ["-ui-testing", "-continuity-fixture", "-reset-working-schedule"]
         app.launch()
         app.buttons["What was I doing?"].tap()
         app.buttons["Resume"].tap()
@@ -45,7 +45,7 @@ final class AttentionLoopUITests: XCTestCase {
     @MainActor
     func testResumeCaptureAndHoldPreserveTheThread() {
         let app = XCUIApplication()
-        app.launchArguments = ["-ui-testing", "-continuity-fixture"]
+        app.launchArguments = ["-ui-testing", "-continuity-fixture", "-reset-working-schedule"]
         app.launch()
         app.buttons["What was I doing?"].tap()
         XCTAssertTrue(app.staticTexts["Write the opening paragraph"].waitForExistence(timeout: 5))

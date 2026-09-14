@@ -31,7 +31,10 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
             UNNotificationAction(identifier: "DONE_FOR_NOW", title: "Done for now", options: []),
             UNNotificationAction(identifier: "DONE", title: "Complete task", options: [])
         ], intentIdentifiers: [], options: [])
-        center.setNotificationCategories([taskCategory, justStartCategory])
+        let transitionCategory = UNNotificationCategory(identifier: "TRANSITION", actions: [
+            UNNotificationAction(identifier: "OPEN", title: "Open Tenora", options: [.foreground])
+        ], intentIdentifiers: [], options: [])
+        center.setNotificationCategories([taskCategory, justStartCategory, transitionCategory])
     }
 
     func requestAccess() async {
@@ -61,9 +64,7 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
                 return
             }
             let pending = await center.pendingNotificationRequests()
-            center.removePendingNotificationRequests(withIdentifiers: pending.filter {
-                $0.identifier.hasPrefix("tenora.reminder.") || ($0.identifier.hasPrefix("tenora.") && !$0.identifier.hasPrefix("tenora.juststart."))
-            }.map(\.identifier))
+            center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.identifier.hasPrefix("tenora.reminder.") }.map(\.identifier))
             let delivered = await center.deliveredNotifications()
             let unresolved = Set(snapshot.filter { ![.completed, .archived].contains($0.status) }.map { $0.id.uuidString })
             center.removeDeliveredNotifications(withIdentifiers: delivered.filter {
@@ -118,6 +119,38 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
             do { try await center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)) }
             catch { errorMessage = "Tenora couldn't schedule the end of this short session." }
         }
+    }
+
+    func synchronizeTransitions(plans: [TransitionPlan]) async {
+        await refreshStatus()
+        let prefix = "tenora.transition."
+        let pending = await center.pendingNotificationRequests()
+        center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.identifier.hasPrefix(prefix) }.map(\.identifier))
+        guard [.authorized, .provisional, .ephemeral].contains(status) else { return }
+        let now = Date()
+        for plan in plans {
+            let safeID = plan.eventID.data(using: .utf8)?.base64EncodedString() ?? plan.eventID
+            if plan.wrapUpLeadMinutes > 0, plan.wrapUpAt > now {
+                await addTransition(identifier: "\(prefix)\(safeID).wrap", date: plan.wrapUpAt,
+                                    title: "Start wrapping up", body: "\(plan.eventTitle) is coming up. Tenora is holding what you were doing.")
+            }
+            if plan.leaveAt > now {
+                await addTransition(identifier: "\(prefix)\(safeID).leave", date: plan.leaveAt,
+                                    title: plan.leaveLeadMinutes == 0 ? "It’s time for \(plan.eventTitle)" : "Leave for \(plan.eventTitle)",
+                                    body: "You planned this transition ahead of time.")
+            }
+        }
+    }
+
+    private func addTransition(identifier: String, date: Date, title: String, body: String) async {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+        content.categoryIdentifier = "TRANSITION"
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, date.timeIntervalSinceNow), repeats: false)
+        do { try await center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger)) }
+        catch { errorMessage = "Some transition reminders couldn't be scheduled." }
     }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {

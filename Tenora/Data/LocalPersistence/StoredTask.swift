@@ -26,6 +26,7 @@ final class StoredTask {
     var lastWorkedAt: Date?
     var justStartBeganAt: Date?
     var justStartDurationSeconds: Int?
+    var returnTriggerData: Data?
 
     init(task: TenoraTask) {
         id = task.id
@@ -51,6 +52,7 @@ final class StoredTask {
         lastWorkedAt = task.lastWorkedAt
         justStartBeganAt = task.justStartBeganAt
         justStartDurationSeconds = task.justStartDurationSeconds
+        returnTriggerData = try? JSONEncoder().encode(task.returnTrigger)
     }
 
     func update(from task: TenoraTask) {
@@ -75,6 +77,7 @@ final class StoredTask {
         lastWorkedAt = task.lastWorkedAt
         justStartBeganAt = task.justStartBeganAt
         justStartDurationSeconds = task.justStartDurationSeconds
+        returnTriggerData = try? JSONEncoder().encode(task.returnTrigger)
     }
 
     var domainModel: TenoraTask {
@@ -101,7 +104,8 @@ final class StoredTask {
             holdReason: holdReason,
             lastWorkedAt: lastWorkedAt,
             justStartBeganAt: justStartBeganAt,
-            justStartDurationSeconds: justStartDurationSeconds
+            justStartDurationSeconds: justStartDurationSeconds,
+            returnTrigger: returnTriggerData.flatMap { try? JSONDecoder().decode(ReturnTrigger.self, from: $0) }
         )
     }
 }

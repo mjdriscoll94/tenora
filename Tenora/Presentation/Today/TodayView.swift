@@ -3,6 +3,7 @@ import SwiftUI
 struct TodayView: View {
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
+    @EnvironmentObject private var transitionStore: TransitionStore
     @State private var reviewKind: ReviewKind?
     @State private var holdingTask: TenoraTask?
     @State private var showingResume = false
@@ -33,9 +34,7 @@ struct TodayView: View {
                 }
                 nowSection
 
-                if !calendarStore.upcomingEvents.isEmpty {
-                    comingUpSection
-                }
+                if !horizonItems.isEmpty { horizonSection }
 
                 if !remainingResurfacedTasks.isEmpty {
                     resurfacedSection
@@ -152,37 +151,52 @@ struct TodayView: View {
         }
     }
 
-    private var comingUpSection: some View {
+    private var horizonSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            sectionLabel("COMING UP")
-            VStack(spacing: 0) {
-                ForEach(Array(calendarStore.upcomingEvents.prefix(3).enumerated()), id: \.element.id) { index, event in
-                    HStack(alignment: .firstTextBaseline, spacing: 14) {
-                        Text(event.isAllDay ? "All day" : event.startDate.formatted(date: Calendar.current.isDate(event.startDate, inSameDayAs: calendarStore.currentDate) ? .omitted : .abbreviated, time: .shortened))
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(Color.tenoraBlue)
-                            .frame(width: 72, alignment: .leading)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(event.title)
-                                .font(.body.weight(.medium))
-                            if !event.calendarName.isEmpty {
-                                Text(event.calendarName)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        Spacer()
-                    }
-                    .padding(.vertical, 12)
-
-                    if index < min(calendarStore.upcomingEvents.count, 3) - 1 {
-                        Divider()
+            ForEach([DayHorizonPhase.soon, .later], id: \.rawValue) { phase in
+                let phaseItems = horizonItems.filter { $0.phase == phase }
+                if !phaseItems.isEmpty {
+                sectionLabel(phase.rawValue.uppercased())
+                VStack(spacing: 0) {
+                    ForEach(Array(phaseItems.prefix(5).enumerated()), id: \.element.id) { index, item in
+                        horizonRow(item)
+                        if index < min(phaseItems.count, 5) - 1 { Divider() }
                     }
                 }
+                .padding(.horizontal)
+                .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
             }
-            .padding(.horizontal)
-            .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         }
+    }
+
+    @ViewBuilder
+    private func horizonRow(_ item: DayHorizonItem) -> some View {
+        if case .task(let id) = item.kind, let task = taskStore.tasks.first(where: { $0.id == id }) {
+            NavigationLink { TaskDetailView(task: task) } label: { horizonRowContent(item) }
+        } else {
+            horizonRowContent(item)
+        }
+    }
+
+    private func horizonRowContent(_ item: DayHorizonItem) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 14) {
+            Text(item.date.formatted(date: Calendar.current.isDate(item.date, inSameDayAs: calendarStore.currentDate) ? .omitted : .abbreviated, time: .shortened))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.tenoraBlue)
+                .frame(width: 72, alignment: .leading)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(item.title).font(.body.weight(.medium))
+                if !item.detail.isEmpty { Text(item.detail).font(.caption).foregroundStyle(.secondary) }
+            }
+            Spacer()
+        }
+        .padding(.vertical, 12)
+    }
+
+    private var horizonItems: [DayHorizonItem] {
+        DayHorizonEngine().items(tasks: taskStore.tasks, events: calendarStore.upcomingEvents,
+                                 transitions: transitionStore.plans, now: calendarStore.currentDate)
     }
 
     private var resurfacedSection: some View {

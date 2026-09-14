@@ -8,6 +8,7 @@ final class AppRuntime {
     let container: ModelContainer
     let tasks: TaskStore
     let calendar: CalendarStore
+    let transitions: TransitionStore
 
     private init() {
         do {
@@ -27,6 +28,7 @@ final class AppRuntime {
             tasks = TaskStore(repository: SwiftDataTaskRepository(modelContext: container.mainContext))
             let calendarRepository = EventKitCalendarRepository()
             calendar = CalendarStore(repository: calendarRepository)
+            transitions = TransitionStore()
             if uiTesting {
                 if ProcessInfo.processInfo.arguments.contains("-continuity-fixture") {
                     let task = TenoraTask(title: "Finish lesson notes", nextStep: "Write the opening paragraph", heldAt: Date(), holdReason: "Lunch")
@@ -41,7 +43,15 @@ final class AppRuntime {
                 await ReminderService.shared.synchronizeJustStart(tasks: tasks)
                 await ReminderService.shared.synchronize(tasks: tasks.filter { $0.id != self?.tasks.focusedTaskID })
             }
-            calendar.didChange = { [weak self] in self?.publishWidget() }
+            transitions.didChange = { plans in await ReminderService.shared.synchronizeTransitions(plans: plans) }
+            calendar.didChange = { [weak self] in
+                guard let self else { return }
+                Task {
+                    await self.tasks.resolveReturnTriggers(events: self.calendar.events, availability: self.calendar.availability)
+                    await self.transitions.synchronize(events: self.calendar.events)
+                    self.publishWidget()
+                }
+            }
             ReminderService.shared.handleAction = { [weak tasks] id, action in
                 await tasks?.notificationAction(id: id, action: action) ?? false
             }

@@ -8,6 +8,7 @@ struct TaskDetailView: View {
     @State private var confirmingDelete = false
     @State private var holding = false
     @State private var justStarting = false
+    @State private var choosingReturn = false
 
     init(task: TenoraTask) { _draft = State(initialValue: task) }
 
@@ -27,6 +28,9 @@ struct TaskDetailView: View {
                 }
                 Picker("Priority", selection: $draft.priority) {
                     ForEach(TaskPriority.allCases, id: \.self) { Text($0.rawValue.capitalized).tag($0) }
+                }
+                Button(draft.returnTrigger == nil ? "Bring back contextually" : draft.returnTrigger!.summary) {
+                    choosingReturn = true
                 }
             }
             Section("Make this easier") {
@@ -64,6 +68,9 @@ struct TaskDetailView: View {
         .sheet(isPresented: $justStarting, onDismiss: {
             if let latest = store.tasks.first(where: { $0.id == draft.id }) { draft = latest }
         }) { JustStartView(task: draft) }
+        .sheet(isPresented: $choosingReturn, onDismiss: {
+            if let latest = store.tasks.first(where: { $0.id == draft.id }) { draft = latest }
+        }) { ReturnTriggerView(task: draft) }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {

@@ -37,6 +37,7 @@ struct ResurfacingEngine: Sendable {
         calendar: Calendar = .current
     ) -> TenoraTask {
         var updated = task
+        updated.returnTrigger = nil
         updated.lastSurfacedAt = date
         updated.surfaceCount += 1
         updated.snoozeCount += 1

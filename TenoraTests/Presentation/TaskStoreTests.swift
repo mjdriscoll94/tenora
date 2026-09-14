@@ -3,6 +3,23 @@ import XCTest
 
 @MainActor
 final class TaskStoreTests: XCTestCase {
+    func testCompletingTaskImmediatelyReleasesDependentTask() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let first = TenoraTask(title: "Draft")
+        let second = TenoraTask(title: "Send", status: .waiting,
+                                returnTrigger: .taskCompleted(taskID: first.id, title: first.title))
+        let repository = MemoryTasks(tasks: [first, second])
+        let store = TaskStore(repository: repository)
+        await store.load()
+        let completed = await store.complete(first)
+        XCTAssertTrue(completed)
+        let released = store.tasks.first { $0.id == second.id }
+        XCTAssertEqual(released?.status, .inbox)
+        XCTAssertNil(released?.returnTrigger)
+        XCTAssertNotNil(released?.nextSurfaceAt)
+    }
+
     func testJustStartPersistsAndDoneForNowReturnsWithoutPenalty() async {
         let previous = UserDefaults.standard.string(forKey: "focusedTask")
         defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }

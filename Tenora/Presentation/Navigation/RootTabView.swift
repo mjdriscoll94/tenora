@@ -7,6 +7,7 @@ struct RootTabView: View {
     @AppStorage(AttentionPreferences.scheduleKey) private var workingSchedule = ""
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
+    @EnvironmentObject private var transitionStore: TransitionStore
     @State private var isAddingTask = false
     @ObservedObject private var reminders = ReminderService.shared
     @State private var openedTask: TenoraTask?
@@ -92,6 +93,8 @@ struct RootTabView: View {
             repeat {
                 await taskStore.load()
                 await calendarStore.refresh()
+                await taskStore.resolveReturnTriggers(events: calendarStore.events, availability: calendarStore.availability)
+                await transitionStore.synchronize(events: calendarStore.events)
                 await reminders.drainActions()
                 if let id = reminders.openedTaskID { openedTask = taskStore.tasks.first { $0.id == id }; reminders.openedTaskID = nil }
                 do { try await Task.sleep(for: .seconds(60)) } catch { return }
