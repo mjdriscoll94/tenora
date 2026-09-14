@@ -3,10 +3,10 @@ services:
     image: postgres:17-alpine
     environment:
       POSTGRES_DB: tenora
-      POSTGRES_USER: tenora_bridge
-      POSTGRES_PASSWORD: local-development-only
+      POSTGRES_USER: tenora_owner
+      POSTGRES_PASSWORD: local-owner-only
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tenora_bridge -d tenora"]
+      test: ["CMD-SHELL", "pg_isready -U tenora_owner -d tenora"]
       interval: 2s
       timeout: 3s
       retries: 15
@@ -15,6 +15,7 @@ services:
     volumes:
       - tenora_bridge_data:/var/lib/postgresql/data
       - ./sql/001_initial.sql:/docker-entrypoint-initdb.d/001_initial.sql:ro
+      - ./dev/002_local_runtime.sql:/docker-entrypoint-initdb.d/002_local_runtime.sql:ro
 
   bridge:
     build: .

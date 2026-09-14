@@ -71,7 +71,15 @@ After installing that build, open Settings → ChatGPT Agent Bridge, connect the
 
 The repository-root `render.yaml` defines a free Docker web service in Render's Ohio region. Create a Blueprint from this repository and Render will prompt for the six environment values rather than storing credentials in Git.
 
-Before the first deploy, create the Neon database and apply `sql/001_initial.sql`, then enter its pooled connection string as `DATABASE_URL`. Create the Auth0 API and applications, then enter:
+Before the first deploy, create the Neon database and apply `sql/001_initial.sql` in the Neon SQL Editor while connected as the project owner. The migration creates a restricted `tenora_bridge` role without login access. Give it a strong, unique password in a separate SQL Editor command:
+
+```sql
+alter role tenora_bridge login password 'GENERATE_A_UNIQUE_PASSWORD';
+```
+
+Use the `tenora_bridge` role—not Neon's default project-owner role—in the pooled connection string entered as `DATABASE_URL`. The default Neon role has elevated privileges that bypass PostgreSQL row-level security. Never commit or paste either database connection string into source control.
+
+Create the Auth0 API and applications, then enter:
 
 - `OAUTH_ISSUER`: the Auth0 tenant issuer, including its trailing slash;
 - `OAUTH_AUDIENCE`: the Auth0 API identifier, equal to the bridge's public HTTPS URL;
