@@ -40,6 +40,12 @@ targets:
         INFOPLIST_KEY_NSCalendarsUsageDescription: "Tenora uses your calendar to show what is coming up and find time for tasks."
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        INFOPLIST_KEY_TENORA_BRIDGE_URL: $(TENORA_BRIDGE_URL)
+        INFOPLIST_KEY_TENORA_OAUTH_ISSUER: $(TENORA_OAUTH_ISSUER)
+        INFOPLIST_KEY_TENORA_OAUTH_CLIENT_ID: $(TENORA_OAUTH_CLIENT_ID)
+        TENORA_BRIDGE_URL: ""
+        TENORA_OAUTH_ISSUER: ""
+        TENORA_OAUTH_CLIENT_ID: ""
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_STYLE: Automatic

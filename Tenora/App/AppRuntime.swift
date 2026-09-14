@@ -42,6 +42,7 @@ final class AppRuntime {
                 self?.publishWidget()
                 await ReminderService.shared.synchronizeJustStart(tasks: tasks)
                 await ReminderService.shared.synchronize(tasks: tasks.filter { $0.id != self?.tasks.focusedTaskID })
+                AgentBridgeSyncService.shared.enqueue(tasks: tasks, events: self?.calendar.events ?? [], focusedTaskID: self?.tasks.focusedTaskID)
             }
             transitions.didChange = { plans in await ReminderService.shared.synchronizeTransitions(plans: plans) }
             calendar.didChange = { [weak self] in
@@ -50,6 +51,7 @@ final class AppRuntime {
                     await self.tasks.resolveReturnTriggers(events: self.calendar.events, availability: self.calendar.availability)
                     await self.transitions.synchronize(events: self.calendar.events)
                     self.publishWidget()
+                    AgentBridgeSyncService.shared.enqueue(tasks: self.tasks.tasks, events: self.calendar.events, focusedTaskID: self.tasks.focusedTaskID)
                 }
             }
             ReminderService.shared.handleAction = { [weak tasks] id, action in

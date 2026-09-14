@@ -39,7 +39,7 @@ The foreground app refreshes every minute and on activation; EventKit changes re
 
 ## Device acceptance checks
 
-Validation: 60 unit tests and four isolated simulator UI tests cover the domain/store rules, contextual return triggers, transition-plan persistence, the day horizon, per-day schedule persistence, Just Start, capture → schedule → complete → review navigation, and resume → interruption capture → hold context. The UI tests use an in-memory task store. An unsigned iOS device build checks compilation of the app and widget.
+Validation: 62 unit tests and four isolated simulator UI tests cover the domain/store rules, contextual return triggers, transition-plan persistence, the day horizon, per-day schedule persistence, Just Start, capture → schedule → complete → review navigation, and resume → interruption capture → hold context. The UI tests use an in-memory task store. An unsigned iOS device build checks compilation of the app and widget.
 
 Before release, verify notification permission, delivery and cold-launch actions; Siri phrase discovery; Share Sheet capture through a configured Shortcut; and small/medium widgets on a signed physical device with the App Group enabled. No native Share extension is included. Automated domain/store tests and unsigned builds do not replace those device checks.
 
@@ -70,3 +70,13 @@ Each unresolved task can return after another task is completed, after a selecte
 Today combines future task times, timed events, and transition cues into Soon (the next three hours) and Later (the following 21 hours). NOW remains a single recommendation. A task appears only once in the horizon even when it has several relevant dates, using its earliest upcoming time.
 
 Calendar event details can enable a leave reminder and an earlier wrap-up reminder. Transition plans stay on-device, follow event title/time changes while the event remains in the loaded calendar window, and are removed one day after their event. Notification permission and iOS delivery policy still govern whether alerts appear.
+
+## ChatGPT Agent Bridge
+
+Phase 4A adds an opt-in, one-way snapshot bridge and a read-only MCP server. The iOS app continues to own task state and work offline. A configured release build can authenticate through an OAuth 2.1/OIDC provider and upload the newest complete snapshot; older uploads cannot replace newer ones. Access tokens are stored in the device Keychain.
+
+Task notes and calendar context are disabled independently by default. The base task snapshot contains titles, status, dates, priorities, tags, next steps, and contextual-return summaries. The user can delete the hosted snapshot before disconnecting, or disconnect only the current device while leaving data available to another authorized client.
+
+The TypeScript service in `AgentBridge/` exposes `list_tasks`, `get_task`, `get_now_context`, `get_today_schedule`, `search`, and `fetch`. All tools are read-only. JWT signature, issuer, audience, expiry, and scope are checked before the authenticated subject reaches the repository. PostgreSQL queries include the subject and run under forced row-level security.
+
+Bridge validation includes TypeScript compilation, four service/MCP protocol tests, the 62-test iOS unit suite, four simulator UI acceptance flows, and an unsigned iOS device build. Live OAuth, PostgreSQL, HTTPS deployment, and ChatGPT connection checks require the production issuer, database, and host values documented in `AgentBridge/README.md`.
