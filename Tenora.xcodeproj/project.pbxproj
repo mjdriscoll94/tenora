@@ -1037,9 +1037,9 @@
 				PRODUCT_NAME = Tenora;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
-				TENORA_BRIDGE_URL = "";
-				TENORA_OAUTH_CLIENT_ID = "";
-				TENORA_OAUTH_ISSUER = "";
+				TENORA_BRIDGE_URL = "https://tenora-agent-bridge.onrender.com";
+				TENORA_OAUTH_CLIENT_ID = "iolMtCvNNWwdOWE0oMFeffFmRL8bRq96";
+				TENORA_OAUTH_ISSUER = "https://dev-ea0xbmd8d0k0senm.us.auth0.com/";
 			};
 			name = Debug;
 		};
@@ -1070,9 +1070,9 @@
 				PRODUCT_NAME = Tenora;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = 1;
-				TENORA_BRIDGE_URL = "";
-				TENORA_OAUTH_CLIENT_ID = "";
-				TENORA_OAUTH_ISSUER = "";
+				TENORA_BRIDGE_URL = "https://tenora-agent-bridge.onrender.com";
+				TENORA_OAUTH_CLIENT_ID = "iolMtCvNNWwdOWE0oMFeffFmRL8bRq96";
+				TENORA_OAUTH_ISSUER = "https://dev-ea0xbmd8d0k0senm.us.auth0.com/";
 			};
 			name = Release;
 		};
