@@ -14,8 +14,10 @@ app.disable("x-powered-by");
 app.use(express.json({ limit: "2mb" }));
 
 const metadataURL = `${config.BRIDGE_BASE_URL.replace(/\/$/, "")}/.well-known/oauth-protected-resource`;
-const authenticate = authenticationMiddleware({ issuer: config.OAUTH_ISSUER, audience: config.OAUTH_AUDIENCE,
-  jwksURL: config.OAUTH_JWKS_URL, resourceMetadataURL: metadataURL });
+const authentication = { issuer: config.OAUTH_ISSUER, audience: config.OAUTH_AUDIENCE,
+  jwksURL: config.OAUTH_JWKS_URL, resourceMetadataURL: metadataURL };
+const authenticateSync = authenticationMiddleware({ ...authentication, challengeScopes: ["tasks:sync"] });
+const authenticateRead = authenticationMiddleware({ ...authentication, challengeScopes: ["tasks:read"] });
 
 app.get("/health", (_request, response) => response.json({ ok: true, service: "tenora-agent-bridge", version: "0.1.0" }));
 app.get("/.well-known/oauth-protected-resource", (_request, response) => response.json({
@@ -25,19 +27,19 @@ app.get("/.well-known/oauth-protected-resource", (_request, response) => respons
   resource_documentation: `${config.TENORA_APP_URL.replace(/\/$/, "")}/agent-bridge`
 }));
 
-app.post("/v1/sync/tasks", authenticate, requireScope("tasks:sync"), async (request: AuthenticatedRequest, response, next) => {
+app.post("/v1/sync/tasks", authenticateSync, requireScope("tasks:sync"), async (request: AuthenticatedRequest, response, next) => {
   try {
     const snapshot = syncSnapshotSchema.parse(request.body);
     await repository.replace(request.tenoraUser!.id, snapshot);
     response.status(204).end();
   } catch (error) { next(error); }
 });
-app.delete("/v1/sync/tasks", authenticate, requireScope("tasks:sync"), async (request: AuthenticatedRequest, response, next) => {
+app.delete("/v1/sync/tasks", authenticateSync, requireScope("tasks:sync"), async (request: AuthenticatedRequest, response, next) => {
   try { await repository.delete(request.tenoraUser!.id); response.status(204).end(); }
   catch (error) { next(error); }
 });
 
-app.post("/mcp", authenticate, requireScope("tasks:read"), async (request: AuthenticatedRequest, response, next) => {
+app.post("/mcp", authenticateRead, requireScope("tasks:read"), async (request: AuthenticatedRequest, response, next) => {
   try {
     const server = createTenoraMcpServer(request.tenoraUser!.id, service, config.TENORA_APP_URL);
     await handleMcpRequest(request, response, server);
