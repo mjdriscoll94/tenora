@@ -11,6 +11,7 @@ const repository = new PostgresSnapshotRepository(config.DATABASE_URL);
 const service = new TenoraReadService(repository);
 const app = express();
 app.disable("x-powered-by");
+app.use("/assets", express.static("public", { index: false, maxAge: "1h", redirect: false }));
 app.use(express.json({ limit: "2mb" }));
 
 const metadataURL = `${config.BRIDGE_BASE_URL.replace(/\/$/, "")}/.well-known/oauth-protected-resource`;

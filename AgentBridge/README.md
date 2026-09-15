@@ -39,7 +39,7 @@ For development without Docker:
 
 4. Point MCP Inspector at `http://localhost:3000/mcp` and provide a bearer token with `tasks:read`.
 
-The MCP endpoint supports stateless Streamable HTTP POST requests. `/health` is the only operational endpoint that does not require authentication.
+The MCP endpoint supports stateless Streamable HTTP POST requests. `/health` and the public branding assets under `/assets` do not require authentication.
 
 ## Authentication
 
@@ -92,6 +92,14 @@ Create the Auth0 API and applications, then enter:
 In Auth0 tenant Settings → Advanced, enable **Resource Parameter Compatibility Profile** so the MCP-standard `resource` parameter selects the Tenora API audience. Enable **Client ID Metadata Document Registration** so ChatGPT can use CIMD without a shared client secret. If CIMD is not available for the tenant, register a dedicated predefined ChatGPT OAuth client instead and copy the exact redirect URI shown by ChatGPT into its callback allowlist.
 
 Render supplies `PORT` automatically. Keep automatic deploys set to wait for GitHub checks so an unverified bridge build is not promoted.
+
+The Tenora icon is available after deployment at:
+
+```text
+https://tenora-agent-bridge.onrender.com/assets/tenora-icon.png
+```
+
+Use that HTTPS URL for the Auth0 Universal Login logo and other hosted Tenora authentication surfaces.
 
 ## Connect ChatGPT
 
