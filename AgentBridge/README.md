@@ -53,6 +53,8 @@ Use an established OAuth 2.1/OIDC provider rather than implementing login in thi
 - ChatGPT's redirect URI from the plugin management screen;
 - support for the MCP `resource` parameter.
 
+Treat the Auth0 identity as the user's canonical Tenora account. Use separate public OAuth clients for the iOS app and ChatGPT: the iOS client requests `tasks:sync`, while the ChatGPT client requests `tasks:read`. Users authorize Tenora from their own ChatGPT account and sign in with the same Tenora identity they used in the app. Client IDs identify the applications and are shared; access and refresh tokens are issued separately for each user and must never be embedded in the app.
+
 The resource server verifies signature, issuer, audience, expiry, and scope for each call. Its protected-resource metadata is served from `/.well-known/oauth-protected-resource`.
 
 ## Configure the iOS build

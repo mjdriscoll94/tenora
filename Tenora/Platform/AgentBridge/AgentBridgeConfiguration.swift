@@ -5,7 +5,7 @@ struct AgentBridgeConfiguration: Equatable, Sendable {
     let oauthIssuer: URL
     let oauthClientID: String
     let redirectURI = "tenora://oauth/callback"
-    let scopes = "openid profile offline_access tasks:read tasks:sync"
+    let scopes = "openid profile offline_access tasks:sync"
 
     static func load(bundle: Bundle = .main) -> AgentBridgeConfiguration? {
         func value(_ key: String) -> String? {

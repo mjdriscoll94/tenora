@@ -31,7 +31,7 @@ final class AgentBridgeSyncService: ObservableObject {
     }
 
     func connect() async {
-        guard let configuration else { errorMessage = "Agent Bridge is not configured for this build."; return }
+        guard let configuration else { errorMessage = "ChatGPT access is not configured for this build."; return }
         do {
             let newTokens = try await oauth.authorize(configuration: configuration)
             try tokens.save(newTokens)
@@ -79,7 +79,7 @@ final class AgentBridgeSyncService: ObservableObject {
     }
 
     func syncNow(tasks: [TenoraTask], events: [CalendarEvent], focusedTaskID: UUID?) async {
-        guard sharingEnabled else { errorMessage = "Turn on Agent Bridge sharing first."; return }
+        guard sharingEnabled else { errorMessage = "Turn on ChatGPT sharing first."; return }
         await send(makeSnapshot(tasks: tasks, events: events, focusedTaskID: focusedTaskID))
     }
 
@@ -90,7 +90,7 @@ final class AgentBridgeSyncService: ObservableObject {
 
     private func send(_ snapshot: AgentBridgeSnapshot) async {
         guard !isSyncing, let configuration, tokens.load() != nil else {
-            if tokens.load() == nil { isConnected = false; errorMessage = "Reconnect Agent Bridge to resume sharing." }
+            if tokens.load() == nil { isConnected = false; errorMessage = "Sign in again to resume ChatGPT sharing." }
             return
         }
         isSyncing = true
@@ -133,9 +133,9 @@ private enum BridgeSyncError: LocalizedError {
     case invalidResponse, reconnect, server(Int), deleteFailed
     var errorDescription: String? {
         switch self {
-        case .invalidResponse: "The Agent Bridge returned an invalid response."
-        case .reconnect: "Your Agent Bridge session expired. Reconnect to continue sharing."
-        case .server: "Tenora couldn't update the Agent Bridge right now."
+        case .invalidResponse: "The ChatGPT connection returned an invalid response."
+        case .reconnect: "Your Tenora session expired. Sign in again to continue sharing."
+        case .server: "Tenora couldn't update your shared data right now."
         case .deleteFailed: "Tenora couldn't delete the shared copy. Your connection was kept so you can try again."
         }
     }
