@@ -31,6 +31,11 @@ struct SettingsView: View {
                     Text("Configure TENORA_BRIDGE_URL, TENORA_OAUTH_ISSUER, and TENORA_OAUTH_CLIENT_ID before distribution.")
                         .font(.footnote).foregroundStyle(.secondary)
                 } else if !bridge.isConnected {
+                    if bridge.isWarmingUp {
+                        Label("Preparing secure connection…", systemImage: "arrow.trianglehead.2.clockwise.rotate.90")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                     Button(bridge.isConnecting ? "Opening secure sign-in…" : "Enable ChatGPT access") {
                         Task {
                             guard await bridge.connect() else { return }
@@ -64,6 +69,11 @@ struct SettingsView: View {
                 }
                 if let error = bridge.errorMessage { Text(error).foregroundStyle(.secondary) }
             }
-        }.navigationTitle("Settings").task { await reminders.refreshStatus() }
+        }
+        .navigationTitle("Settings")
+        .task {
+            await bridge.warmUp()
+            await reminders.refreshStatus()
+        }
     }
 }

@@ -33,11 +33,14 @@ private struct TenoraRootView: View {
     @AppStorage("account.onboardingCompleted") private var onboardingCompleted = false
 
     var body: some View {
-        if bridge.configuration != nil, !bridge.isConnected, !onboardingCompleted {
-            AccountOnboardingView(onContinueOffline: { onboardingCompleted = true })
-        } else {
-            RootTabView()
+        Group {
+            if bridge.configuration != nil, !bridge.isConnected, !onboardingCompleted {
+                AccountOnboardingView(onContinueOffline: { onboardingCompleted = true })
+            } else {
+                RootTabView()
+            }
         }
+        .task { await bridge.warmUp() }
     }
 }
 

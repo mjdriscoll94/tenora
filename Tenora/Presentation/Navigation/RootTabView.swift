@@ -83,6 +83,7 @@ struct RootTabView: View {
         }
         .task(id: scenePhase) {
             guard scenePhase == .active else { return }
+            await AgentBridgeSyncService.shared.warmUp()
             await taskStore.load()
             if lastLeft > 0, Date().timeIntervalSince1970 - lastLeft >= 15 * 60,
                taskStore.resumeTask != nil, !isAddingTask, openedTask == nil, reminders.openedTaskID == nil {

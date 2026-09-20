@@ -6,6 +6,8 @@ final class AgentBridgeSyncService: ObservableObject {
 
     @Published private(set) var isConnected: Bool
     @Published private(set) var isConnecting = false
+    @Published private(set) var isBridgeReady = false
+    @Published private(set) var isWarmingUp = false
     @Published private(set) var isSyncing = false
     @Published private(set) var lastSyncedAt: Date?
     @Published private(set) var errorMessage: String?
@@ -18,6 +20,7 @@ final class AgentBridgeSyncService: ObservableObject {
     private let tokens: AgentBridgeTokenStore
     private let oauth = AgentBridgeOAuthClient()
     private var pendingSync: Task<Void, Never>?
+    private var lastWarmAt: Date?
 
     init(configuration: AgentBridgeConfiguration? = .load(), defaults: UserDefaults = .standard,
          tokens: AgentBridgeTokenStore = AgentBridgeTokenStore()) {
@@ -35,6 +38,7 @@ final class AgentBridgeSyncService: ObservableObject {
     func connect(mode: AgentBridgeAuthorizationMode = .signIn) async -> Bool {
         guard let configuration else { errorMessage = "ChatGPT access is not configured for this build."; return false }
         guard !isConnecting else { return false }
+        Task { await warmUp() }
         isConnecting = true
         errorMessage = nil
         defer { isConnecting = false }
@@ -78,6 +82,24 @@ final class AgentBridgeSyncService: ObservableObject {
     func setIncludeNotes(_ value: Bool) { includeNotes = value; defaults.set(value, forKey: "agentBridge.includeNotes") }
     func setIncludeCalendar(_ value: Bool) { includeCalendar = value; defaults.set(value, forKey: "agentBridge.includeCalendar") }
 
+    func warmUp() async {
+        guard let configuration, !isWarmingUp else { return }
+        if let lastWarmAt, Date().timeIntervalSince(lastWarmAt) < 10 * 60 { return }
+        isWarmingUp = true
+        defer { isWarmingUp = false }
+        do {
+            var request = URLRequest(url: configuration.bridgeURL.appending(path: "health"))
+            request.timeoutInterval = 75
+            request.cachePolicy = .reloadIgnoringLocalCacheData
+            let (_, response) = try await URLSession.shared.data(for: request)
+            guard (response as? HTTPURLResponse)?.statusCode == 200 else { return }
+            isBridgeReady = true
+            lastWarmAt = Date()
+        } catch {
+            isBridgeReady = false
+        }
+    }
+
     func enqueue(tasks: [TenoraTask], events: [CalendarEvent], focusedTaskID: UUID?) {
         guard sharingEnabled, isConnected else { return }
         let snapshot = makeSnapshot(tasks: tasks, events: events, focusedTaskID: focusedTaskID)
@@ -90,6 +112,7 @@ final class AgentBridgeSyncService: ObservableObject {
 
     func syncNow(tasks: [TenoraTask], events: [CalendarEvent], focusedTaskID: UUID?) async {
         guard sharingEnabled else { errorMessage = "Turn on ChatGPT sharing first."; return }
+        await warmUp()
         await send(makeSnapshot(tasks: tasks, events: events, focusedTaskID: focusedTaskID))
     }
 
