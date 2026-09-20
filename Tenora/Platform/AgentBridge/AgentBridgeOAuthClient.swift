@@ -4,22 +4,29 @@ import Foundation
 import Security
 import UIKit
 
+enum AgentBridgeAuthorizationMode: Sendable {
+    case signIn
+    case signUp
+}
+
 @MainActor
 final class AgentBridgeOAuthClient: NSObject, ASWebAuthenticationPresentationContextProviding {
     private var session: ASWebAuthenticationSession?
 
-    func authorize(configuration: AgentBridgeConfiguration) async throws -> AgentBridgeTokens {
+    func authorize(configuration: AgentBridgeConfiguration, mode: AgentBridgeAuthorizationMode = .signIn) async throws -> AgentBridgeTokens {
         let metadata = try await metadata(for: configuration.oauthIssuer)
         let verifier = Self.randomURLSafeString()
         let challenge = Data(SHA256.hash(data: Data(verifier.utf8))).base64URLEncodedString()
         let state = UUID().uuidString
         var components = try urlComponents(metadata.authorizationEndpoint)
-        components.queryItems = [
+        var queryItems = [
             URLQueryItem(name: "response_type", value: "code"), URLQueryItem(name: "client_id", value: configuration.oauthClientID),
             URLQueryItem(name: "redirect_uri", value: configuration.redirectURI), URLQueryItem(name: "scope", value: configuration.scopes),
             URLQueryItem(name: "state", value: state), URLQueryItem(name: "code_challenge", value: challenge),
             URLQueryItem(name: "code_challenge_method", value: "S256"), URLQueryItem(name: "resource", value: configuration.bridgeURL.absoluteString)
         ]
+        if mode == .signUp { queryItems.append(URLQueryItem(name: "screen_hint", value: "signup")) }
+        components.queryItems = queryItems
         guard let authorizationURL = components.url else { throw BridgeOAuthError.invalidConfiguration }
         let callback = try await callbackURL(for: authorizationURL)
         guard let callbackComponents = URLComponents(url: callback, resolvingAgainstBaseURL: false),

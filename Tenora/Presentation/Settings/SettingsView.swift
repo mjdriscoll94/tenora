@@ -31,7 +31,13 @@ struct SettingsView: View {
                     Text("Configure TENORA_BRIDGE_URL, TENORA_OAUTH_ISSUER, and TENORA_OAUTH_CLIENT_ID before distribution.")
                         .font(.footnote).foregroundStyle(.secondary)
                 } else if !bridge.isConnected {
-                    Button("Enable ChatGPT access") { Task { await bridge.connect() } }
+                    Button(bridge.isConnecting ? "Opening secure sign-in…" : "Enable ChatGPT access") {
+                        Task {
+                            guard await bridge.connect() else { return }
+                            await bridge.syncNow(tasks: store.tasks, events: calendarStore.events, focusedTaskID: store.focusedTaskID)
+                        }
+                    }
+                    .disabled(bridge.isConnecting)
                     Text("Sign in to your Tenora account to create a private shared copy of the data you choose. Then connect Tenora from your own ChatGPT account using the same Tenora sign-in.")
                         .font(.footnote).foregroundStyle(.secondary)
                 } else {

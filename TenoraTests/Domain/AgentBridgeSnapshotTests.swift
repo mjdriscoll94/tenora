@@ -2,6 +2,17 @@ import XCTest
 @testable import Tenora
 
 final class AgentBridgeSnapshotTests: XCTestCase {
+    func testOAuthScopesSupportIdentityRefreshAndSync() {
+        let configuration = AgentBridgeConfiguration(
+            bridgeURL: URL(string: "https://bridge.example.com")!,
+            oauthIssuer: URL(string: "https://identity.example.com/")!,
+            oauthClientID: "native-client"
+        )
+
+        XCTAssertEqual(Set(configuration.scopes.split(separator: " ").map(String.init)),
+                       Set(["openid", "profile", "email", "offline_access", "tasks:sync"]))
+    }
+
     func testPrivateFieldsStayOutUntilSeparatelyEnabled() {
         let task = TenoraTask(title: "Private task", notes: "Sensitive details")
         let event = CalendarEvent(externalIdentifier: "event", title: "Therapy", startDate: Date(), endDate: Date().addingTimeInterval(3600))

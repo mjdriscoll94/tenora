@@ -5,6 +5,7 @@ final class AgentBridgeSyncService: ObservableObject {
     static let shared = AgentBridgeSyncService()
 
     @Published private(set) var isConnected: Bool
+    @Published private(set) var isConnecting = false
     @Published private(set) var isSyncing = false
     @Published private(set) var lastSyncedAt: Date?
     @Published private(set) var errorMessage: String?
@@ -30,16 +31,25 @@ final class AgentBridgeSyncService: ObservableObject {
         lastSyncedAt = defaults.object(forKey: "agentBridge.lastSyncedAt") as? Date
     }
 
-    func connect() async {
-        guard let configuration else { errorMessage = "ChatGPT access is not configured for this build."; return }
+    @discardableResult
+    func connect(mode: AgentBridgeAuthorizationMode = .signIn) async -> Bool {
+        guard let configuration else { errorMessage = "ChatGPT access is not configured for this build."; return false }
+        guard !isConnecting else { return false }
+        isConnecting = true
+        errorMessage = nil
+        defer { isConnecting = false }
         do {
-            let newTokens = try await oauth.authorize(configuration: configuration)
+            let newTokens = try await oauth.authorize(configuration: configuration, mode: mode)
             try tokens.save(newTokens)
             isConnected = true
             sharingEnabled = true
             defaults.set(true, forKey: "agentBridge.sharingEnabled")
             errorMessage = nil
-        } catch { errorMessage = error.localizedDescription }
+            return true
+        } catch {
+            errorMessage = error.localizedDescription
+            return false
+        }
     }
 
     func disconnect() {
