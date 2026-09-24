@@ -29,6 +29,16 @@ struct TenoraApp: App {
 }
 
 private struct TenoraRootView: View {
+    var body: some View {
+        if TenoraFeatures.agentBridgeEnabled {
+            AgentAccountRootView()
+        } else {
+            RootTabView()
+        }
+    }
+}
+
+private struct AgentAccountRootView: View {
     @ObservedObject private var bridge = AgentBridgeSyncService.shared
     @AppStorage("account.onboardingCompleted") private var onboardingCompleted = false
 
