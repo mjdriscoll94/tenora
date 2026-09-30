@@ -38,6 +38,7 @@
 		5A5AD50A65F5686658A16919 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8853A90211A4B982F760F2 /* SettingsView.swift */; };
 		60FEFCA2E15B9D0201854426 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604F3CF4EBF37F94368BCFC9 /* AddTaskView.swift */; };
 		6329FB0E673FA5E466B8EB3E /* AttentionLoopUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542383F66EBA91110223583F /* AttentionLoopUITests.swift */; };
+		644E2AFB793684717395777A /* LostTrackRecoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D764B39990454B15DBC7C90F /* LostTrackRecoveryView.swift */; };
 		661C4A214173857BA3C21967 /* ReminderPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7FF88060CCA737FB8B089CB /* ReminderPlanner.swift */; };
 		6BA8BE22E0DBE0037ED1B3A7 /* TaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C8F837184BFD98E3459E985 /* TaskRepository.swift */; };
 		6C72525EB19B50DA6209BD56 /* TenoraRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */; };
@@ -187,6 +188,7 @@
 		CFB1939D430BE027D318ECB2 /* TenoraTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraTask.swift; sourceTree = "<group>"; };
 		D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraRoute.swift; sourceTree = "<group>"; };
 		D2226ECEA8A388C073F70CA3 /* Tenora.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tenora.entitlements; sourceTree = "<group>"; };
+		D764B39990454B15DBC7C90F /* LostTrackRecoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LostTrackRecoveryView.swift; sourceTree = "<group>"; };
 		DEBD863E438A9164DFAFB3B3 /* WidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshot.swift; sourceTree = "<group>"; };
 		DF0F402F160274492F263C08 /* WorkingScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingScheduleView.swift; sourceTree = "<group>"; };
 		E3197B14D4577EA491823ED0 /* AgentBridgeTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeTokenStore.swift; sourceTree = "<group>"; };
@@ -393,6 +395,7 @@
 		83B51FE6303480359FAC95ED /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				D764B39990454B15DBC7C90F /* LostTrackRecoveryView.swift */,
 				8B038186373CD861DF2FABED /* ResumeView.swift */,
 				360259A7CA3F430445B2D742 /* StuckAssistanceView.swift */,
 				7103B4F45D830AB456714BEE /* TaskStore.swift */,
@@ -769,6 +772,7 @@
 				340EB1CECF90DBD1E01E6AEB /* HoldPlaceView.swift in Sources */,
 				3DFA95E7E87EACD8FB4AE016 /* InboxView.swift in Sources */,
 				785471ADFD779481990FF92E /* JustStartView.swift in Sources */,
+				644E2AFB793684717395777A /* LostTrackRecoveryView.swift in Sources */,
 				661C4A214173857BA3C21967 /* ReminderPlanner.swift in Sources */,
 				30A3174F03A6B85D55EE2E92 /* ReminderService.swift in Sources */,
 				18DB53640FC7C817C425E430 /* ResumeView.swift in Sources */,

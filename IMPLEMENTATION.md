@@ -89,6 +89,16 @@ Today lets the user describe what they can handle right now: an easy win, someth
 
 Tenora infers fit from duration, urgency, priority, current focus, recent work, and whether a smallest next step already exists. Task details optionally allow the user to identify work that feels interesting, mindless, or like an easy win; these traits are not required during capture. The NOW explanation states how the recommendation matches the selected capacity.
 
+## Lost-track recovery
+
+Today keeps a permanent, one-tap “What was I doing?” recovery entry point above planning and recommendations. If an unresolved task was intentionally started or held, Tenora reconstructs that thread from the most recent work or hold event, shows the smallest next step and pause reason, and resumes it directly. Current focus always wins over recency so a newer captured or held item cannot silently replace what the user was doing.
+
+When no prior thread exists, recovery does not dead-end or show an empty history screen. It offers the best eligible recommendation for the user's current capacity and available time. If nothing is eligible, it simply confirms that there is no thread to recover and returns to Today. After at least 15 minutes away, the same recovery experience can appear automatically and reports how many unresolved items reached a due or return time during the absence without presenting an overdue backlog.
+
+## Fast task gestures
+
+Inbox rows follow the same compact gesture language as the rest of Tenora: tap opens the task, swipe right completes it, and swipe left offers Not now as the full-swipe action plus Keep in front today as a secondary choice. Long-press exposes Start or Resume, Keep in front, Not now, and Done without requiring the user to open task details. Done and Not now are also registered as named accessibility actions so the shortcuts are available without relying on touch gestures.
+
 ## ChatGPT Agent Bridge
 
 Phase 4A adds an opt-in, one-way snapshot bridge and a read-only MCP server. The iOS app continues to own task state and work offline. A configured release build can authenticate through an OAuth 2.1/OIDC provider and upload the newest complete snapshot; older uploads cannot replace newer ones. Access tokens are stored in the device Keychain.

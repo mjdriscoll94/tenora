@@ -6,7 +6,7 @@ struct TodayView: View {
     @EnvironmentObject private var transitionStore: TransitionStore
     @State private var reviewKind: ReviewKind?
     @State private var holdingTask: TenoraTask?
-    @State private var showingResume = false
+    @State private var showingLostTrackRecovery = false
     @State private var justStartTask: TenoraTask?
     @State private var stuckTask: TenoraTask?
     @AppStorage(AttentionPreferences.capacityModeKey) private var capacityModeRaw = TaskCapacityMode.balanced.rawValue
@@ -19,17 +19,7 @@ struct TodayView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
 
-                if let task = taskStore.resumeTask {
-                    VStack(alignment: .leading, spacing: 10) {
-                        sectionLabel("YOUR PLACE IS HELD")
-                        Text(task.title).font(.headline)
-                        if let step = task.nextStep, !step.isEmpty { Text("Next: \(step)").foregroundStyle(.secondary) }
-                        Button("What was I doing?") { showingResume = true }.buttonStyle(TenoraSecondaryButtonStyle())
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(18)
-                    .tenoraCard()
-                }
+                lostTrackCard
                 if let task = taskStore.activeJustStartTask {
                     Button {
                         justStartTask = task
@@ -65,7 +55,12 @@ struct TodayView: View {
         .navigationTitle("Today")
         .sheet(item: $reviewKind) { ReviewView(kind: $0) }
         .sheet(item: $holdingTask) { HoldPlaceView(task: $0) }
-        .sheet(isPresented: $showingResume) { ResumeView() }
+        .sheet(isPresented: $showingLostTrackRecovery) {
+            LostTrackRecoveryView(
+                availableMinutes: calendarStore.availability?.availableMinutes,
+                capacityMode: capacityMode
+            )
+        }
         .sheet(item: $justStartTask) { JustStartView(task: $0) }
         .sheet(item: $stuckTask) { StuckAssistanceView(task: $0) }
         .overlay(alignment: .bottom) {
@@ -77,6 +72,44 @@ struct TodayView: View {
                     .padding()
             }
         }
+    }
+
+    private var lostTrackCard: some View {
+        Button { showingLostTrackRecovery = true } label: {
+            HStack(spacing: 14) {
+                Image(systemName: "arrow.uturn.backward.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(Color.tenoraCopper)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("LOST THE THREAD?")
+                        .font(.caption2.weight(.bold))
+                        .tracking(1.1)
+                        .foregroundStyle(Color.tenoraCopper)
+                    Text("What was I doing?")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    if let task = taskStore.recoveryTask {
+                        Text(task.nextStep.flatMap { $0.isEmpty ? nil : "Next: \($0)" } ?? task.title)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(2)
+                    } else {
+                        Text("Tenora will help you find one clear place to begin.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+            .padding(16)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .tenoraCard(cornerRadius: 16)
+        .accessibilityLabel("What was I doing?")
     }
 
     @ViewBuilder

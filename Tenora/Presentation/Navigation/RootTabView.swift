@@ -47,7 +47,14 @@ struct RootTabView: View {
         .tint(.tenoraForest)
         .toolbarBackground(Color.tenoraCard, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
-        .sheet(isPresented: $showingResume) { ResumeView(since: returnSince, onResume: { selectedTab = 0 }) }
+        .sheet(isPresented: $showingResume) {
+            LostTrackRecoveryView(
+                since: returnSince,
+                availableMinutes: calendarStore.availability?.availableMinutes,
+                capacityMode: currentCapacityMode,
+                onRecover: { selectedTab = 0 }
+            )
+        }
         .onOpenURL { url in
             guard let route = TenoraRoute(url: url) else { return }
             showingResume = false
@@ -105,6 +112,13 @@ struct RootTabView: View {
                 do { try await Task.sleep(for: .seconds(60)) } catch { return }
             } while !Task.isCancelled
         }
+    }
+
+    private var currentCapacityMode: TaskCapacityMode {
+        let defaults = UserDefaults.standard
+        let rawValue = defaults.string(forKey: AttentionPreferences.capacityModeKey) ?? TaskCapacityMode.balanced.rawValue
+        let selectedAt = defaults.double(forKey: AttentionPreferences.capacitySelectedAtKey)
+        return AttentionPreferences.capacityMode(rawValue: rawValue, selectedAt: selectedAt, now: Date())
     }
 
     @ToolbarContentBuilder

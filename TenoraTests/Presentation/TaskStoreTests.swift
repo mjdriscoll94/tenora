@@ -221,6 +221,50 @@ final class TaskStoreTests: XCTestCase {
         XCTAssertNil(store.tasks.first?.keepInFrontUntil)
         XCTAssertTrue(store.keptInFrontTasks.isEmpty)
     }
+
+    func testRecoveryUsesCurrentFocusBeforeMoreRecentlyHeldTask() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let now = Date(timeIntervalSince1970: 2_000_000_000)
+        let focused = TenoraTask(title: "Current", lastWorkedAt: now.addingTimeInterval(-300))
+        let held = TenoraTask(title: "Recently held", heldAt: now)
+        let repository = MemoryTasks(tasks: [focused, held])
+        let store = TaskStore(repository: repository, clock: FixedClock(now: now))
+        await store.load()
+
+        let started = await store.start(focused)
+        XCTAssertTrue(started)
+        XCTAssertEqual(store.recoveryTask?.id, focused.id)
+    }
+
+    func testRecoveryUsesMostRecentIntentionalThreadWithoutFocus() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        UserDefaults.standard.removeObject(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let now = Date(timeIntervalSince1970: 2_000_000_000)
+        let older = TenoraTask(title: "Older", lastWorkedAt: now.addingTimeInterval(-600))
+        let newer = TenoraTask(title: "Newer", heldAt: now.addingTimeInterval(-60))
+        let store = TaskStore(repository: MemoryTasks(tasks: [older, newer]), clock: FixedClock(now: now))
+        await store.load()
+
+        XCTAssertEqual(store.recoveryTask?.id, newer.id)
+    }
+
+    func testRecoveryCountsItemsThatBecameRelevantWhileAwayOncePerTask() async {
+        let now = Date(timeIntervalSince1970: 2_000_000_000)
+        let since = now.addingTimeInterval(-3600)
+        let becameRelevant = TenoraTask(
+            title: "Relevant",
+            dueDate: now.addingTimeInterval(-120),
+            nextSurfaceAt: now.addingTimeInterval(-60)
+        )
+        let future = TenoraTask(title: "Future", dueDate: now.addingTimeInterval(3600))
+        let completed = TenoraTask(title: "Done", status: .completed, dueDate: now.addingTimeInterval(-120))
+        let store = TaskStore(repository: MemoryTasks(tasks: [becameRelevant, future, completed]), clock: FixedClock(now: now))
+        await store.load()
+
+        XCTAssertEqual(store.relevantItemCount(since: since), 1)
+    }
 }
 
 @MainActor

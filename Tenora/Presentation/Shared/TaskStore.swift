@@ -145,10 +145,23 @@ final class TaskStore: ObservableObject {
         return true
     }
 
-    var resumeTask: TenoraTask? {
+    /// The unresolved task that best reconstructs the user's last intentional thread.
+    /// A currently focused task always wins; otherwise the latest work or hold event wins.
+    var recoveryTask: TenoraTask? {
         if let currentTask { return currentTask }
         return inboxTasks.filter { $0.lastWorkedAt != nil || $0.heldAt != nil }
             .max { max($0.lastWorkedAt ?? .distantPast, $0.heldAt ?? .distantPast) < max($1.lastWorkedAt ?? .distantPast, $1.heldAt ?? .distantPast) }
+    }
+
+    var resumeTask: TenoraTask? { recoveryTask }
+
+    func relevantItemCount(since date: Date, through endDate: Date? = nil) -> Int {
+        let endDate = endDate ?? clock.now
+        return inboxTasks.filter { task in
+            [task.dueDate, task.scheduledDate, task.nextSurfaceAt]
+                .compactMap { $0 }
+                .contains { $0 > date && $0 <= endDate }
+        }.count
     }
 
     func hold(_ id: UUID, nextStep: String, reason: String, returnAt: Date?) async -> Bool {

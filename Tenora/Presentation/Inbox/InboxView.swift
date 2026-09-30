@@ -42,6 +42,21 @@ struct InboxView: View {
                     .listRowSeparatorTint(Color.tenoraSage.opacity(0.35))
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button {
+                            Task { await taskStore.complete(task) }
+                        } label: {
+                            Label("Done", systemImage: "checkmark")
+                        }
+                        .tint(.tenoraForest)
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button {
+                            Task { await taskStore.postpone(task) }
+                        } label: {
+                            Label("Not now", systemImage: "clock.arrow.circlepath")
+                        }
+                        .tint(.tenoraSage)
+
+                        Button {
                             Task { await taskStore.setKeepInFrontToday(!task.isKeptInFront(at: Date()), for: task.id) }
                         } label: {
                             Label(
@@ -50,6 +65,40 @@ struct InboxView: View {
                             )
                         }
                         .tint(.tenoraCopper)
+                    }
+                    .contextMenu {
+                        Button {
+                            Task { await taskStore.start(task) }
+                        } label: {
+                            Label(taskStore.focusedTaskID == task.id ? "Resume" : "Start", systemImage: "play.fill")
+                        }
+
+                        Button {
+                            Task { await taskStore.setKeepInFrontToday(!task.isKeptInFront(at: Date()), for: task.id) }
+                        } label: {
+                            Label(
+                                task.isKeptInFront(at: Date()) ? "Stop keeping in front" : "Keep in front today",
+                                systemImage: task.isKeptInFront(at: Date()) ? "pin.slash" : "pin"
+                            )
+                        }
+
+                        Button {
+                            Task { await taskStore.postpone(task) }
+                        } label: {
+                            Label("Not now", systemImage: "clock.arrow.circlepath")
+                        }
+
+                        Button(role: .destructive) {
+                            Task { await taskStore.complete(task) }
+                        } label: {
+                            Label("Done", systemImage: "checkmark.circle")
+                        }
+                    }
+                    .accessibilityAction(named: "Done") {
+                        Task { await taskStore.complete(task) }
+                    }
+                    .accessibilityAction(named: "Not now") {
+                        Task { await taskStore.postpone(task) }
                     }
                 }
             }

@@ -35,6 +35,10 @@ final class AppRuntime {
                     container.mainContext.insert(StoredTask(task: task))
                     try container.mainContext.save()
                 }
+                if ProcessInfo.processInfo.arguments.contains("-swipe-fixture") {
+                    container.mainContext.insert(StoredTask(task: TenoraTask(title: "Swipe action task")))
+                    try container.mainContext.save()
+                }
                 return
             }
             calendarRepository.onChange = { [weak calendar] in Task { await calendar?.refresh() } }

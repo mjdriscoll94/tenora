@@ -2,6 +2,37 @@ import XCTest
 
 final class AttentionLoopUITests: XCTestCase {
     @MainActor
+    func testInboxSwipeRightCompletesTask() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-swipe-fixture"]
+        app.launch()
+        app.tabBars.buttons["Inbox"].tap()
+
+        let task = app.staticTexts["Swipe action task"]
+        XCTAssertTrue(task.waitForExistence(timeout: 5))
+        task.swipeRight()
+        XCTAssertTrue(app.buttons["Done"].waitForExistence(timeout: 5))
+        app.buttons["Done"].tap()
+        XCTAssertTrue(app.staticTexts["Nothing waiting"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
+    func testLostTrackRecoveryRestoresTheLastIntentionalThread() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-continuity-fixture", "-reset-working-schedule"]
+        app.launch()
+
+        XCTAssertTrue(app.buttons["What was I doing?"].waitForExistence(timeout: 5))
+        app.buttons["What was I doing?"].tap()
+        XCTAssertTrue(app.staticTexts["YOU WERE DOING"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Finish lesson notes"].exists)
+        XCTAssertTrue(app.staticTexts["Write the opening paragraph"].exists)
+        XCTAssertTrue(app.staticTexts["You paused because: Lunch"].exists)
+        app.buttons["Resume"].tap()
+        XCTAssertTrue(app.buttons["I'm stuck"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
     func testStuckHelpTurnsTheNextStepIntoAShortStart() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing", "-continuity-fixture", "-reset-working-schedule"]
