@@ -61,6 +61,9 @@ struct TaskDetailView: View {
                 Button("Delete task", role: .destructive) { confirmingDelete = true }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(TenoraScreenBackground())
+        .tint(.tenoraForest)
         .navigationTitle("Task")
         .sheet(isPresented: $holding, onDismiss: {
             if let latest = store.tasks.first(where: { $0.id == draft.id }) { draft = latest }

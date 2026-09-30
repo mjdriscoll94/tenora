@@ -43,7 +43,7 @@ struct TenoraWidgetView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("NOW").font(.caption.weight(.bold)).foregroundStyle(Color(red: 0.71, green: 0.62, blue: 1))
+                Text("NOW").font(.caption.weight(.bold)).foregroundStyle(Color(red: 0.88, green: 0.63, blue: 0.50))
                 Spacer()
                 if family == .systemMedium {
                     Link(destination: URL(string: "tenora://add")!) {
@@ -68,7 +68,13 @@ struct TenoraWidgetView: View {
         }
         .foregroundStyle(.white)
         .privacySensitive()
-        .containerBackground(for: .widget) { Color(red: 0.059, green: 0.122, blue: 0.227) }
+        .containerBackground(for: .widget) {
+            LinearGradient(
+                colors: [Color(red: 0.078, green: 0.157, blue: 0.133), Color(red: 0.12, green: 0.25, blue: 0.21)],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+        }
         .widgetURL(entry.url)
     }
 }

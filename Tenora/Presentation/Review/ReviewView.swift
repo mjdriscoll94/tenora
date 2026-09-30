@@ -45,7 +45,7 @@ struct ReviewView: View {
                                 decision("Make room today", .today, task.id)
                             }
                             decision("Tomorrow", .tomorrow, task.id)
-                            Button("Schedule") { showSchedule = true }.buttonStyle(.bordered)
+                            Button("Schedule") { showSchedule = true }.buttonStyle(TenoraSecondaryButtonStyle())
                             decision("Keep reminding me", .keep, task.id)
                             decision("Done", .complete, task.id)
                             Button("Delete", role: .destructive) { confirmDelete = true }.buttonStyle(.bordered)
@@ -58,7 +58,7 @@ struct ReviewView: View {
                     }
                 }.padding(24).frame(maxWidth: .infinity, alignment: .leading)
             }
-            .background(Color.tenoraSurface)
+            .background(TenoraScreenBackground())
             .navigationTitle(kind == .morning ? "Morning review" : "Evening reset")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
@@ -67,7 +67,11 @@ struct ReviewView: View {
                     Form {
                         DatePicker("When", selection: $scheduleDate, in: Date()...)
                         if let error = store.errorMessage { Text(error) }
-                    }.navigationTitle("Schedule")
+                    }
+                    .scrollContentBackground(.hidden)
+                    .background(TenoraScreenBackground())
+                    .tint(.tenoraForest)
+                    .navigationTitle("Schedule")
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) { Button("Cancel") { showSchedule = false } }
                         ToolbarItem(placement: .confirmationAction) {
@@ -106,6 +110,6 @@ struct ReviewView: View {
                 if await store.review(id, decision: decision) { ids.removeAll { $0 == id } }
                 busy = false
             }
-        }.buttonStyle(.bordered).frame(minHeight: 44)
+        }.buttonStyle(TenoraSecondaryButtonStyle()).frame(minHeight: 44)
     }
 }

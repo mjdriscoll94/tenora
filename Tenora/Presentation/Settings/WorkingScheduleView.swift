@@ -25,7 +25,11 @@ struct WorkingScheduleView: View {
             } footer: {
                 Text("This schedule repeats weekly and saves automatically on this device. Times follow your local time zone. Overnight shifts belong to the day they start, so a day off can still include the end of the previous night's shift.")
             }
-        }.navigationTitle("Weekly schedule")
+        }
+        .scrollContentBackground(.hidden)
+        .background(TenoraScreenBackground())
+        .tint(.tenoraForest)
+        .navigationTitle("Weekly schedule")
     }
 
     private func binding(for weekday: Int) -> Binding<WorkDay> {
@@ -71,6 +75,9 @@ private struct WorkDayView: View {
                 Text("No shift starts on this day. Your saved times will be kept if you mark it as working again.").foregroundStyle(.secondary)
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(TenoraScreenBackground())
+        .tint(.tenoraForest)
         .navigationTitle(Calendar.current.weekdaySymbols[day.weekday - 1])
     }
 

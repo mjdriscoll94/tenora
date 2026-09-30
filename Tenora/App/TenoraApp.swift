@@ -63,7 +63,7 @@ private struct AccountOnboardingView: View {
 
     var body: some View {
         ZStack {
-            Color.tenoraSurface.ignoresSafeArea()
+            TenoraScreenBackground()
             VStack(spacing: 24) {
                 Spacer()
                 Image("TenoraLogo")
@@ -87,6 +87,7 @@ private struct AccountOnboardingView: View {
                         .buttonStyle(TenoraPrimaryButtonStyle())
                         .disabled(bridge.isConnecting)
                     Button("Sign in") { authorize(.signIn) }
+                        .buttonStyle(TenoraSecondaryButtonStyle())
                         .disabled(bridge.isConnecting)
                     Button("Continue without an account") { onContinueOffline() }
                         .font(.footnote)

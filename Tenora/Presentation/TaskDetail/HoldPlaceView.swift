@@ -31,6 +31,9 @@ struct HoldPlaceView: View {
                 }
                 if let error = store.errorMessage { Text(error) }
             }
+            .scrollContentBackground(.hidden)
+            .background(TenoraScreenBackground())
+            .tint(.tenoraForest)
             .navigationTitle("Hold my place")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() }.disabled(saving) }

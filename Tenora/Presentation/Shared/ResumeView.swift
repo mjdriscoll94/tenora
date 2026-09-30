@@ -43,10 +43,10 @@ struct ResumeView: View {
                     } else {
                         Text("Your place is clear. Choose your next step in Today.")
                     }
-                    Button("Show me today") { onResume(); dismiss() }.buttonStyle(.bordered)
+                    Button("Show me today") { onResume(); dismiss() }.buttonStyle(TenoraSecondaryButtonStyle())
                 }.padding(24).frame(maxWidth: .infinity, alignment: .leading)
             }
-            .background(Color.tenoraSurface)
+            .background(TenoraScreenBackground())
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() }.disabled(saving) } }
             .interactiveDismissDisabled(saving)
         }

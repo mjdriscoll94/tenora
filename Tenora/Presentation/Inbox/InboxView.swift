@@ -19,7 +19,7 @@ struct InboxView: View {
                         } label: {
                             Image(systemName: "circle")
                                 .font(.title3)
-                                .foregroundStyle(Color.tenoraBlue)
+                                .foregroundStyle(Color.tenoraCopper)
                         }
                         .buttonStyle(.plain)
                         .accessibilityLabel("Complete \(task.title)")
@@ -37,12 +37,14 @@ struct InboxView: View {
                             }
                         } }
                     }
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 7)
+                    .listRowBackground(Color.tenoraCard)
+                    .listRowSeparatorTint(Color.tenoraSage.opacity(0.35))
                 }
             }
         }
         .scrollContentBackground(.hidden)
-        .background(Color.tenoraSurface.ignoresSafeArea())
+        .background(TenoraScreenBackground())
         .navigationTitle("Inbox")
         .overlay(alignment: .bottom) {
             if let errorMessage = taskStore.errorMessage {

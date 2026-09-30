@@ -17,7 +17,7 @@ struct CalendarView: View {
                 unavailableView
             }
         }
-        .background(Color.tenoraSurface.ignoresSafeArea())
+        .background(TenoraScreenBackground())
         .navigationTitle("Calendar")
         .task { await calendarStore.refresh() }
         .refreshable { await calendarStore.refresh() }
@@ -57,7 +57,7 @@ struct CalendarView: View {
                     openURL(url)
                 }
             }
-            .buttonStyle(.borderedProminent)
+            .buttonStyle(TenoraPrimaryButtonStyle())
         }
     }
 
@@ -81,7 +81,8 @@ struct CalendarView: View {
                     }
                 }
                 .padding(.vertical, 4)
-                .listRowBackground(Color.clear)
+                .listRowBackground(Color.tenoraCard)
+                .listRowSeparatorTint(Color.tenoraSage.opacity(0.35))
             }
             .scrollContentBackground(.hidden)
         }
@@ -90,7 +91,7 @@ struct CalendarView: View {
     private func eventRow(_ event: CalendarEvent) -> some View {
         HStack(alignment: .top, spacing: 14) {
             RoundedRectangle(cornerRadius: 2)
-                .fill(TenoraTheme.accentGradient)
+                .fill(Color.tenoraCopper)
                 .frame(width: 4, height: 44)
             VStack(alignment: .leading, spacing: 4) {
                 Text(event.title).font(.headline)
@@ -98,7 +99,7 @@ struct CalendarView: View {
                 if !event.calendarName.isEmpty { Text(event.calendarName).font(.caption).foregroundStyle(.secondary) }
                 if transitionStore.plan(for: event) != nil {
                     Label("Transition ready", systemImage: "figure.walk.departure")
-                        .font(.caption).foregroundStyle(Color.tenoraBlue)
+                        .font(.caption).foregroundStyle(Color.tenoraForest)
                 }
             }
         }

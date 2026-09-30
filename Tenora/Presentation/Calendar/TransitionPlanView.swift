@@ -37,6 +37,9 @@ struct TransitionPlanView: View {
                 Section { Button("Turn off transition reminders", role: .destructive) { Task { await store.remove(eventID: event.externalIdentifier); dismiss() } } }
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(TenoraScreenBackground())
+        .tint(.tenoraForest)
         .navigationTitle("Event Transition")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

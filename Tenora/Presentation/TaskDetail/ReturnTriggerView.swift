@@ -47,6 +47,9 @@ struct ReturnTriggerView: View {
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(TenoraScreenBackground())
+            .tint(.tenoraForest)
             .navigationTitle("Bring Back")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }

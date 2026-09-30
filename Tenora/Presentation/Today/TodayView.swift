@@ -21,8 +21,11 @@ struct TodayView: View {
                         sectionLabel("YOUR PLACE IS HELD")
                         Text(task.title).font(.headline)
                         if let step = task.nextStep, !step.isEmpty { Text("Next: \(step)").foregroundStyle(.secondary) }
-                        Button("What was I doing?") { showingResume = true }.buttonStyle(.bordered)
+                        Button("What was I doing?") { showingResume = true }.buttonStyle(TenoraSecondaryButtonStyle())
                     }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(18)
+                    .tenoraCard()
                 }
                 if let task = taskStore.activeJustStartTask {
                     Button {
@@ -30,7 +33,7 @@ struct TodayView: View {
                     } label: {
                         Label("Continue short start: \(task.nextStep ?? task.title)", systemImage: "timer")
                             .frame(maxWidth: .infinity, alignment: .leading)
-                    }.buttonStyle(.borderedProminent)
+                    }.buttonStyle(TenoraPrimaryButtonStyle())
                 }
                 nowSection
 
@@ -41,14 +44,16 @@ struct TodayView: View {
                 }
                 VStack(alignment: .leading, spacing: 12) {
                     sectionLabel("A MOMENT TO REORIENT")
-                    Button("Morning review") { reviewKind = .morning }.buttonStyle(.bordered)
-                    Button("Evening reset") { reviewKind = .evening }.buttonStyle(.bordered)
+                    HStack(spacing: 12) {
+                        Button("Morning review") { reviewKind = .morning }.buttonStyle(TenoraSecondaryButtonStyle())
+                        Button("Evening reset") { reviewKind = .evening }.buttonStyle(TenoraSecondaryButtonStyle())
+                    }
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
         }
-        .background(Color.tenoraSurface.ignoresSafeArea())
+        .background(TenoraScreenBackground())
         .navigationTitle("Today")
         .sheet(item: $reviewKind) { ReviewView(kind: $0) }
         .sheet(item: $holdingTask) { HoldPlaceView(task: $0) }
@@ -75,7 +80,7 @@ struct TodayView: View {
                     Text("WHAT MATTERS NOW")
                         .font(.caption2.weight(.bold))
                         .tracking(1.1)
-                        .foregroundStyle(Color.tenoraLavender)
+                        .foregroundStyle(Color.tenoraSage)
 
                     Text(task.title)
                         .font(.system(.title2, design: .rounded, weight: .semibold))
@@ -120,7 +125,7 @@ struct TodayView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(22)
                 .background(TenoraNowCardBackground())
-                .shadow(color: Color.tenoraNavy.opacity(0.18), radius: 18, y: 10)
+                .shadow(color: Color.tenoraInk.opacity(0.18), radius: 18, y: 10)
                 .accessibilityElement(children: .contain)
             } else {
                 ContentUnavailableView(
@@ -164,7 +169,7 @@ struct TodayView: View {
                     }
                 }
                 .padding(.horizontal)
-                .background(.background, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                .tenoraCard()
                 }
             }
         }
@@ -183,7 +188,7 @@ struct TodayView: View {
         HStack(alignment: .firstTextBaseline, spacing: 14) {
             Text(item.date.formatted(date: Calendar.current.isDate(item.date, inSameDayAs: calendarStore.currentDate) ? .omitted : .abbreviated, time: .shortened))
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Color.tenoraBlue)
+                .foregroundStyle(Color.tenoraCopper)
                 .frame(width: 72, alignment: .leading)
             VStack(alignment: .leading, spacing: 2) {
                 Text(item.title).font(.body.weight(.medium))
@@ -222,10 +227,10 @@ struct TodayView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
-                .background(Color.secondary.opacity(0.08), in: RoundedRectangle(cornerRadius: 16))
+                .tenoraCard(cornerRadius: 16)
                 .overlay(alignment: .leading) {
                     Capsule()
-                        .fill(TenoraTheme.accentGradient)
+                        .fill(Color.tenoraCopper)
                         .frame(width: 4)
                         .padding(.vertical, 12)
                 }
@@ -245,7 +250,7 @@ struct TodayView: View {
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
             .font(.caption.weight(.semibold))
-            .foregroundStyle(Color.tenoraBlue)
+            .foregroundStyle(Color.tenoraCopper)
             .tracking(1.2)
     }
 }

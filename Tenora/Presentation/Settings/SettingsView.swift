@@ -28,6 +28,9 @@ struct SettingsView: View {
                 AgentBridgeSettingsSection()
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(TenoraScreenBackground())
+        .tint(.tenoraForest)
         .navigationTitle("Settings")
         .task { await reminders.refreshStatus() }
     }

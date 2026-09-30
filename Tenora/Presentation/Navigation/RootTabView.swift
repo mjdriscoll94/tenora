@@ -44,7 +44,9 @@ struct RootTabView: View {
         .sheet(isPresented: $isAddingTask) {
             AddTaskView(initialTitle: captureTitle, onResume: { selectedTab = 0 })
         }
-        .tint(.tenoraBlue)
+        .tint(.tenoraForest)
+        .toolbarBackground(Color.tenoraCard, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
         .sheet(isPresented: $showingResume) { ResumeView(since: returnSince, onResume: { selectedTab = 0 }) }
         .onOpenURL { url in
             guard let route = TenoraRoute(url: url) else { return }

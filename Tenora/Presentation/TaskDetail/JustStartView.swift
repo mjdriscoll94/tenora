@@ -28,7 +28,7 @@ struct JustStartView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.tenoraSurface.ignoresSafeArea())
+            .background(TenoraScreenBackground())
             .navigationTitle("Just Start")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() }.disabled(saving) } }
@@ -45,7 +45,10 @@ struct JustStartView: View {
                     .focused($editingStep)
                     .font(.title3)
                     .padding()
-                    .background(.background, in: RoundedRectangle(cornerRadius: 16))
+                    .background(Color.tenoraCard, in: RoundedRectangle(cornerRadius: 16))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 16).stroke(Color.tenoraSage.opacity(0.35))
+                    }
                     .accessibilityIdentifier("just-start-next-step")
                 Text("Choose one physical action, such as opening the document or finding the phone number.")
                     .font(.footnote).foregroundStyle(.secondary)
@@ -90,11 +93,11 @@ struct JustStartView: View {
                     Button(seconds == 0 ? "Keep going" : "Keep working without the timer") { finish(keepGoing: true) }
                         .buttonStyle(TenoraPrimaryButtonStyle()).disabled(saving)
                     Button("I'm done for now") { finish(keepGoing: false) }
-                        .buttonStyle(.bordered).disabled(saving)
+                        .buttonStyle(TenoraSecondaryButtonStyle()).disabled(saving)
                     Button("Complete task") {
                         saving = true
                         Task { if await store.complete(current) { dismiss() }; saving = false }
-                    }.buttonStyle(.bordered).disabled(saving)
+                    }.buttonStyle(TenoraSecondaryButtonStyle()).disabled(saving)
                     if let error = store.errorMessage { Text(error).foregroundStyle(.secondary) }
                 }.padding(24).frame(maxWidth: .infinity, alignment: .leading)
             }

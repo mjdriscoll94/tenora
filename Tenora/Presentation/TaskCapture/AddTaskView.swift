@@ -59,8 +59,8 @@ struct AddTaskView: View {
                 if let error = taskStore.errorMessage { Section { Text(error) } }
             }
             .scrollContentBackground(.hidden)
-            .background(Color.tenoraSurface)
-            .tint(.tenoraBlue)
+            .background(TenoraScreenBackground())
+            .tint(.tenoraForest)
             .navigationTitle(captured ? "Your place is held" : "Hold this")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
