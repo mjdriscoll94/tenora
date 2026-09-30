@@ -25,6 +25,7 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
     var justStartBeganAt: Date?
     var justStartDurationSeconds: Int?
     var returnTrigger: ReturnTrigger?
+    var keepInFrontUntil: Date?
 
     init(
         id: UUID = UUID(),
@@ -50,7 +51,8 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         lastWorkedAt: Date? = nil,
         justStartBeganAt: Date? = nil,
         justStartDurationSeconds: Int? = nil,
-        returnTrigger: ReturnTrigger? = nil
+        returnTrigger: ReturnTrigger? = nil,
+        keepInFrontUntil: Date? = nil
     ) {
         self.id = id
         self.title = title
@@ -76,6 +78,7 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         self.justStartBeganAt = justStartBeganAt
         self.justStartDurationSeconds = justStartDurationSeconds
         self.returnTrigger = returnTrigger
+        self.keepInFrontUntil = keepInFrontUntil
     }
 
     var justStartEndsAt: Date? {
@@ -93,7 +96,14 @@ struct TenoraTask: Identifiable, Equatable, Sendable, Codable {
         completedAt = date
         nextSurfaceAt = nil
         returnTrigger = nil
+        keepInFrontUntil = nil
         clearJustStart()
+    }
+
+    func isKeptInFront(at date: Date, calendar: Calendar = .current) -> Bool {
+        guard ![.completed, .archived].contains(status),
+              let keepInFrontUntil else { return false }
+        return date < keepInFrontUntil && calendar.isDate(date, inSameDayAs: keepInFrontUntil.addingTimeInterval(-1))
     }
 }
 

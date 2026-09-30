@@ -172,6 +172,19 @@ final class TaskStoreTests: XCTestCase {
         XCTAssertNil(repository.tasks.first?.nextSurfaceAt)
     }
 
+    func testTomorrowNotificationStopsKeepingTaskInFrontToday() async {
+        let now = Date(timeIntervalSince1970: 2_000_000_000)
+        let task = TenoraTask(title: "Tomorrow", createdAt: now, keepInFrontUntil: now.addingTimeInterval(86_400))
+        let repository = MemoryTasks(tasks: [task])
+        let store = TaskStore(repository: repository, clock: FixedClock(now: now))
+
+        let saved = await store.notificationAction(id: task.id, action: "TOMORROW")
+
+        XCTAssertTrue(saved)
+        XCTAssertNil(store.tasks.first?.keepInFrontUntil)
+        XCTAssertEqual(store.tasks.first?.status, .scheduled)
+    }
+
     func testFailedStartDoesNotKeepFocus() async {
         let defaults = UserDefaults.standard
         let previous = defaults.string(forKey: "focusedTask")
@@ -186,6 +199,27 @@ final class TaskStoreTests: XCTestCase {
         XCTAssertNil(store.focusedTaskID)
         XCTAssertNotNil(store.errorMessage)
         XCTAssertEqual(repository.tasks.first?.status, .inbox)
+    }
+
+    func testKeepInFrontPersistsForTodayAndCanBeRemoved() async {
+        let now = Date(timeIntervalSince1970: 2_000_000_000)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let task = TenoraTask(title: "Bring paperwork", createdAt: now)
+        let repository = MemoryTasks(tasks: [task])
+        let store = TaskStore(repository: repository, clock: FixedClock(now: now), calendar: calendar)
+        await store.load()
+
+        let kept = await store.setKeepInFrontToday(true, for: task.id)
+        XCTAssertTrue(kept)
+        let tomorrow = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now))!
+        XCTAssertEqual(store.tasks.first?.keepInFrontUntil, tomorrow)
+        XCTAssertEqual(store.keptInFrontTasks.map(\.id), [task.id])
+
+        let removed = await store.setKeepInFrontToday(false, for: task.id)
+        XCTAssertTrue(removed)
+        XCTAssertNil(store.tasks.first?.keepInFrontUntil)
+        XCTAssertTrue(store.keptInFrontTasks.isEmpty)
     }
 }
 

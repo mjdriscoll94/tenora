@@ -9,6 +9,7 @@ struct TaskDetailView: View {
     @State private var holding = false
     @State private var justStarting = false
     @State private var choosingReturn = false
+    @State private var showingStuckHelp = false
 
     init(task: TenoraTask) { _draft = State(initialValue: task) }
 
@@ -19,6 +20,20 @@ struct TaskDetailView: View {
                 TextField("Notes", text: $draft.notes, axis: .vertical).lineLimit(3...8)
             }
             Section("Timing") {
+                Toggle("Keep in front today", isOn: Binding(
+                    get: { draft.isKeptInFront(at: Date()) },
+                    set: { keep in
+                        if keep {
+                            let startOfToday = Calendar.current.startOfDay(for: Date())
+                            draft.keepInFrontUntil = Calendar.current.date(byAdding: .day, value: 1, to: startOfToday)
+                        } else {
+                            draft.keepInFrontUntil = nil
+                        }
+                    }
+                ))
+                Text("Tenora will keep this visible today without asking you to choose reminder times.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
                 optionalDate("Schedule", date: $draft.scheduledDate)
                 optionalDate("Due", date: $draft.dueDate)
                 optionalDate("Bring back", date: $draft.nextSurfaceAt)
@@ -27,7 +42,9 @@ struct TaskDetailView: View {
                     ForEach([5, 15, 30, 45, 60, 120], id: \.self) { Text("\($0) min").tag(Optional($0)) }
                 }
                 Picker("Priority", selection: $draft.priority) {
-                    ForEach(TaskPriority.allCases, id: \.self) { Text($0.rawValue.capitalized).tag($0) }
+                    ForEach(TaskPriority.allCases, id: \.self) { priority in
+                        Text(priority.rawValue.capitalized).tag(priority)
+                    }
                 }
                 Button(draft.returnTrigger == nil ? "Bring back contextually" : draft.returnTrigger!.summary) {
                     choosingReturn = true
@@ -37,8 +54,11 @@ struct TaskDetailView: View {
                 TextField("Smallest next step", text: Binding(get: { draft.nextStep ?? "" }, set: { draft.nextStep = $0 }), axis: .vertical)
                 Text("What's the smallest physical thing you could do next?").font(.footnote).foregroundStyle(.secondary)
             }
+            taskFitSection
             if let error = store.errorMessage { Section { Text(error).foregroundStyle(.secondary) } }
             Section {
+                Button("I'm stuck") { showingStuckHelp = true }
+                    .disabled(saving || draft.status == .completed)
                 Button(draft.justStartEndsAt == nil ? "Just Start" : "Continue short start") {
                     saving = true
                     Task {
@@ -74,6 +94,9 @@ struct TaskDetailView: View {
         .sheet(isPresented: $choosingReturn, onDismiss: {
             if let latest = store.tasks.first(where: { $0.id == draft.id }) { draft = latest }
         }) { ReturnTriggerView(task: draft) }
+        .sheet(isPresented: $showingStuckHelp, onDismiss: {
+            if let latest = store.tasks.first(where: { $0.id == draft.id }) { draft = latest }
+        }) { StuckAssistanceView(task: draft) }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
@@ -100,5 +123,24 @@ struct TaskDetailView: View {
                 DatePicker(title, selection: Binding(get: { date.wrappedValue ?? Date() }, set: { date.wrappedValue = $0 }))
             }
         }
+    }
+
+    private var taskFitSection: some View {
+        Section {
+            ForEach(TaskCapacityTrait.allCases) { trait in
+                Toggle(trait.title, isOn: capacityTraitBinding(trait))
+            }
+        } header: {
+            Text("When this task fits")
+        } footer: {
+            Text("Optional. Tenora already uses duration, priority, deadlines, and your next step when matching tasks to your capacity.")
+        }
+    }
+
+    private func capacityTraitBinding(_ trait: TaskCapacityTrait) -> Binding<Bool> {
+        Binding(
+            get: { draft.hasCapacityTrait(trait) },
+            set: { draft.setCapacityTrait(trait, enabled: $0) }
+        )
     }
 }

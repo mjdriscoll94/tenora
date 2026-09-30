@@ -2,6 +2,24 @@ import XCTest
 
 final class AttentionLoopUITests: XCTestCase {
     @MainActor
+    func testStuckHelpTurnsTheNextStepIntoAShortStart() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-continuity-fixture", "-reset-working-schedule"]
+        app.launch()
+        app.buttons["What was I doing?"].tap()
+        app.buttons["Resume"].tap()
+        XCTAssertTrue(app.buttons["I'm stuck"].waitForExistence(timeout: 5))
+        app.buttons["I'm stuck"].tap()
+        XCTAssertTrue(app.staticTexts["What's stopping you?"].waitForExistence(timeout: 5))
+        app.buttons["I don't know where to start"].tap()
+        let step = app.textFields["stuck-next-step"]
+        XCTAssertTrue(step.waitForExistence(timeout: 5))
+        XCTAssertEqual(step.value as? String, "Write the opening paragraph")
+        app.buttons["Start with 3 minutes"].tap()
+        XCTAssertTrue(app.staticTexts["just-start-countdown"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
     func testJustStartUsesTheSmallestStepAndCanStopWithoutCompleting() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing", "-continuity-fixture", "-reset-working-schedule"]

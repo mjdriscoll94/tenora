@@ -40,6 +40,17 @@ struct InboxView: View {
                     .padding(.vertical, 7)
                     .listRowBackground(Color.tenoraCard)
                     .listRowSeparatorTint(Color.tenoraSage.opacity(0.35))
+                    .swipeActions(edge: .leading, allowsFullSwipe: true) {
+                        Button {
+                            Task { await taskStore.setKeepInFrontToday(!task.isKeptInFront(at: Date()), for: task.id) }
+                        } label: {
+                            Label(
+                                task.isKeptInFront(at: Date()) ? "Unpin Today" : "Keep Today",
+                                systemImage: task.isKeptInFront(at: Date()) ? "pin.slash" : "pin"
+                            )
+                        }
+                        .tint(.tenoraCopper)
+                    }
                 }
             }
         }

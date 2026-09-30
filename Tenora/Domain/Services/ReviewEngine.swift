@@ -30,6 +30,7 @@ struct ReviewEngine {
             result.scheduledDate = date
             result.nextSurfaceAt = date
             result.snoozeCount = 0
+            result.keepInFrontUntil = nil
         case .keep:
             result = ResurfacingEngine().postpone(result, at: now, calendar: calendar)
         case .schedule(let date):
@@ -37,6 +38,7 @@ struct ReviewEngine {
             result.scheduledDate = date
             result.nextSurfaceAt = date
             result.snoozeCount = 0
+            result.keepInFrontUntil = nil
         }
         return result
     }

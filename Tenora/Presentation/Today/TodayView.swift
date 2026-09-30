@@ -8,6 +8,9 @@ struct TodayView: View {
     @State private var holdingTask: TenoraTask?
     @State private var showingResume = false
     @State private var justStartTask: TenoraTask?
+    @State private var stuckTask: TenoraTask?
+    @AppStorage(AttentionPreferences.capacityModeKey) private var capacityModeRaw = TaskCapacityMode.balanced.rawValue
+    @AppStorage(AttentionPreferences.capacitySelectedAtKey) private var capacitySelectedAt = 0.0
 
     var body: some View {
         ScrollView {
@@ -35,7 +38,12 @@ struct TodayView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }.buttonStyle(TenoraPrimaryButtonStyle())
                 }
+                capacityPicker
                 nowSection
+
+                if !remainingKeptInFrontTasks.isEmpty {
+                    keptInFrontSection
+                }
 
                 if !horizonItems.isEmpty { horizonSection }
 
@@ -59,6 +67,7 @@ struct TodayView: View {
         .sheet(item: $holdingTask) { HoldPlaceView(task: $0) }
         .sheet(isPresented: $showingResume) { ResumeView() }
         .sheet(item: $justStartTask) { JustStartView(task: $0) }
+        .sheet(item: $stuckTask) { StuckAssistanceView(task: $0) }
         .overlay(alignment: .bottom) {
             if let errorMessage = taskStore.errorMessage {
                 Text(errorMessage)
@@ -99,7 +108,7 @@ struct TodayView: View {
                     }
 
                     availabilityContext
-                    Text(taskStore.reason(for: task, availableMinutes: calendarStore.availability?.availableMinutes))
+                    Text(taskStore.reason(for: task, availableMinutes: calendarStore.availability?.availableMinutes, capacityMode: capacityMode))
                         .font(.footnote).foregroundStyle(.white.opacity(0.85))
                     if taskStore.focusedTaskID != task.id {
                         Button("Start") { Task { await taskStore.start(task) } }
@@ -107,7 +116,19 @@ struct TodayView: View {
                     }
                     Button(task.justStartEndsAt == nil ? "Just Start" : "Continue short start") { justStartTask = task }
                         .buttonStyle(.bordered).tint(.white)
+                    Button("I'm stuck") { stuckTask = task }
+                        .buttonStyle(.bordered)
+                        .tint(.white)
                     Button("Hold my place") { holdingTask = task }.tint(.white)
+                    Button {
+                        Task { await taskStore.setKeepInFrontToday(!task.isKeptInFront(at: calendarStore.currentDate), for: task.id) }
+                    } label: {
+                        Label(
+                            task.isKeptInFront(at: calendarStore.currentDate) ? "Kept in front today" : "Keep in front today",
+                            systemImage: task.isKeptInFront(at: calendarStore.currentDate) ? "pin.fill" : "pin"
+                        )
+                    }
+                    .tint(.white)
 
                     HStack {
                         Button("Complete") {
@@ -172,6 +193,81 @@ struct TodayView: View {
                 .tenoraCard()
                 }
             }
+        }
+    }
+
+    private var capacityPicker: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            sectionLabel("WHAT CAN YOU HANDLE RIGHT NOW?")
+            Menu {
+                ForEach(TaskCapacityMode.allCases) { mode in
+                    Button {
+                        selectCapacity(mode)
+                    } label: {
+                        Label(mode.title, systemImage: mode == capacityMode ? "checkmark" : mode.icon)
+                    }
+                }
+            } label: {
+                HStack(spacing: 14) {
+                    Image(systemName: capacityMode.icon)
+                        .font(.title3)
+                        .foregroundStyle(Color.tenoraCopper)
+                        .frame(width: 28)
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(capacityMode.shortTitle)
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(.primary)
+                        Text(capacityMode == .balanced ? "Tenora will balance urgency, timing, and fit." : "Recommendations will favor this kind of task for today.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+                .padding(16)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .tenoraCard(cornerRadius: 16)
+            .accessibilityIdentifier("capacity-picker")
+        }
+    }
+
+    private var keptInFrontSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            sectionLabel("IN FRONT TODAY")
+            VStack(spacing: 0) {
+                ForEach(Array(remainingKeptInFrontTasks.enumerated()), id: \.element.id) { index, task in
+                    HStack(spacing: 12) {
+                        Image(systemName: "pin.fill")
+                            .foregroundStyle(Color.tenoraCopper)
+                            .accessibilityHidden(true)
+                        NavigationLink { TaskDetailView(task: task) } label: {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(task.title).font(.body.weight(.medium))
+                                if let step = task.nextStep, !step.isEmpty {
+                                    Text("Next: \(step)").font(.caption).foregroundStyle(.secondary)
+                                }
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        Button {
+                            Task { await taskStore.setKeepInFrontToday(false, for: task.id) }
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("Stop keeping \(task.title) in front today")
+                    }
+                    .padding(.vertical, 12)
+                    if index < remainingKeptInFrontTasks.count - 1 { Divider() }
+                }
+            }
+            .padding(.horizontal)
+            .tenoraCard()
         }
     }
 
@@ -240,11 +336,38 @@ struct TodayView: View {
 
     private var remainingResurfacedTasks: [TenoraTask] {
         let context = TaskPriorityEngine.Context(now: calendarStore.currentDate, availableMinutes: calendarStore.availability?.availableMinutes, schedule: AttentionPreferences.schedule)
-        return Array(taskStore.resurfacedTasks.filter { $0.id != recommendation?.id && TaskPriorityEngine().isEligible($0, context: context) }.prefix(2))
+        return Array(taskStore.resurfacedTasks.filter {
+            $0.id != recommendation?.id
+                && !$0.isKeptInFront(at: calendarStore.currentDate)
+                && TaskPriorityEngine().isEligible($0, context: context)
+        }.prefix(2))
+    }
+
+    private var remainingKeptInFrontTasks: [TenoraTask] {
+        taskStore.keptInFrontTasks.filter { $0.id != recommendation?.id }
     }
 
     private var recommendation: TenoraTask? {
-        taskStore.recommendation(availableMinutes: calendarStore.availability?.availableMinutes)
+        taskStore.recommendation(availableMinutes: calendarStore.availability?.availableMinutes, capacityMode: capacityMode)
+    }
+
+    private var capacityMode: TaskCapacityMode {
+        AttentionPreferences.capacityMode(
+            rawValue: capacityModeRaw,
+            selectedAt: capacitySelectedAt,
+            now: calendarStore.currentDate
+        )
+    }
+
+    private func selectCapacity(_ mode: TaskCapacityMode) {
+        capacityModeRaw = mode.rawValue
+        capacitySelectedAt = mode == .balanced ? 0 : calendarStore.currentDate.timeIntervalSince1970
+        WidgetPublisher.publish(
+            tasks: taskStore.tasks,
+            events: calendarStore.events,
+            calendarKnown: calendarStore.availability != nil,
+            focusedTaskID: taskStore.focusedTaskID
+        )
     }
 
     private func sectionLabel(_ text: String) -> some View {

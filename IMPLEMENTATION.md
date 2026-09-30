@@ -71,6 +71,24 @@ Today combines future task times, timed events, and transition cues into Soon (t
 
 Calendar event details can enable a leave reminder and an earlier wrap-up reminder. Transition plans stay on-device, follow event title/time changes while the event remains in the loaded calendar window, and are removed one day after their event. Notification permission and iOS delivery policy still govern whether alerts appear.
 
+## Keep in front today
+
+Any unresolved task can be marked Keep in front today from its detail screen, the NOW card, or an Inbox swipe action. Kept tasks receive a strong recommendation boost and appear in a dedicated Today section whenever another task occupies NOW. The Home Screen widget continues showing a kept task during meetings or outside working hours so the intention remains visible without promising that the time is free.
+
+The state expires at the next local midnight and can be removed at any time. Later still defers the task from NOW until its return time while leaving it visible in the Today section. Completing the task, choosing Tomorrow from a notification or review, or explicitly scheduling it during review clears the state.
+
+## I'm stuck
+
+The NOW card and task details offer a short recovery flow for seven common blockers: not knowing where to start, a task feeling too large, not wanting to do it, distraction, low energy, waiting on someone, and uncertainty about what matters. The flow asks only for the closest blocker and then offers a concrete next action instead of generic advice.
+
+Depending on the answer, Tenora can turn a smallest next step into a three- or five-minute Just Start session, restore the task thread, hold the task with a low-energy return path, show another recommendation, configure a contextual return, or keep the task visible today. All actions use the existing persisted task transitions, so leaving or relaunching the app does not create a separate recovery state.
+
+## Capacity-aware recommendations
+
+Today lets the user describe what they can handle right now: an easy win, something interesting, something important, something mindless, something quick, or work that can use existing momentum. This is a recommendation lens rather than a filter, so choosing a mode never hides the rest of the user's work or creates a new list to maintain. The choice expires at the next local midnight and is shared with the Home Screen widget.
+
+Tenora infers fit from duration, urgency, priority, current focus, recent work, and whether a smallest next step already exists. Task details optionally allow the user to identify work that feels interesting, mindless, or like an easy win; these traits are not required during capture. The NOW explanation states how the recommendation matches the selected capacity.
+
 ## ChatGPT Agent Bridge
 
 Phase 4A adds an opt-in, one-way snapshot bridge and a read-only MCP server. The iOS app continues to own task state and work offline. A configured release build can authenticate through an OAuth 2.1/OIDC provider and upload the newest complete snapshot; older uploads cannot replace newer ones. Access tokens are stored in the device Keychain.

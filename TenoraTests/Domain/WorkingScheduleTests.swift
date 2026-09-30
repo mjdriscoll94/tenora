@@ -98,4 +98,26 @@ final class WorkingScheduleTests: XCTestCase {
         off.schedule?.days[1].isEnabled = false
         XCTAssertNil(off.recommendation(at: now))
     }
+
+    func testCapacityChoiceExpiresOnTheNextLocalDay() {
+        let selected = date(7, 14)
+        XCTAssertEqual(
+            AttentionPreferences.capacityMode(
+                rawValue: TaskCapacityMode.quick.rawValue,
+                selectedAt: selected.timeIntervalSince1970,
+                now: date(7, 18),
+                calendar: calendar
+            ),
+            .quick
+        )
+        XCTAssertEqual(
+            AttentionPreferences.capacityMode(
+                rawValue: TaskCapacityMode.quick.rawValue,
+                selectedAt: selected.timeIntervalSince1970,
+                now: date(8, 8),
+                calendar: calendar
+            ),
+            .balanced
+        )
+    }
 }

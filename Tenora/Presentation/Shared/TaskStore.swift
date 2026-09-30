@@ -36,19 +36,42 @@ final class TaskStore: ObservableObject {
         recommendation(availableMinutes: nil)
     }
 
-    func recommendation(availableMinutes: Int?) -> TenoraTask? {
-        let context = priorityContext(availableMinutes)
+    var keptInFrontTasks: [TenoraTask] {
+        tasks
+            .filter { $0.isKeptInFront(at: clock.now, calendar: calendar) }
+            .sorted { lhs, rhs in
+                if lhs.priority != rhs.priority {
+                    return priorityRank(lhs.priority) > priorityRank(rhs.priority)
+                }
+                return lhs.createdAt < rhs.createdAt
+            }
+    }
+
+    func recommendation(availableMinutes: Int?, capacityMode: TaskCapacityMode = .balanced) -> TenoraTask? {
+        let context = priorityContext(availableMinutes, capacityMode: capacityMode)
         if let focus = tasks.first(where: { $0.id == focusedTaskID }), priorityEngine.isEligible(focus, context: context) { return focus }
         return priorityEngine.recommendation(from: tasks, context: context)
     }
 
-    private func priorityContext(_ availableMinutes: Int?) -> TaskPriorityEngine.Context {
-        .init(now: clock.now, availableMinutes: availableMinutes, calendar: calendar, schedule: AttentionPreferences.schedule)
+    private func priorityContext(_ availableMinutes: Int?, capacityMode: TaskCapacityMode = .balanced) -> TaskPriorityEngine.Context {
+        .init(now: clock.now, availableMinutes: availableMinutes, calendar: calendar, schedule: AttentionPreferences.schedule, capacityMode: capacityMode)
     }
 
-    func reason(for task: TenoraTask, availableMinutes: Int?) -> String {
+    func reason(for task: TenoraTask, availableMinutes: Int?, capacityMode: TaskCapacityMode = .balanced) -> String {
         if task.id == focusedTaskID { return "You're working on this. Tenora is holding your place." }
-        return priorityEngine.reason(for: task, context: priorityContext(availableMinutes))
+        return priorityEngine.reason(for: task, context: priorityContext(availableMinutes, capacityMode: capacityMode))
+    }
+
+    func setKeepInFrontToday(_ keepInFront: Bool, for id: UUID) async -> Bool {
+        guard var task = tasks.first(where: { $0.id == id }),
+              ![.completed, .archived].contains(task.status) else { return false }
+        if keepInFront {
+            let startOfToday = calendar.startOfDay(for: clock.now)
+            task.keepInFrontUntil = calendar.date(byAdding: .day, value: 1, to: startOfToday)
+        } else {
+            task.keepInFrontUntil = nil
+        }
+        return await saveAndReload(task, failureMessage: "Tenora couldn't update what stays in front today.")
     }
 
     @discardableResult
@@ -145,6 +168,14 @@ final class TaskStore: ObservableObject {
     private func setFocus(_ id: UUID?) {
         focusedTaskID = id
         UserDefaults.standard.set(id?.uuidString, forKey: "focusedTask")
+    }
+
+    private func priorityRank(_ priority: TaskPriority) -> Int {
+        switch priority {
+        case .normal: 0
+        case .important: 1
+        case .critical: 2
+        }
     }
 
     var resurfacedTasks: [TenoraTask] {
@@ -260,6 +291,7 @@ final class TaskStore: ObservableObject {
             task.scheduledDate = calendar.date(bySettingHour: 9, minute: 0, second: 0, of: tomorrow)!
             task.nextSurfaceAt = task.scheduledDate
             task.status = .scheduled
+            task.keepInFrontUntil = nil
         default: return false
         }
         return await saveAndReload(task, failureMessage: "Your reminder decision couldn't be saved.")
