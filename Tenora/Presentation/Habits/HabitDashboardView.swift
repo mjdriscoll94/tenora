@@ -10,9 +10,8 @@ struct HabitDashboardView: View {
 
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 22) {
-                playerHeader
-                HabitWorldView(unlockedRewardIDs: store.rewardIDs)
+            LazyVStack(alignment: .leading, spacing: 24) {
+                playerWorldSection
 
                 if store.activeHabits.isEmpty { emptyState }
                 else {
@@ -23,6 +22,7 @@ struct HabitDashboardView: View {
             }
             .padding()
         }
+        .contentMargins(.bottom, 96, for: .scrollContent)
         .background(TenoraScreenBackground())
         .navigationTitle("Habits")
         .toolbar {
@@ -38,6 +38,20 @@ struct HabitDashboardView: View {
         .task {
             await store.load()
             if !hasSeenIntro && store.activeHabits.isEmpty { showingIntro = true }
+        }
+    }
+
+    private var playerWorldSection: some View {
+        VStack(spacing: 0) {
+            playerHeader
+            Color.tenoraSurface
+                .frame(height: 18)
+                .zIndex(1)
+                .accessibilityHidden(true)
+            HabitWorldView(
+                unlockedRewardIDs: store.rewardIDs,
+                compact: store.activeHabits.isEmpty
+            )
         }
     }
 
@@ -95,15 +109,18 @@ struct HabitDashboardView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 14) {
             Image(systemName: "leaf.circle.fill")
-                .font(.system(size: 44)).foregroundStyle(TenoraTheme.accentGradient)
+                .font(.system(size: 40)).foregroundStyle(TenoraTheme.accentGradient)
             Text("Build Your First Routine").font(.title2.bold())
             Text("Create a habit and each completion will build your progress over time.")
                 .foregroundStyle(.secondary).multilineTextAlignment(.center)
-            Button("Create Habit") { showingEditor = true }.buttonStyle(TenoraPrimaryButtonStyle())
+            Button { showingEditor = true } label: {
+                Text("Create Habit").frame(maxWidth: .infinity)
+            }
+            .buttonStyle(TenoraPrimaryButtonStyle())
         }
-        .frame(maxWidth: .infinity).padding(28).tenoraCard(cornerRadius: 22)
+        .frame(maxWidth: .infinity).padding(24).tenoraCard(cornerRadius: 22)
     }
 
     private var weeklyDetail: String {

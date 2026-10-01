@@ -39,13 +39,13 @@ struct HabitWorldView: View {
             }
             .animation(reduceMotion ? nil : .spring(response: 0.55, dampingFraction: 0.82), value: unlockedRewardIDs)
         }
-        .frame(height: compact ? 155 : 220)
+        .frame(height: compact ? 145 : 220)
         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
                 .stroke(Color.white.opacity(0.12), lineWidth: 1)
         }
-        .shadow(color: Color.tenoraInk.opacity(0.16), radius: 18, y: 8)
+        .shadow(color: Color.tenoraInk.opacity(0.12), radius: 8, y: 4)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Progress landscape with \(unlockedRewardIDs.count) world upgrades")
     }
@@ -121,4 +121,3 @@ struct HabitWorldView: View {
             .accessibilityHidden(true)
     }
 }
-
