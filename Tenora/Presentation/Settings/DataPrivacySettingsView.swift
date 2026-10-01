@@ -4,6 +4,7 @@ import UniformTypeIdentifiers
 struct DataPrivacySettingsView: View {
     @EnvironmentObject private var store: TaskStore
     @EnvironmentObject private var transitionStore: TransitionStore
+    @EnvironmentObject private var habitStore: HabitStore
     @State private var showingExporter = false
     @State private var exportDocument = TenoraExportDocument(data: Data())
     @State private var showingDeleteConfirmation = false
@@ -14,11 +15,13 @@ struct DataPrivacySettingsView: View {
         Form {
             Section {
                 LabeledContent("Tasks", value: "\(store.tasks.count)")
+                LabeledContent("Habits", value: "\(habitStore.habits.count)")
+                LabeledContent("Habit completions", value: "\(habitStore.completions.count)")
                 LabeledContent("Location", value: "On this device")
             } header: {
                 Text("Storage")
             } footer: {
-                Text("Tasks, working hours, attention preferences, and calendar-derived availability remain local to this device. Calendar events are read from Apple Calendar and are not copied into Tenora's task database.")
+                Text("Tasks, habits, progress, working hours, attention preferences, and calendar-derived availability remain local to this device. Calendar events are read from Apple Calendar and are not copied into Tenora's database.")
             }
 
             Section {
@@ -26,7 +29,7 @@ struct DataPrivacySettingsView: View {
             } header: {
                 Text("Export")
             } footer: {
-                Text("Creates a JSON file containing your tasks, transition plans, and saved preference values. Calendar events are not exported.")
+                Text("Creates a JSON file containing your tasks, habits, habit completions, progression, transition plans, and saved preference values. Calendar events are not exported.")
             }
 
             Section {
@@ -35,7 +38,7 @@ struct DataPrivacySettingsView: View {
             } header: {
                 Text("Delete")
             } footer: {
-                Text("This removes tasks, transition plans, reminder reservations, and Tenora preferences from this device. It does not change calendar or notification permissions in iOS Settings.")
+                Text("This removes tasks, habits, progress, transition plans, reminder reservations, and Tenora preferences from this device. It does not change calendar or notification permissions in iOS Settings.")
             }
 
             if let statusMessage {
@@ -70,6 +73,11 @@ struct DataPrivacySettingsView: View {
         let payload = TenoraExportPayload(
             exportedAt: Date(),
             tasks: store.tasks,
+            habits: habitStore.habits,
+            habitCompletions: habitStore.completions,
+            playerProgress: habitStore.progress,
+            achievementIDs: habitStore.achievementIDs.sorted(),
+            rewardIDs: habitStore.rewardIDs.sorted(),
             transitionPlans: transitionStore.plans,
             workingSchedule: AttentionPreferences.schedule,
             reminderLevel: AttentionPreferences.reminderLevel.rawValue,
@@ -96,6 +104,11 @@ struct DataPrivacySettingsView: View {
                 statusMessage = store.errorMessage
                 return
             }
+            guard await habitStore.deleteAll() else {
+                deleting = false
+                statusMessage = habitStore.errorMessage
+                return
+            }
             await transitionStore.removeAll()
             await ReminderService.shared.removeAllTenoraNotifications()
             AttentionPreferences.resetLocalPreferences()
@@ -108,6 +121,11 @@ struct DataPrivacySettingsView: View {
 private struct TenoraExportPayload: Codable {
     let exportedAt: Date
     let tasks: [TenoraTask]
+    let habits: [Habit]
+    let habitCompletions: [HabitCompletion]
+    let playerProgress: PlayerProgress
+    let achievementIDs: [String]
+    let rewardIDs: [String]
     let transitionPlans: [TransitionPlan]
     let workingSchedule: WorkingSchedule
     let reminderLevel: String

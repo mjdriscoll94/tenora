@@ -17,4 +17,9 @@ enum WidgetPublisher {
         UserDefaults(suiteName: WidgetSnapshot.groupID)?.set(data, forKey: WidgetSnapshot.key)
         WidgetCenter.shared.reloadTimelines(ofKind: "TenoraNow")
     }
+
+    static func publishHabits(_ snapshot: HabitWidgetSnapshot) {
+        snapshot.write()
+        WidgetCenter.shared.reloadTimelines(ofKind: "TenoraHabits")
+    }
 }

@@ -9,6 +9,7 @@ final class AppRuntime {
     let tasks: TaskStore
     let calendar: CalendarStore
     let transitions: TransitionStore
+    let habits: HabitStore
 
     private init() {
         do {
@@ -17,18 +18,23 @@ final class AppRuntime {
             if ProcessInfo.processInfo.arguments.contains("-reset-working-schedule") {
                 UserDefaults.standard.removeObject(forKey: AttentionPreferences.scheduleKey)
             }
-            #else
-            let uiTesting = false
-            #endif
             if uiTesting {
-                container = try ModelContainer(for: StoredTask.self, configurations: ModelConfiguration(isStoredInMemoryOnly: true))
+                container = try ModelContainer(
+                    for: StoredTask.self, StoredHabit.self, StoredHabitCompletion.self, StoredPlayerProgress.self, StoredGameUnlock.self,
+                    configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+                )
             } else {
-                container = try ModelContainer(for: StoredTask.self)
+                container = try ModelContainer(for: StoredTask.self, StoredHabit.self, StoredHabitCompletion.self, StoredPlayerProgress.self, StoredGameUnlock.self)
             }
+            #else
+            container = try ModelContainer(for: StoredTask.self, StoredHabit.self, StoredHabitCompletion.self, StoredPlayerProgress.self, StoredGameUnlock.self)
+            #endif
             tasks = TaskStore(repository: SwiftDataTaskRepository(modelContext: container.mainContext))
+            habits = HabitStore(modelContext: container.mainContext)
             let calendarRepository = EventKitCalendarRepository()
             calendar = CalendarStore(repository: calendarRepository)
             transitions = TransitionStore()
+            #if DEBUG
             if uiTesting {
                 if ProcessInfo.processInfo.arguments.contains("-continuity-fixture") {
                     var allDaySchedule = WorkingSchedule()
@@ -57,6 +63,7 @@ final class AppRuntime {
                 }
                 return
             }
+            #endif
             calendarRepository.onChange = { [weak calendar] in Task { await calendar?.refresh() } }
             tasks.didChange = { [weak self] tasks in
                 self?.publishWidget()
@@ -67,6 +74,11 @@ final class AppRuntime {
                 }
             }
             transitions.didChange = { plans in await ReminderService.shared.synchronizeTransitions(plans: plans) }
+            habits.didChange = { [weak self] in
+                guard let self else { return }
+                self.publishWidget()
+                await ReminderService.shared.synchronizeHabits(habits: self.habits.activeHabits, completions: self.habits.completions)
+            }
             calendar.didChange = { [weak self] in
                 guard let self else { return }
                 Task {
@@ -81,11 +93,15 @@ final class AppRuntime {
             ReminderService.shared.handleAction = { [weak tasks] id, action in
                 await tasks?.notificationAction(id: id, action: action) ?? false
             }
+            ReminderService.shared.handleHabitAction = { [weak habits] id in
+                await habits?.completeFromWidget(id: id) ?? false
+            }
         } catch { fatalError("Unable to initialize Tenora's local store: \(error)") }
     }
 
     func publishWidget() {
         WidgetPublisher.publish(tasks: tasks.tasks, events: calendar.events,
             calendarKnown: calendar.availability != nil, focusedTaskID: tasks.focusedTaskID)
+        WidgetPublisher.publishHabits(habits.widgetSnapshot)
     }
 }

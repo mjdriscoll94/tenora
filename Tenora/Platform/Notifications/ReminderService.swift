@@ -8,7 +8,9 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
     @Published private(set) var status: UNAuthorizationStatus = .notDetermined
     @Published private(set) var errorMessage: String?
     @Published var openedTaskID: UUID?
+    @Published var openedHabitID: UUID?
     var handleAction: ((UUID, String) async -> Bool)?
+    var handleHabitAction: ((UUID) async -> Bool)?
     private let center = UNUserNotificationCenter.current()
     private var synchronizing = false
     private var latestTasks: [TenoraTask] = []
@@ -34,7 +36,11 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
         let transitionCategory = UNNotificationCategory(identifier: "TRANSITION", actions: [
             UNNotificationAction(identifier: "OPEN", title: "Open Tenora", options: [.foreground])
         ], intentIdentifiers: [], options: [])
-        center.setNotificationCategories([taskCategory, justStartCategory, transitionCategory])
+        let habitCategory = UNNotificationCategory(identifier: "HABIT", actions: [
+            UNNotificationAction(identifier: "COMPLETE_HABIT", title: "Complete", options: []),
+            UNNotificationAction(identifier: "OPEN_HABIT", title: "Open", options: [.foreground])
+        ], intentIdentifiers: [], options: [])
+        center.setNotificationCategories([taskCategory, justStartCategory, transitionCategory, habitCategory])
     }
 
     func requestAccess() async {
@@ -156,6 +162,48 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
         }
     }
 
+    func synchronizeHabits(habits: [Habit], completions: [HabitCompletion]) async {
+        await refreshStatus()
+        let prefix = "tenora.habit."
+        let pending = await center.pendingNotificationRequests()
+        center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.identifier.hasPrefix(prefix) }.map(\.identifier))
+        guard [.authorized, .provisional, .ephemeral].contains(status) else { return }
+
+        let calendar = Calendar.autoupdatingCurrent
+        let calculator = HabitScheduleCalculator()
+        let now = Date()
+        var scheduledCount = 0
+        for habit in habits where habit.reminderMinute != nil {
+            guard let reminderMinute = habit.reminderMinute else { continue }
+            for offset in 0..<14 where scheduledCount < 40 {
+                guard let day = calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: now)),
+                      calculator.isScheduled(habit, on: day, completions: completions, calendar: calendar),
+                      !completions.contains(where: { $0.habitID == habit.id && calendar.isDate($0.completionDate, inSameDayAs: day) }),
+                      let delivery = calendar.date(bySettingHour: reminderMinute / 60, minute: reminderMinute % 60, second: 0, of: day),
+                      delivery > now else { continue }
+                let content = UNMutableNotificationContent()
+                content.title = habit.name
+                content.body = "This quest is still waiting for today. One small step counts."
+                content.sound = .default
+                content.categoryIdentifier = "HABIT"
+                content.userInfo = ["habitID": habit.id.uuidString]
+                let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: delivery)
+                let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+                do {
+                    let dayKey = calendar.dateComponents([.year, .month, .day], from: day)
+                    try await center.add(UNNotificationRequest(
+                        identifier: "\(prefix)\(habit.id).\(dayKey.year ?? 0)-\(dayKey.month ?? 0)-\(dayKey.day ?? 0)",
+                        content: content,
+                        trigger: trigger
+                    ))
+                    scheduledCount += 1
+                } catch {
+                    errorMessage = "Some habit reminders couldn't be scheduled."
+                }
+            }
+        }
+    }
+
     private func addTransition(identifier: String, date: Date, title: String, body: String) async {
         let content = UNMutableNotificationContent()
         content.title = title
@@ -168,9 +216,26 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
     }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+        if let value = response.notification.request.content.userInfo["habitID"] as? String,
+           let id = UUID(uuidString: value) {
+            await processHabit(id: id, action: response.actionIdentifier)
+            return
+        }
         guard let value = response.notification.request.content.userInfo["taskID"] as? String, let id = UUID(uuidString: value) else { return }
         let action = response.actionIdentifier
         await process(id: id, action: action)
+    }
+
+    private func processHabit(id: UUID, action: String) async {
+        if action == UNNotificationDefaultActionIdentifier || action == "OPEN_HABIT" {
+            openedHabitID = id
+            return
+        }
+        guard action == "COMPLETE_HABIT" else { return }
+        if await handleHabitAction?(id) != true {
+            HabitWidgetSnapshot.queueCompletion(id: id)
+            errorMessage = "Open Tenora to finish saving your habit completion."
+        }
     }
 
     private func process(id: UUID, action: String) async {

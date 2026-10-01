@@ -11,4 +11,10 @@ final class TenoraRouteTests: XCTestCase {
         XCTAssertNil(TenoraRoute(url: URL(string: "tenora://task/not-an-id")!))
         XCTAssertNil(TenoraRoute(url: URL(string: "https://add")!))
     }
+
+    func testHabitRoutes() {
+        let id = UUID()
+        XCTAssertEqual(TenoraRoute(url: URL(string: "tenora://habits")!), .habits)
+        XCTAssertEqual(TenoraRoute(url: URL(string: "tenora://habit/\(id)")!), .habit(id))
+    }
 }

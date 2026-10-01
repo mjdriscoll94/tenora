@@ -4,6 +4,8 @@ enum TenoraRoute: Equatable {
     case capture(String)
     case task(UUID)
     case today
+    case habits
+    case habit(UUID)
 
     init?(url: URL) {
         guard url.scheme?.lowercased() == "tenora" else { return nil }
@@ -15,6 +17,10 @@ enum TenoraRoute: Equatable {
             guard let id = UUID(uuidString: url.lastPathComponent) else { return nil }
             self = .task(id)
         case "today": self = .today
+        case "habits": self = .habits
+        case "habit":
+            guard let id = UUID(uuidString: url.lastPathComponent) else { return nil }
+            self = .habit(id)
         default: return nil
         }
     }

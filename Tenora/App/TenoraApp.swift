@@ -8,6 +8,7 @@ struct TenoraApp: App {
     @StateObject private var taskStore: TaskStore
     @StateObject private var calendarStore: CalendarStore
     @StateObject private var transitionStore: TransitionStore
+    @StateObject private var habitStore: HabitStore
 
     init() {
         let runtime = AppRuntime.shared
@@ -15,6 +16,7 @@ struct TenoraApp: App {
         _taskStore = StateObject(wrappedValue: runtime.tasks)
         _calendarStore = StateObject(wrappedValue: runtime.calendar)
         _transitionStore = StateObject(wrappedValue: runtime.transitions)
+        _habitStore = StateObject(wrappedValue: runtime.habits)
     }
 
     var body: some Scene {
@@ -23,6 +25,7 @@ struct TenoraApp: App {
                 .environmentObject(taskStore)
                 .environmentObject(calendarStore)
                 .environmentObject(transitionStore)
+                .environmentObject(habitStore)
         }
         .modelContainer(modelContainer)
     }
