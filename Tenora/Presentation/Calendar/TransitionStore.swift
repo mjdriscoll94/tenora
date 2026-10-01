@@ -32,6 +32,12 @@ final class TransitionStore: ObservableObject {
         await didChange?(plans)
     }
 
+    func removeAll() async {
+        plans = []
+        persist()
+        await didChange?(plans)
+    }
+
     func synchronize(events: [CalendarEvent], now: Date = Date()) async {
         let byID = Dictionary(events.map { ($0.externalIdentifier, $0) }, uniquingKeysWith: { _, newest in newest })
         plans = plans.compactMap { plan in

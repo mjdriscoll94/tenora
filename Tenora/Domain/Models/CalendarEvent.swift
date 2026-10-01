@@ -7,6 +7,7 @@ struct CalendarEvent: Identifiable, Equatable, Sendable, Codable {
     let endDate: Date
     let isAllDay: Bool
     let calendarName: String
+    let calendarIdentifier: String?
     let isBusy: Bool
 
     var id: String {
@@ -20,6 +21,7 @@ struct CalendarEvent: Identifiable, Equatable, Sendable, Codable {
         endDate: Date,
         isAllDay: Bool = false,
         calendarName: String = "",
+        calendarIdentifier: String? = nil,
         isBusy: Bool = true
     ) {
         self.externalIdentifier = externalIdentifier
@@ -28,8 +30,15 @@ struct CalendarEvent: Identifiable, Equatable, Sendable, Codable {
         self.endDate = endDate
         self.isAllDay = isAllDay
         self.calendarName = calendarName
+        self.calendarIdentifier = calendarIdentifier
         self.isBusy = isBusy
     }
+}
+
+struct UserCalendar: Identifiable, Equatable, Sendable {
+    let id: String
+    let title: String
+    let sourceTitle: String
 }
 
 enum CalendarAuthorization: Equatable, Sendable {

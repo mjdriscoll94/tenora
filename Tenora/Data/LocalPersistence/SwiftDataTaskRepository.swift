@@ -40,5 +40,10 @@ final class SwiftDataTaskRepository: TaskRepository {
             try modelContext.save()
         }
     }
-}
 
+    func deleteAll() async throws {
+        let storedTasks = try modelContext.fetch(FetchDescriptor<StoredTask>())
+        for task in storedTasks { modelContext.delete(task) }
+        try modelContext.save()
+    }
+}

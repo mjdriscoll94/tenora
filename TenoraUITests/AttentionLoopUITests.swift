@@ -2,6 +2,21 @@ import XCTest
 
 final class AttentionLoopUITests: XCTestCase {
     @MainActor
+    func testSettingsMenuStaysConciseAndRoutesToDetails() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing"]
+        app.launch()
+        app.buttons["Settings"].tap()
+
+        for label in ["Weekly schedule", "Calendar", "Reminders", "Recovery", "Data & Privacy", "About Tenora"] {
+            XCTAssertTrue(app.staticTexts[label].waitForExistence(timeout: 5), label)
+        }
+        app.staticTexts["Calendar"].tap()
+        XCTAssertTrue(app.navigationBars["Calendar"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Connection"].exists)
+    }
+
+    @MainActor
     func testInboxSwipeRightCompletesTask() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing", "-swipe-fixture"]

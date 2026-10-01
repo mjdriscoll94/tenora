@@ -31,7 +31,23 @@ final class AppRuntime {
             transitions = TransitionStore()
             if uiTesting {
                 if ProcessInfo.processInfo.arguments.contains("-continuity-fixture") {
-                    let task = TenoraTask(title: "Finish lesson notes", nextStep: "Write the opening paragraph", heldAt: Date(), holdReason: "Lunch")
+                    var allDaySchedule = WorkingSchedule()
+                    for index in allDaySchedule.days.indices {
+                        allDaySchedule.days[index].startMinute = 0
+                        allDaySchedule.days[index].endMinute = 0
+                    }
+                    if let data = try? JSONEncoder().encode(allDaySchedule),
+                       let json = String(data: data, encoding: .utf8) {
+                        UserDefaults.standard.set(json, forKey: AttentionPreferences.scheduleKey)
+                    }
+                    let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: Calendar.current.startOfDay(for: Date()))
+                    let task = TenoraTask(
+                        title: "Finish lesson notes",
+                        nextStep: "Write the opening paragraph",
+                        heldAt: Date(),
+                        holdReason: "Lunch",
+                        keepInFrontUntil: tomorrow
+                    )
                     container.mainContext.insert(StoredTask(task: task))
                     try container.mainContext.save()
                 }

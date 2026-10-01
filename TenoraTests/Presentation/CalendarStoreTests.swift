@@ -35,6 +35,29 @@ final class CalendarStoreTests: XCTestCase {
         XCTAssertEqual(store.events, [event])
         XCTAssertEqual(repository.requestCount, 1)
     }
+
+    func testSelectedCalendarsFilterEvents() async {
+        let defaults = UserDefaults.standard
+        let oldUseAll = defaults.object(forKey: AttentionPreferences.useAllCalendarsKey)
+        let oldSelection = defaults.object(forKey: AttentionPreferences.selectedCalendarIDsKey)
+        defer {
+            if let oldUseAll { defaults.set(oldUseAll, forKey: AttentionPreferences.useAllCalendarsKey) }
+            else { defaults.removeObject(forKey: AttentionPreferences.useAllCalendarsKey) }
+            if let oldSelection { defaults.set(oldSelection, forKey: AttentionPreferences.selectedCalendarIDsKey) }
+            else { defaults.removeObject(forKey: AttentionPreferences.selectedCalendarIDsKey) }
+        }
+        defaults.set(false, forKey: AttentionPreferences.useAllCalendarsKey)
+        AttentionPreferences.saveSelectedCalendarIDs(["work"])
+        let now = Date()
+        let work = CalendarEvent(externalIdentifier: "work-event", title: "Work", startDate: now, endDate: now.addingTimeInterval(3600), calendarIdentifier: "work")
+        let personal = CalendarEvent(externalIdentifier: "personal-event", title: "Personal", startDate: now, endDate: now.addingTimeInterval(3600), calendarIdentifier: "personal")
+        let repository = FakeCalendarRepository(authorization: .fullAccess, events: [work, personal])
+        let store = CalendarStore(repository: repository)
+
+        await store.refresh()
+
+        XCTAssertEqual(store.events, [work])
+    }
 }
 
 @MainActor
@@ -62,5 +85,9 @@ private final class FakeCalendarRepository: CalendarRepository {
     func events(in interval: DateInterval) async throws -> [CalendarEvent] {
         fetchCount += 1
         return storedEvents
+    }
+
+    func calendars() async throws -> [UserCalendar] {
+        [UserCalendar(id: "work", title: "Work", sourceTitle: "Test"), UserCalendar(id: "personal", title: "Personal", sourceTitle: "Test")]
     }
 }

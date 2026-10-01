@@ -96,7 +96,8 @@ struct RootTabView: View {
                 await AgentBridgeSyncService.shared.warmUp()
             }
             await taskStore.load()
-            if lastLeft > 0, Date().timeIntervalSince1970 - lastLeft >= 15 * 60,
+            if lastLeft > 0,
+               AttentionPreferences.shouldOfferRecovery(lastLeft: Date(timeIntervalSince1970: lastLeft), now: Date()),
                taskStore.resumeTask != nil, !isAddingTask, openedTask == nil, reminders.openedTaskID == nil {
                 returnSince = Date(timeIntervalSince1970: lastLeft)
                 showingResume = true

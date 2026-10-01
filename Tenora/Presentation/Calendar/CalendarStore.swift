@@ -4,6 +4,7 @@ import Foundation
 final class CalendarStore: ObservableObject {
     @Published private(set) var authorization: CalendarAuthorization
     @Published private(set) var events: [CalendarEvent] = []
+    @Published private(set) var availableCalendars: [UserCalendar] = []
     @Published private(set) var isRequestingAccess = false
     @Published private(set) var errorMessage: String?
 
@@ -40,7 +41,9 @@ final class CalendarStore: ObservableObject {
             events: events,
             workingHours: workingHoursOverride ?? AttentionPreferences.workingHours,
             calendar: calendar,
-            schedule: workingHoursOverride == nil ? AttentionPreferences.schedule : nil
+            schedule: workingHoursOverride == nil ? AttentionPreferences.schedule : nil,
+            meetingBufferMinutes: AttentionPreferences.meetingBufferMinutes,
+            minimumGapMinutes: AttentionPreferences.minimumGapMinutes
         )
     }
 
@@ -58,6 +61,7 @@ final class CalendarStore: ObservableObject {
         authorization = repository.authorizationStatus()
         guard authorization == .fullAccess else {
             events = []
+            availableCalendars = []
             loadedDay = nil
             errorMessage = nil
             return
@@ -89,7 +93,17 @@ final class CalendarStore: ObservableObject {
         let horizonEnd = max(dayEnd, shiftEnd ?? dayEnd)
 
         do {
-            events = try await repository.events(in: DateInterval(start: dayStart, end: horizonEnd))
+            availableCalendars = try await repository.calendars()
+            let fetchedEvents = try await repository.events(in: DateInterval(start: dayStart, end: horizonEnd))
+            if AttentionPreferences.useAllCalendars {
+                events = fetchedEvents
+            } else {
+                let selected = AttentionPreferences.selectedCalendarIDs
+                events = fetchedEvents.filter { event in
+                    guard let identifier = event.calendarIdentifier else { return false }
+                    return selected.contains(identifier)
+                }
+            }
             loadedDay = dayStart
             errorMessage = nil
         } catch {

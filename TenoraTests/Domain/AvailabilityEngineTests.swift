@@ -80,6 +80,23 @@ final class AvailabilityEngineTests: XCTestCase {
         XCTAssertNil(result.availableMinutes)
     }
 
+    func testMeetingBufferProtectsTransitionTimeAndMinimumGapRemovesTinyWindows() {
+        let now = date(year: 2024, month: 9, day: 1, hour: 9, minute: 40)
+        let meeting = event("Meeting", startHour: 10, endHour: 11)
+
+        let buffered = engine.snapshot(
+            at: now,
+            events: [meeting],
+            calendar: calendar,
+            meetingBufferMinutes: 10,
+            minimumGapMinutes: 15
+        )
+
+        XCTAssertEqual(buffered.availableMinutes, 0)
+        XCTAssertEqual(buffered.freeTimeWindows.first?.endDate, date(year: 2024, month: 9, day: 1, hour: 9, minute: 50))
+        XCTAssertEqual(buffered.freeTimeWindows.last?.startDate, date(year: 2024, month: 9, day: 1, hour: 11, minute: 10))
+    }
+
     func testWorkingHoursRemainWallClockHoursAcrossDaylightSavingTime() {
         var chicagoCalendar = Calendar(identifier: .gregorian)
         chicagoCalendar.timeZone = TimeZone(identifier: "America/Chicago")!

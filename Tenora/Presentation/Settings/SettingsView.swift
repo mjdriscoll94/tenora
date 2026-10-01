@@ -1,29 +1,20 @@
 import SwiftUI
-import UIKit
 
 struct SettingsView: View {
-    @EnvironmentObject private var store: TaskStore
-    @ObservedObject private var reminders = ReminderService.shared
-    @EnvironmentObject private var calendarStore: CalendarStore
-    @Environment(\.openURL) private var openURL
-
     var body: some View {
         Form {
-            Section("Working hours") {
-                NavigationLink("Weekly schedule") { WorkingScheduleView() }
-                Text("Set different hours for each day, including days off and overnight shifts. NOW uses your schedule; reminder quiet hours are separate.").font(.footnote)
+            Section {
+                destination("Weekly schedule", icon: "calendar.badge.clock") { WorkingScheduleView() }
+                destination("Calendar", icon: "calendar") { CalendarSettingsView() }
+                destination("Reminders", icon: "bell") { ReminderSettingsView() }
+                destination("Recovery", icon: "arrow.uturn.backward.circle") { RecoverySettingsView() }
             }
-            Section("Reminders") {
-                Text("Tenora can bring unfinished tasks back while the app is closed.")
-                Button("Enable reminders") {
-                    Task { await reminders.requestAccess(); await store.load() }
-                }
-                Text("Task reminders: up to three per day, between 9 AM and 8 PM. An active Just Start session adds one end prompt. Opening Tenora refreshes the next seven days of reminders.")
-                    .font(.footnote).foregroundStyle(.secondary)
-                Text(reminders.status == .authorized || reminders.status == .provisional ? "Notifications allowed" : "Notifications are not enabled")
-                Button("Notification settings") { openURL(URL(string: UIApplication.openSettingsURLString)!) }
-                if let error = reminders.errorMessage { Text(error) }
+
+            Section {
+                destination("Data & Privacy", icon: "hand.raised") { DataPrivacySettingsView() }
+                destination("About Tenora", icon: "info.circle") { AboutSettingsView() }
             }
+
             if TenoraFeatures.agentBridgeEnabled {
                 AgentBridgeSettingsSection()
             }
@@ -32,7 +23,18 @@ struct SettingsView: View {
         .background(TenoraScreenBackground())
         .tint(.tenoraForest)
         .navigationTitle("Settings")
-        .task { await reminders.refreshStatus() }
+    }
+
+    private func destination<Destination: View>(
+        _ title: String,
+        icon: String,
+        @ViewBuilder destination: () -> Destination
+    ) -> some View {
+        NavigationLink {
+            destination()
+        } label: {
+            Label(title, systemImage: icon)
+        }
     }
 }
 

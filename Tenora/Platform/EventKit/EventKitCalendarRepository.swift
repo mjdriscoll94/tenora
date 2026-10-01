@@ -42,10 +42,22 @@ final class EventKitCalendarRepository: CalendarRepository {
                     endDate: event.endDate,
                     isAllDay: event.isAllDay,
                     calendarName: event.calendar.title,
+                    calendarIdentifier: event.calendar.calendarIdentifier,
                     isBusy: event.availability != .free
                 )
             }
             .sorted { $0.startDate < $1.startDate }
+    }
+
+    func calendars() async throws -> [UserCalendar] {
+        guard authorizationStatus() == .fullAccess else { return [] }
+        return eventStore.calendars(for: .event)
+            .map { UserCalendar(id: $0.calendarIdentifier, title: $0.title, sourceTitle: $0.source.title) }
+            .sorted {
+                $0.sourceTitle == $1.sourceTitle
+                    ? $0.title.localizedCaseInsensitiveCompare($1.title) == .orderedAscending
+                    : $0.sourceTitle.localizedCaseInsensitiveCompare($1.sourceTitle) == .orderedAscending
+            }
     }
 
     private static func mapAuthorization(_ status: EKAuthorizationStatus) -> CalendarAuthorization {

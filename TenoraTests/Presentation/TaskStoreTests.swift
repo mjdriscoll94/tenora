@@ -265,6 +265,22 @@ final class TaskStoreTests: XCTestCase {
 
         XCTAssertEqual(store.relevantItemCount(since: since), 1)
     }
+
+    func testDeleteAllClearsTasksAndFocus() async {
+        let previous = UserDefaults.standard.string(forKey: "focusedTask")
+        defer { UserDefaults.standard.set(previous, forKey: "focusedTask") }
+        let task = TenoraTask(title: "Private task")
+        let repository = MemoryTasks(tasks: [task])
+        let store = TaskStore(repository: repository)
+        await store.load()
+        _ = await store.start(task)
+
+        let deleted = await store.deleteAll()
+        XCTAssertTrue(deleted)
+        XCTAssertTrue(store.tasks.isEmpty)
+        XCTAssertTrue(repository.tasks.isEmpty)
+        XCTAssertNil(store.focusedTaskID)
+    }
 }
 
 @MainActor
@@ -279,6 +295,7 @@ private final class MemoryTasks: TaskRepository {
         tasks.append(task)
     }
     func delete(id: UUID) async throws { tasks.removeAll { $0.id == id } }
+    func deleteAll() async throws { tasks = [] }
 }
 
 private struct FixedClock: TenoraClock {

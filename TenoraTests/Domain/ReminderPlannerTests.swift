@@ -33,4 +33,25 @@ final class ReminderPlannerTests: XCTestCase {
         let plan = ReminderPlanner().plan(tasks: [TenoraTask(title: "Call", nextSurfaceAt: now)], now: now, usedSlots: slots)
         XCTAssertFalse(plan.contains { calendar.isDate($0.date, inSameDayAs: now) })
     }
+
+    func testCustomFrequencyAndDeliveryWindowAreRespected() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let now = calendar.date(from: DateComponents(year: 2026, month: 9, day: 5, hour: 7))!
+        let tasks = (0..<5).map { TenoraTask(title: "Task \($0)", createdAt: now, nextSurfaceAt: now) }
+
+        let plan = ReminderPlanner().plan(
+            tasks: tasks,
+            now: now,
+            calendar: calendar,
+            dailyLimit: 1,
+            deliveryStartMinute: 10 * 60,
+            deliveryEndMinute: 17 * 60
+        )
+
+        for (day, reminders) in Dictionary(grouping: plan, by: { calendar.startOfDay(for: $0.date) }) {
+            XCTAssertLessThanOrEqual(reminders.count, 1, "\(day)")
+            XCTAssertTrue(reminders.allSatisfy { (10..<17).contains(calendar.component(.hour, from: $0.date)) })
+        }
+    }
 }

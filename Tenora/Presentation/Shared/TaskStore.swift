@@ -335,6 +335,20 @@ final class TaskStore: ObservableObject {
         } catch { errorMessage = "Tenora couldn't delete that task."; return false }
     }
 
+    func deleteAll() async -> Bool {
+        do {
+            try await repository.deleteAll()
+            setFocus(nil)
+            tasks = []
+            errorMessage = nil
+            await didChange?(tasks)
+            return true
+        } catch {
+            errorMessage = "Tenora couldn't delete your local data."
+            return false
+        }
+    }
+
     @discardableResult
     private func saveAndReload(_ task: TenoraTask, failureMessage: String) async -> Bool {
         do {

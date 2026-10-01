@@ -120,4 +120,24 @@ final class WorkingScheduleTests: XCTestCase {
             .balanced
         )
     }
+
+    func testRecoveryPreferenceSupportsElapsedAndNextDayModes() {
+        let defaults = UserDefaults.standard
+        let oldEnabled = defaults.object(forKey: AttentionPreferences.recoveryEnabledKey)
+        let oldDelay = defaults.object(forKey: AttentionPreferences.recoveryDelayKey)
+        defer {
+            if let oldEnabled { defaults.set(oldEnabled, forKey: AttentionPreferences.recoveryEnabledKey) }
+            else { defaults.removeObject(forKey: AttentionPreferences.recoveryEnabledKey) }
+            if let oldDelay { defaults.set(oldDelay, forKey: AttentionPreferences.recoveryDelayKey) }
+            else { defaults.removeObject(forKey: AttentionPreferences.recoveryDelayKey) }
+        }
+        defaults.set(true, forKey: AttentionPreferences.recoveryEnabledKey)
+        defaults.set(RecoveryPromptDelay.oneHour.rawValue, forKey: AttentionPreferences.recoveryDelayKey)
+        XCTAssertFalse(AttentionPreferences.shouldOfferRecovery(lastLeft: date(7, 10), now: date(7, 10, 59), calendar: calendar))
+        XCTAssertTrue(AttentionPreferences.shouldOfferRecovery(lastLeft: date(7, 10), now: date(7, 11), calendar: calendar))
+
+        defaults.set(RecoveryPromptDelay.nextDay.rawValue, forKey: AttentionPreferences.recoveryDelayKey)
+        XCTAssertFalse(AttentionPreferences.shouldOfferRecovery(lastLeft: date(7, 10), now: date(7, 23), calendar: calendar))
+        XCTAssertTrue(AttentionPreferences.shouldOfferRecovery(lastLeft: date(7, 23), now: date(8, 0), calendar: calendar))
+    }
 }

@@ -99,6 +99,14 @@ When no prior thread exists, recovery does not dead-end or show an empty history
 
 Inbox rows follow the same compact gesture language as the rest of Tenora: tap opens the task, swipe right completes it, and swipe left offers Not now as the full-swipe action plus Keep in front today as a secondary choice. Long-press exposes Start or Resume, Keep in front, Not now, and Done without requiring the user to open task details. Done and Not now are also registered as named accessibility actions so the shortcuts are available without relying on touch gestures.
 
+## User settings
+
+The main Settings screen stays intentionally short and routes to dedicated pages for Weekly Schedule, Calendar, Reminders, Recovery, Data & Privacy, and About. Explanatory copy lives on those destination pages rather than in the main menu.
+
+Calendar settings report EventKit permission, select which device calendars block availability, and configure meeting buffers and a minimum usable gap. Reminder settings control automatic task reminders independently from explicit Just Start and transition alerts, including a one-to-three-per-day level and delivery window. Recovery settings control whether the automatic return prompt appears and whether it waits 15 minutes, one hour, or until the next local day; manual lost-track recovery remains available.
+
+Data & Privacy can export tasks, transition plans, working schedule, and preference values as JSON without exporting calendar events. Confirmed deletion removes local tasks, transition plans, notification reservations, and Tenora preferences while leaving iOS-managed calendar and notification permissions unchanged. About links to the repository privacy policy and support tracker and explains the recommendation model in plain language.
+
 ## ChatGPT Agent Bridge
 
 Phase 4A adds an opt-in, one-way snapshot bridge and a read-only MCP server. The iOS app continues to own task state and work offline. A configured release build can authenticate through an OAuth 2.1/OIDC provider and upload the newest complete snapshot; older uploads cannot replace newer ones. Access tokens are stored in the device Keychain.

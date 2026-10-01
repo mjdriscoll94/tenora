@@ -36,7 +36,9 @@ struct AvailabilityEngine: Sendable {
         events: [CalendarEvent],
         workingHours: WorkingHours = WorkingHours(),
         calendar: Calendar = .current,
-        schedule: WorkingSchedule? = nil
+        schedule: WorkingSchedule? = nil,
+        meetingBufferMinutes: Int = 0,
+        minimumGapMinutes: Int = 0
     ) -> AvailabilitySnapshot {
         let workIntervals = schedule?.intervals(around: now, calendar: calendar) ?? [workingInterval(
             containing: now,
@@ -47,6 +49,20 @@ struct AvailabilityEngine: Sendable {
             .filter { !$0.isAllDay && $0.isBusy && $0.endDate > $0.startDate }
             .sorted { $0.startDate < $1.startDate }
 
+        let buffer = TimeInterval(max(0, meetingBufferMinutes) * 60)
+        let bufferedBusyEvents = timedBusyEvents.map { event in
+            CalendarEvent(
+                externalIdentifier: event.externalIdentifier,
+                title: event.title,
+                startDate: event.startDate.addingTimeInterval(-buffer),
+                endDate: event.endDate.addingTimeInterval(buffer),
+                isAllDay: false,
+                calendarName: event.calendarName,
+                calendarIdentifier: event.calendarIdentifier,
+                isBusy: true
+            )
+        }
+
         let currentEvent = timedBusyEvents.first {
             $0.startDate <= now && now < $0.endDate
         }
@@ -56,15 +72,16 @@ struct AvailabilityEngine: Sendable {
         }
         let freeWindows = workIntervals.flatMap { freeTimeWindows(
             within: $0,
-            busyEvents: timedBusyEvents
-        ) }
+            busyEvents: bufferedBusyEvents
+        ) }.filter { $0.durationMinutes >= max(0, minimumGapMinutes) }
 
         let availableMinutes: Int?
         if let interval = workIntervals.first(where: { $0.start <= now && now < $0.end }) {
-            if currentEvent != nil { availableMinutes = 0 }
+            if bufferedBusyEvents.contains(where: { $0.startDate <= now && now < $0.endDate }) { availableMinutes = 0 }
             else {
-                let gapEnd = timedBusyEvents.first { $0.startDate > now && $0.startDate < interval.end }?.startDate ?? interval.end
-                availableMinutes = max(0, Int(gapEnd.timeIntervalSince(now) / 60))
+                let gapEnd = bufferedBusyEvents.first { $0.startDate > now && $0.startDate < interval.end }?.startDate ?? interval.end
+                let minutes = max(0, Int(gapEnd.timeIntervalSince(now) / 60))
+                availableMinutes = minutes >= max(0, minimumGapMinutes) ? minutes : 0
             }
         } else { availableMinutes = nil }
 

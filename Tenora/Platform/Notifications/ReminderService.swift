@@ -55,8 +55,15 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
             let currentRevision = revision
             let snapshot = latestTasks
             await refreshStatus()
-            guard [.authorized, .provisional, .ephemeral].contains(status) else { lastSignature = nil; return }
-            let signature = try? JSONEncoder().encode(snapshot)
+            guard AttentionPreferences.taskRemindersEnabled,
+                  [.authorized, .provisional, .ephemeral].contains(status) else {
+                let pending = await center.pendingNotificationRequests()
+                center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.identifier.hasPrefix("tenora.reminder.") }.map(\.identifier))
+                lastSignature = nil
+                return
+            }
+            let preferenceSignature = "\(AttentionPreferences.reminderLevel.rawValue)|\(AttentionPreferences.reminderStartMinute)|\(AttentionPreferences.reminderEndMinute)"
+            let signature = try? JSONEncoder().encode([String(data: (try? JSONEncoder().encode(snapshot)) ?? Data(), encoding: .utf8) ?? "", preferenceSignature])
             let day = Calendar.current.startOfDay(for: Date())
             let zone = TimeZone.current.identifier
             if signature == lastSignature && day == lastDay && zone == lastZone && status == lastStatus {
@@ -75,7 +82,14 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
             let now = Date()
             let oldSlots = UserDefaults.standard.array(forKey: "reminderReservations") as? [Date] ?? []
             let used = oldSlots.filter { $0 <= now && $0 >= Calendar.current.startOfDay(for: now) }
-            let plan = ReminderPlanner().plan(tasks: snapshot, now: now, usedSlots: used)
+            let plan = ReminderPlanner().plan(
+                tasks: snapshot,
+                now: now,
+                usedSlots: used,
+                dailyLimit: AttentionPreferences.reminderLevel.dailyLimit,
+                deliveryStartMinute: AttentionPreferences.reminderStartMinute,
+                deliveryEndMinute: AttentionPreferences.reminderEndMinute
+            )
             // Slots already due remain spent even when tasks change or a notification is dismissed.
             UserDefaults.standard.set(used + plan.map(\.date), forKey: "reminderReservations")
             for (index, reminder) in plan.enumerated() {
@@ -177,6 +191,15 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
         for entry in queued {
             if let value = entry["id"], let id = UUID(uuidString: value), let action = entry["action"] { await process(id: id, action: action) }
         }
+    }
+
+    func removeAllTenoraNotifications() async {
+        let pending = await center.pendingNotificationRequests()
+        center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.identifier.hasPrefix("tenora.") }.map(\.identifier))
+        let delivered = await center.deliveredNotifications()
+        center.removeDeliveredNotifications(withIdentifiers: delivered.filter { $0.request.identifier.hasPrefix("tenora.") }.map { $0.request.identifier })
+        UserDefaults.standard.removeObject(forKey: "reminderReservations")
+        lastSignature = nil
     }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions { [.banner, .sound] }
