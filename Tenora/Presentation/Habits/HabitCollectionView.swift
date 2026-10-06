@@ -6,7 +6,7 @@ struct HabitCollectionView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                HabitWorldView(unlockedRewardIDs: store.rewardIDs)
+                HabitWorldView(unlockedRewardIDs: store.rewardIDs, level: store.progress.level)
                 collectionSection("WORLD UPGRADES") {
                     ForEach(HabitRewardCatalog.all) { reward in rewardRow(reward) }
                 }
@@ -33,8 +33,13 @@ struct HabitCollectionView: View {
     private func rewardRow(_ reward: GameReward) -> some View {
         let unlocked = store.rewardIDs.contains(reward.id)
         return HStack(spacing: 14) {
-            Image(systemName: unlocked ? reward.symbol : "questionmark").font(.title3).foregroundStyle(unlocked ? Color.tenoraForest : .secondary)
-                .frame(width: 36, height: 36).background(Color.tenoraSage.opacity(unlocked ? 0.20 : 0.10), in: Circle())
+            ProductionArtworkView(
+                assetName: unlocked ? reward.assetName : nil,
+                fallbackSymbol: unlocked ? reward.symbol : "questionmark",
+                size: 52
+            )
+            .saturation(unlocked ? 1 : 0)
+            .opacity(unlocked ? 1 : 0.48)
             VStack(alignment: .leading, spacing: 2) {
                 Text(unlocked ? reward.title : "Level \(reward.levelRequired) · ???").font(.body.weight(.semibold))
                 Text(unlocked ? reward.detail : "New world upgrade").font(.caption).foregroundStyle(.secondary)
@@ -47,10 +52,9 @@ struct HabitCollectionView: View {
     private func achievementRow(_ achievement: HabitAchievement) -> some View {
         let unlocked = store.achievementIDs.contains(achievement.id)
         return HStack(spacing: 14) {
-            ZStack {
-                Circle().fill(unlocked ? TenoraTheme.accentGradient : LinearGradient(colors: [.gray.opacity(0.20)], startPoint: .top, endPoint: .bottom)).frame(width: 42, height: 42)
-                Image(systemName: achievement.symbol).foregroundStyle(unlocked ? .white : .secondary)
-            }
+            ProductionArtworkView(assetName: achievement.assetName, fallbackSymbol: achievement.symbol, size: 56)
+                .saturation(unlocked ? 1 : 0)
+                .opacity(unlocked ? 1 : 0.38)
             VStack(alignment: .leading, spacing: 2) {
                 Text(achievement.title).font(.body.weight(.semibold))
                 Text(achievement.detail).font(.caption).foregroundStyle(.secondary)

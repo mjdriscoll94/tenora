@@ -50,7 +50,9 @@ struct HabitDashboardView: View {
                 .accessibilityHidden(true)
             HabitWorldView(
                 unlockedRewardIDs: store.rewardIDs,
-                compact: store.activeHabits.isEmpty
+                level: store.progress.level,
+                compact: store.activeHabits.isEmpty,
+                celebration: store.celebration
             )
         }
     }
@@ -110,8 +112,9 @@ struct HabitDashboardView: View {
 
     private var emptyState: some View {
         VStack(spacing: 14) {
-            Image(systemName: "leaf.circle.fill")
-                .font(.system(size: 40)).foregroundStyle(TenoraTheme.accentGradient)
+            Image("keeper_idle_02")
+                .resizable().scaledToFit().frame(width: 62, height: 62)
+                .accessibilityHidden(true)
             Text("Build Your First Routine").font(.title2.bold())
             Text("Create a habit and each completion will build your progress over time.")
                 .foregroundStyle(.secondary).multilineTextAlignment(.center)
@@ -147,9 +150,11 @@ struct HabitDashboardView: View {
     private var celebrationOverlay: some View {
         if let celebration = store.celebration {
             VStack(spacing: 12) {
-                Image(systemName: celebration.symbol)
-                    .font(.system(size: celebration.kind == .levelUp ? 44 : 30, weight: .bold))
-                    .foregroundStyle(TenoraTheme.accentGradient)
+                ProductionArtworkView(
+                    assetName: celebration.assetName,
+                    fallbackSymbol: celebration.symbol,
+                    size: celebration.kind == .levelUp ? 74 : 62
+                )
                 Text(celebration.title).font(.title2.bold())
                 Text(celebration.detail).foregroundStyle(.secondary)
                 Button("Continue") { store.celebration = nil }.buttonStyle(TenoraPrimaryButtonStyle())
@@ -180,8 +185,12 @@ private struct HabitQuestCard: View {
         HStack(spacing: 14) {
             ZStack {
                 Circle().fill(HabitTint.color(for: habit.colorIdentifier).opacity(0.16)).frame(width: 50, height: 50)
-                Image(systemName: store.isCompleted(habit) ? "checkmark" : habit.iconName)
-                    .font(.title3.weight(.semibold)).foregroundStyle(HabitTint.color(for: habit.colorIdentifier))
+                HabitArtworkView(
+                    iconName: habit.iconName,
+                    size: 48,
+                    tint: HabitTint.color(for: habit.colorIdentifier),
+                    completed: store.isCompleted(habit)
+                )
             }
             NavigationLink { HabitDetailView(habit: habit) } label: {
                 VStack(alignment: .leading, spacing: 4) {

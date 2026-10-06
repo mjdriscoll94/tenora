@@ -1,0 +1,3989 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "name": "world_terrain_grass_01",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        0,
+        0,
+        181,
+        270
+      ],
+      "anchor": "bottom",
+      "size": [
+        175,
+        161
+      ]
+    },
+    {
+      "name": "world_terrain_grass_02",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        181,
+        0,
+        362,
+        270
+      ],
+      "anchor": "bottom",
+      "size": [
+        178,
+        156
+      ]
+    },
+    {
+      "name": "world_terrain_grass_flowers",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        362,
+        0,
+        543,
+        270
+      ],
+      "anchor": "bottom",
+      "size": [
+        181,
+        170
+      ]
+    },
+    {
+      "name": "world_terrain_dirt_01",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        543,
+        0,
+        724,
+        270
+      ],
+      "anchor": "bottom",
+      "size": [
+        181,
+        152
+      ]
+    },
+    {
+      "name": "world_terrain_dirt_02",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        724,
+        0,
+        905,
+        270
+      ],
+      "anchor": "bottom",
+      "size": [
+        181,
+        164
+      ]
+    },
+    {
+      "name": "world_terrain_stone_01",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        905,
+        0,
+        1086,
+        270
+      ],
+      "anchor": "bottom",
+      "size": [
+        175,
+        149
+      ]
+    },
+    {
+      "name": "world_terrain_stone_02",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        1086,
+        0,
+        1267,
+        270
+      ],
+      "anchor": "bottom",
+      "size": [
+        176,
+        156
+      ]
+    },
+    {
+      "name": "world_terrain_stone_mossy",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        1267,
+        0,
+        1448,
+        270
+      ],
+      "anchor": "bottom",
+      "size": [
+        172,
+        158
+      ]
+    },
+    {
+      "name": "world_path_straight",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        0,
+        260,
+        207,
+        525
+      ],
+      "anchor": "bottom",
+      "size": [
+        202,
+        164
+      ]
+    },
+    {
+      "name": "world_path_curve",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        207,
+        260,
+        414,
+        525
+      ],
+      "anchor": "bottom",
+      "size": [
+        188,
+        174
+      ]
+    },
+    {
+      "name": "world_path_intersection",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        414,
+        260,
+        621,
+        525
+      ],
+      "anchor": "bottom",
+      "size": [
+        207,
+        176
+      ]
+    },
+    {
+      "name": "world_path_stepping",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        621,
+        260,
+        827,
+        525
+      ],
+      "anchor": "bottom",
+      "size": [
+        191,
+        157
+      ]
+    },
+    {
+      "name": "world_water_pond",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        827,
+        260,
+        1034,
+        525
+      ],
+      "anchor": "bottom",
+      "size": [
+        201,
+        193
+      ]
+    },
+    {
+      "name": "world_water_stream",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        1034,
+        260,
+        1241,
+        525
+      ],
+      "anchor": "bottom",
+      "size": [
+        192,
+        189
+      ]
+    },
+    {
+      "name": "world_water_edge",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        1241,
+        260,
+        1448,
+        525
+      ],
+      "anchor": "bottom",
+      "size": [
+        202,
+        188
+      ]
+    },
+    {
+      "name": "world_shore_grass",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        0,
+        510,
+        207,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        202,
+        193
+      ]
+    },
+    {
+      "name": "world_shore_rock",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        207,
+        510,
+        414,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        193,
+        186
+      ]
+    },
+    {
+      "name": "world_cliff_small",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        414,
+        510,
+        621,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        161,
+        182
+      ]
+    },
+    {
+      "name": "world_cliff_medium",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        621,
+        510,
+        827,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        180,
+        223
+      ]
+    },
+    {
+      "name": "world_cliff_large",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        827,
+        510,
+        1034,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        193,
+        249
+      ]
+    },
+    {
+      "name": "world_cliff_corner",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        1034,
+        510,
+        1241,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        191,
+        217
+      ]
+    },
+    {
+      "name": "world_island_tree",
+      "group": "World/Terrain",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        1241,
+        510,
+        1448,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        207,
+        251
+      ]
+    },
+    {
+      "name": "world_background_clouds",
+      "group": "World/Backgrounds",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        0,
+        805,
+        483,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        342,
+        224
+      ]
+    },
+    {
+      "name": "world_background_mountains",
+      "group": "World/Backgrounds",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        483,
+        805,
+        965,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        482,
+        224
+      ]
+    },
+    {
+      "name": "world_background_forest",
+      "group": "World/Backgrounds",
+      "source_sheet": "01_terrain_tiles.png",
+      "source_box": [
+        965,
+        805,
+        1448,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        482,
+        215
+      ]
+    },
+    {
+      "name": "world_tree_sapling",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        0,
+        0,
+        120,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        84,
+        101
+      ]
+    },
+    {
+      "name": "world_tree_young",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        105,
+        0,
+        255,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        127,
+        166
+      ]
+    },
+    {
+      "name": "world_tree_medium",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        235,
+        0,
+        415,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        177,
+        208
+      ]
+    },
+    {
+      "name": "world_tree_large",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        405,
+        0,
+        650,
+        355
+      ],
+      "anchor": "bottom",
+      "size": [
+        245,
+        317
+      ]
+    },
+    {
+      "name": "world_tree_flowering",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        650,
+        0,
+        865,
+        355
+      ],
+      "anchor": "bottom",
+      "size": [
+        215,
+        256
+      ]
+    },
+    {
+      "name": "world_tree_fruit",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        845,
+        0,
+        1050,
+        355
+      ],
+      "anchor": "bottom",
+      "size": [
+        205,
+        244
+      ]
+    },
+    {
+      "name": "world_tree_pine",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1035,
+        0,
+        1235,
+        355
+      ],
+      "anchor": "bottom",
+      "size": [
+        197,
+        292
+      ]
+    },
+    {
+      "name": "world_tree_autumn",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1215,
+        0,
+        1448,
+        355
+      ],
+      "anchor": "bottom",
+      "size": [
+        220,
+        259
+      ]
+    },
+    {
+      "name": "world_bush_small",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        0,
+        345,
+        181,
+        520
+      ],
+      "anchor": "bottom",
+      "size": [
+        138,
+        107
+      ]
+    },
+    {
+      "name": "world_bush_round",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        181,
+        345,
+        362,
+        520
+      ],
+      "anchor": "bottom",
+      "size": [
+        149,
+        129
+      ]
+    },
+    {
+      "name": "world_bush_lush",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        362,
+        345,
+        543,
+        520
+      ],
+      "anchor": "bottom",
+      "size": [
+        143,
+        140
+      ]
+    },
+    {
+      "name": "world_bush_flowering",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        543,
+        345,
+        724,
+        520
+      ],
+      "anchor": "bottom",
+      "size": [
+        144,
+        136
+      ]
+    },
+    {
+      "name": "world_bush_berry",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        724,
+        345,
+        905,
+        520
+      ],
+      "anchor": "bottom",
+      "size": [
+        140,
+        130
+      ]
+    },
+    {
+      "name": "world_bush_pink",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        905,
+        345,
+        1086,
+        520
+      ],
+      "anchor": "bottom",
+      "size": [
+        146,
+        136
+      ]
+    },
+    {
+      "name": "world_bush_hydrangea",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1086,
+        345,
+        1267,
+        520
+      ],
+      "anchor": "bottom",
+      "size": [
+        166,
+        148
+      ]
+    },
+    {
+      "name": "world_bush_rocky",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1267,
+        345,
+        1448,
+        520
+      ],
+      "anchor": "bottom",
+      "size": [
+        159,
+        140
+      ]
+    },
+    {
+      "name": "world_flower_white",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        0,
+        510,
+        103,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        85,
+        113
+      ]
+    },
+    {
+      "name": "world_flower_yellow",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        103,
+        510,
+        207,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        73,
+        113
+      ]
+    },
+    {
+      "name": "world_flower_blue",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        207,
+        510,
+        310,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        65,
+        113
+      ]
+    },
+    {
+      "name": "world_flower_purple",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        310,
+        510,
+        414,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        59,
+        129
+      ]
+    },
+    {
+      "name": "world_flower_pink",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        414,
+        510,
+        517,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        56,
+        127
+      ]
+    },
+    {
+      "name": "world_flower_mixed",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        517,
+        510,
+        621,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        73,
+        112
+      ]
+    },
+    {
+      "name": "world_grass_small",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        621,
+        510,
+        724,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        94,
+        119
+      ]
+    },
+    {
+      "name": "world_grass_medium",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        724,
+        510,
+        827,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        84,
+        80
+      ]
+    },
+    {
+      "name": "world_grass_tall",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        827,
+        510,
+        931,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        85,
+        116
+      ]
+    },
+    {
+      "name": "world_reeds",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        931,
+        510,
+        1034,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        103,
+        126
+      ]
+    },
+    {
+      "name": "world_wildflowers",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1034,
+        510,
+        1138,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        104,
+        139
+      ]
+    },
+    {
+      "name": "world_dandelions",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1138,
+        510,
+        1241,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        75,
+        106
+      ]
+    },
+    {
+      "name": "world_fern_small",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1241,
+        510,
+        1345,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        104,
+        131
+      ]
+    },
+    {
+      "name": "world_fern_large",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1345,
+        510,
+        1448,
+        690
+      ],
+      "anchor": "bottom",
+      "size": [
+        89,
+        129
+      ]
+    },
+    {
+      "name": "world_mushroom_brown",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        0,
+        675,
+        132,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        86,
+        95
+      ]
+    },
+    {
+      "name": "world_mushroom_red",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        132,
+        675,
+        263,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        98,
+        134
+      ]
+    },
+    {
+      "name": "world_mushroom_cluster",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        263,
+        675,
+        395,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        88,
+        127
+      ]
+    },
+    {
+      "name": "world_fungus_log",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        395,
+        675,
+        527,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        132,
+        136
+      ]
+    },
+    {
+      "name": "world_decor_log",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        527,
+        675,
+        658,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        131,
+        126
+      ]
+    },
+    {
+      "name": "world_plant_stump",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        658,
+        675,
+        790,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        132,
+        124
+      ]
+    },
+    {
+      "name": "world_decor_rock_large",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        790,
+        675,
+        921,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        131,
+        140
+      ]
+    },
+    {
+      "name": "world_vine_hanging",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        921,
+        675,
+        1053,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        96,
+        177
+      ]
+    },
+    {
+      "name": "world_vine_flowering",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1053,
+        675,
+        1185,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        111,
+        148
+      ]
+    },
+    {
+      "name": "world_vine_dense",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1185,
+        675,
+        1316,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        100,
+        148
+      ]
+    },
+    {
+      "name": "world_stump_vines",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1316,
+        675,
+        1448,
+        885
+      ],
+      "anchor": "bottom",
+      "size": [
+        112,
+        181
+      ]
+    },
+    {
+      "name": "world_sprout_01",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        0,
+        870,
+        290,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        84,
+        83
+      ]
+    },
+    {
+      "name": "world_sprout_02",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        290,
+        870,
+        579,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        120,
+        147
+      ]
+    },
+    {
+      "name": "world_sprout_03",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        579,
+        870,
+        869,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        196,
+        116
+      ]
+    },
+    {
+      "name": "world_ground_plant",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        869,
+        870,
+        1158,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        289,
+        195
+      ]
+    },
+    {
+      "name": "world_vegetation_cluster",
+      "group": "World/Vegetation",
+      "source_sheet": "02_vegetation.png",
+      "source_box": [
+        1158,
+        870,
+        1448,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        246,
+        191
+      ]
+    },
+    {
+      "name": "world_structure_sign",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        0,
+        0,
+        207,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        172,
+        197
+      ]
+    },
+    {
+      "name": "world_structure_bench",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        200,
+        0,
+        420,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        218,
+        186
+      ]
+    },
+    {
+      "name": "world_structure_lantern",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        420,
+        0,
+        610,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        127,
+        225
+      ]
+    },
+    {
+      "name": "world_structure_lamp_post",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        590,
+        0,
+        780,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        139,
+        262
+      ]
+    },
+    {
+      "name": "world_structure_fence_wood",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        750,
+        0,
+        1005,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        238,
+        161
+      ]
+    },
+    {
+      "name": "world_structure_fence_stone",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        975,
+        0,
+        1240,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        237,
+        167
+      ]
+    },
+    {
+      "name": "world_structure_gate",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        1215,
+        0,
+        1448,
+        350
+      ],
+      "anchor": "bottom",
+      "size": [
+        221,
+        181
+      ]
+    },
+    {
+      "name": "world_structure_bridge_wood",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        0,
+        325,
+        310,
+        625
+      ],
+      "anchor": "bottom",
+      "size": [
+        302,
+        220
+      ]
+    },
+    {
+      "name": "world_structure_bridge_stone",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        285,
+        325,
+        610,
+        625
+      ],
+      "anchor": "bottom",
+      "size": [
+        298,
+        238
+      ]
+    },
+    {
+      "name": "world_structure_birdhouse",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        590,
+        325,
+        785,
+        625
+      ],
+      "anchor": "bottom",
+      "size": [
+        146,
+        224
+      ]
+    },
+    {
+      "name": "world_structure_garden_bed",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        755,
+        325,
+        1020,
+        625
+      ],
+      "anchor": "bottom",
+      "size": [
+        265,
+        192
+      ]
+    },
+    {
+      "name": "world_structure_well",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        995,
+        325,
+        1230,
+        625
+      ],
+      "anchor": "bottom",
+      "size": [
+        188,
+        226
+      ]
+    },
+    {
+      "name": "world_structure_fire_pit",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        1200,
+        325,
+        1448,
+        625
+      ],
+      "anchor": "bottom",
+      "size": [
+        241,
+        185
+      ]
+    },
+    {
+      "name": "world_structure_hammock",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        0,
+        610,
+        207,
+        880
+      ],
+      "anchor": "bottom",
+      "size": [
+        185,
+        235
+      ]
+    },
+    {
+      "name": "world_decor_picnic_table",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        207,
+        610,
+        414,
+        880
+      ],
+      "anchor": "bottom",
+      "size": [
+        166,
+        176
+      ]
+    },
+    {
+      "name": "world_structure_dock",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        414,
+        610,
+        621,
+        880
+      ],
+      "anchor": "bottom",
+      "size": [
+        207,
+        204
+      ]
+    },
+    {
+      "name": "world_structure_archway",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        621,
+        610,
+        827,
+        880
+      ],
+      "anchor": "bottom",
+      "size": [
+        206,
+        230
+      ]
+    },
+    {
+      "name": "world_structure_mailbox",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        827,
+        610,
+        1034,
+        880
+      ],
+      "anchor": "bottom",
+      "size": [
+        123,
+        235
+      ]
+    },
+    {
+      "name": "world_structure_sign_flowering",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        1034,
+        610,
+        1241,
+        880
+      ],
+      "anchor": "bottom",
+      "size": [
+        146,
+        213
+      ]
+    },
+    {
+      "name": "world_structure_lantern_pair",
+      "group": "World/Structures",
+      "source_sheet": "03_structures_small_medium.png",
+      "source_box": [
+        1241,
+        610,
+        1448,
+        880
+      ],
+      "anchor": "bottom",
+      "size": [
+        161,
+        233
+      ]
+    },
+    {
+      "name": "world_structure_gazebo",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        0,
+        0,
+        310,
+        390
+      ],
+      "anchor": "bottom",
+      "size": [
+        295,
+        344
+      ]
+    },
+    {
+      "name": "world_structure_cabin",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        285,
+        0,
+        610,
+        390
+      ],
+      "anchor": "bottom",
+      "size": [
+        278,
+        281
+      ]
+    },
+    {
+      "name": "world_structure_cabin_upgraded",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        570,
+        0,
+        900,
+        390
+      ],
+      "anchor": "bottom",
+      "size": [
+        316,
+        319
+      ]
+    },
+    {
+      "name": "world_structure_windmill",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        850,
+        0,
+        1175,
+        390
+      ],
+      "anchor": "bottom",
+      "size": [
+        258,
+        355
+      ]
+    },
+    {
+      "name": "world_structure_fountain",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        1135,
+        0,
+        1448,
+        390
+      ],
+      "anchor": "bottom",
+      "size": [
+        301,
+        249
+      ]
+    },
+    {
+      "name": "world_structure_lookout",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        0,
+        360,
+        310,
+        770
+      ],
+      "anchor": "bottom",
+      "size": [
+        258,
+        360
+      ]
+    },
+    {
+      "name": "world_structure_observatory",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        280,
+        360,
+        600,
+        770
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        275
+      ]
+    },
+    {
+      "name": "world_structure_grand_archway",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        579,
+        365,
+        869,
+        765
+      ],
+      "anchor": "bottom",
+      "size": [
+        283,
+        305
+      ]
+    },
+    {
+      "name": "world_structure_pergola",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        825,
+        360,
+        1175,
+        770
+      ],
+      "anchor": "bottom",
+      "size": [
+        324,
+        287
+      ]
+    },
+    {
+      "name": "world_structure_pavilion",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        1158,
+        365,
+        1448,
+        765
+      ],
+      "anchor": "bottom",
+      "size": [
+        290,
+        344
+      ]
+    },
+    {
+      "name": "world_structure_bridge_grand",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        0,
+        745,
+        290,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        285,
+        302
+      ]
+    },
+    {
+      "name": "world_structure_dock_grand",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        290,
+        745,
+        579,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        222,
+        255
+      ]
+    },
+    {
+      "name": "world_structure_shed",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        579,
+        745,
+        869,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        185,
+        292
+      ]
+    },
+    {
+      "name": "world_structure_tower",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        869,
+        745,
+        1158,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        140,
+        306
+      ]
+    },
+    {
+      "name": "world_structure_greenhouse",
+      "group": "World/Structures",
+      "source_sheet": "04_structures_large_upgrades.png",
+      "source_box": [
+        1158,
+        745,
+        1448,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        246,
+        281
+      ]
+    },
+    {
+      "name": "world_decor_rock_small",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        0,
+        0,
+        241,
+        285
+      ],
+      "anchor": "bottom",
+      "size": [
+        199,
+        136
+      ]
+    },
+    {
+      "name": "world_decor_rocks",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        241,
+        0,
+        483,
+        285
+      ],
+      "anchor": "bottom",
+      "size": [
+        230,
+        161
+      ]
+    },
+    {
+      "name": "world_decor_rock_flowers",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        483,
+        0,
+        724,
+        285
+      ],
+      "anchor": "bottom",
+      "size": [
+        206,
+        157
+      ]
+    },
+    {
+      "name": "world_decor_log_mushrooms",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        724,
+        0,
+        965,
+        285
+      ],
+      "anchor": "bottom",
+      "size": [
+        241,
+        169
+      ]
+    },
+    {
+      "name": "world_decor_hollow_log",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        965,
+        0,
+        1207,
+        285
+      ],
+      "anchor": "bottom",
+      "size": [
+        227,
+        161
+      ]
+    },
+    {
+      "name": "world_decor_stump",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        1207,
+        0,
+        1448,
+        285
+      ],
+      "anchor": "bottom",
+      "size": [
+        204,
+        157
+      ]
+    },
+    {
+      "name": "world_decor_watering_can",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        0,
+        275,
+        241,
+        515
+      ],
+      "anchor": "bottom",
+      "size": [
+        196,
+        146
+      ]
+    },
+    {
+      "name": "world_decor_bucket",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        241,
+        275,
+        483,
+        515
+      ],
+      "anchor": "bottom",
+      "size": [
+        163,
+        148
+      ]
+    },
+    {
+      "name": "world_decor_shovel",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        483,
+        275,
+        724,
+        515
+      ],
+      "anchor": "bottom",
+      "size": [
+        165,
+        170
+      ]
+    },
+    {
+      "name": "world_decor_wheelbarrow",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        724,
+        275,
+        965,
+        515
+      ],
+      "anchor": "bottom",
+      "size": [
+        157,
+        156
+      ]
+    },
+    {
+      "name": "world_decor_crate",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        965,
+        275,
+        1207,
+        515
+      ],
+      "anchor": "bottom",
+      "size": [
+        166,
+        171
+      ]
+    },
+    {
+      "name": "world_decor_basket",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        1207,
+        275,
+        1448,
+        515
+      ],
+      "anchor": "bottom",
+      "size": [
+        224,
+        172
+      ]
+    },
+    {
+      "name": "world_decor_bicycle",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        0,
+        500,
+        207,
+        735
+      ],
+      "anchor": "bottom",
+      "size": [
+        194,
+        199
+      ]
+    },
+    {
+      "name": "world_decor_books",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        207,
+        500,
+        414,
+        735
+      ],
+      "anchor": "bottom",
+      "size": [
+        173,
+        134
+      ]
+    },
+    {
+      "name": "world_decor_blanket",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        414,
+        500,
+        621,
+        735
+      ],
+      "anchor": "bottom",
+      "size": [
+        207,
+        126
+      ]
+    },
+    {
+      "name": "world_decor_tea",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        621,
+        500,
+        827,
+        735
+      ],
+      "anchor": "bottom",
+      "size": [
+        206,
+        172
+      ]
+    },
+    {
+      "name": "world_decor_backpack",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        827,
+        500,
+        1034,
+        735
+      ],
+      "anchor": "bottom",
+      "size": [
+        207,
+        189
+      ]
+    },
+    {
+      "name": "world_decor_telescope",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        1034,
+        500,
+        1241,
+        735
+      ],
+      "anchor": "bottom",
+      "size": [
+        207,
+        171
+      ]
+    },
+    {
+      "name": "world_decor_planter",
+      "group": "World/Decorations",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        1241,
+        500,
+        1448,
+        735
+      ],
+      "anchor": "bottom",
+      "size": [
+        195,
+        199
+      ]
+    },
+    {
+      "name": "world_animal_butterfly",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        0,
+        710,
+        135,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        114,
+        145
+      ]
+    },
+    {
+      "name": "world_animal_bee",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        145,
+        710,
+        245,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        92,
+        116
+      ]
+    },
+    {
+      "name": "world_animal_ladybug",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        255,
+        710,
+        345,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        90,
+        95
+      ]
+    },
+    {
+      "name": "world_animal_bird",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        365,
+        710,
+        495,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        130,
+        136
+      ]
+    },
+    {
+      "name": "world_animal_squirrel",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        500,
+        710,
+        630,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        130,
+        156
+      ]
+    },
+    {
+      "name": "world_animal_rabbit",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        635,
+        710,
+        760,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        125,
+        170
+      ]
+    },
+    {
+      "name": "world_animal_duck",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        765,
+        710,
+        880,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        115,
+        158
+      ]
+    },
+    {
+      "name": "world_animal_frog",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        890,
+        710,
+        1005,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        115,
+        143
+      ]
+    },
+    {
+      "name": "world_animal_fox",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        1015,
+        710,
+        1135,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        120,
+        188
+      ]
+    },
+    {
+      "name": "world_animal_owl",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        1150,
+        710,
+        1275,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        125,
+        167
+      ]
+    },
+    {
+      "name": "world_animal_deer",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        1280,
+        710,
+        1448,
+        955
+      ],
+      "anchor": "bottom",
+      "size": [
+        168,
+        214
+      ]
+    },
+    {
+      "name": "world_animal_fish",
+      "group": "World/Wildlife",
+      "source_sheet": "05_decorations_wildlife.png",
+      "source_box": [
+        0,
+        935,
+        1448,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        194,
+        138
+      ]
+    },
+    {
+      "name": "keeper_idle_01",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        0,
+        0,
+        241,
+        280
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_idle_02",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        241,
+        0,
+        483,
+        280
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_idle_03",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        483,
+        0,
+        724,
+        280
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_idle_04",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        724,
+        0,
+        965,
+        280
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_walk_01",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        965,
+        0,
+        1207,
+        280
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_walk_02",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        1207,
+        0,
+        1448,
+        280
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_walk_03",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        0,
+        270,
+        241,
+        555
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_walk_04",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        241,
+        270,
+        483,
+        555
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_water_01",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        483,
+        270,
+        724,
+        555
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_water_02",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        724,
+        270,
+        965,
+        555
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_read_01",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        965,
+        270,
+        1207,
+        555
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_read_02",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        1207,
+        270,
+        1448,
+        555
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_celebrate_01",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        0,
+        540,
+        241,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_celebrate_02",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        241,
+        540,
+        483,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_celebrate_03",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        483,
+        540,
+        724,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_sit_01",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        724,
+        540,
+        965,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_sit_02",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        965,
+        540,
+        1207,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_sleep_01",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        1207,
+        540,
+        1448,
+        820
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_sleep_02",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        0,
+        805,
+        290,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_look_01",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        290,
+        805,
+        579,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_carry_01",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        579,
+        805,
+        869,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_carry_02",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        869,
+        805,
+        1158,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "keeper_carry_03",
+      "group": "Keeper",
+      "source_sheet": "06_keeper_animation_frames.png",
+      "source_box": [
+        1158,
+        805,
+        1448,
+        1086
+      ],
+      "anchor": "bottom",
+      "size": [
+        320,
+        320
+      ]
+    },
+    {
+      "name": "habit_icon_water",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        0,
+        0,
+        241,
+        181
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_medication",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        241,
+        0,
+        483,
+        181
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_exercise",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        483,
+        0,
+        724,
+        181
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_walk",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        724,
+        0,
+        965,
+        181
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_sleep",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        965,
+        0,
+        1207,
+        181
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_stretch",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        1207,
+        0,
+        1448,
+        181
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_meditate",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        0,
+        181,
+        241,
+        362
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_breathe",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        241,
+        181,
+        483,
+        362
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_therapy",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        483,
+        181,
+        724,
+        362
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_reflection",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        724,
+        181,
+        965,
+        362
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_food",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        965,
+        181,
+        1207,
+        362
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_vitamins",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        1207,
+        181,
+        1448,
+        362
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_bible",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        0,
+        362,
+        241,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_prayer",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        241,
+        362,
+        483,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_church",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        483,
+        362,
+        724,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_study",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        724,
+        362,
+        965,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_service",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        965,
+        362,
+        1207,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_book",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        1207,
+        362,
+        1448,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_journal",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        0,
+        543,
+        241,
+        724
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_language",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        241,
+        543,
+        483,
+        724
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_music",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        483,
+        543,
+        724,
+        724
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_dishes",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        724,
+        543,
+        965,
+        724
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_laundry",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        965,
+        543,
+        1207,
+        724
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_cleaning",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        1207,
+        543,
+        1448,
+        724
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_trash",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        0,
+        724,
+        241,
+        905
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_organize",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        241,
+        724,
+        483,
+        905
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_hygiene",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        483,
+        724,
+        724,
+        905
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_skincare",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        724,
+        724,
+        965,
+        905
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_call",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        965,
+        724,
+        1207,
+        905
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_finances",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        1207,
+        724,
+        1448,
+        905
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_planning",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        0,
+        905,
+        241,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_writing",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        241,
+        905,
+        483,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_connection",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        483,
+        905,
+        724,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_home",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        724,
+        905,
+        965,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_laptop",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        965,
+        905,
+        1207,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "habit_icon_gratitude",
+      "group": "HabitIcons",
+      "source_sheet": "07_habit_icons.png",
+      "source_box": [
+        1207,
+        905,
+        1448,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "badge_first_step",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        0,
+        0,
+        241,
+        272
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_getting_started",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        241,
+        0,
+        483,
+        272
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_completions_10",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        483,
+        0,
+        724,
+        272
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_completions_50",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        724,
+        0,
+        965,
+        272
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_completions_100",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        965,
+        0,
+        1207,
+        272
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_completions_500",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        1207,
+        0,
+        1448,
+        272
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_momentum_3",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        0,
+        272,
+        241,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_momentum_7",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        241,
+        272,
+        483,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_momentum_14",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        483,
+        272,
+        724,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_momentum_30",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        724,
+        272,
+        965,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_momentum_60",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        965,
+        272,
+        1207,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_momentum_100",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        1207,
+        272,
+        1448,
+        543
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_perfect_day",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        0,
+        543,
+        241,
+        815
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_perfect_days_5",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        241,
+        543,
+        483,
+        815
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_perfect_days_25",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        483,
+        543,
+        724,
+        815
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_level_5",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        724,
+        543,
+        965,
+        815
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_level_10",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        965,
+        543,
+        1207,
+        815
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_level_20",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        1207,
+        543,
+        1448,
+        815
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_level_30",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        0,
+        815,
+        241,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_level_50",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        241,
+        815,
+        483,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_back_in_motion",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        483,
+        815,
+        724,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_second_wind",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        724,
+        815,
+        965,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_fresh_start",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        965,
+        815,
+        1207,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "badge_world_thriving",
+      "group": "Badges",
+      "source_sheet": "08_achievement_badges.png",
+      "source_box": [
+        1207,
+        815,
+        1448,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        288,
+        288
+      ]
+    },
+    {
+      "name": "effect_sparkle_01",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        0,
+        0,
+        111,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_star",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        111,
+        0,
+        223,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_sparkle_02",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        223,
+        0,
+        334,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_xp_orb",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        334,
+        0,
+        446,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_glow",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        446,
+        0,
+        557,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_leaf",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        557,
+        0,
+        668,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_petal",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        668,
+        0,
+        780,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_heart",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        780,
+        0,
+        891,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_confetti",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        891,
+        0,
+        1002,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_rays",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        1002,
+        0,
+        1114,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_firefly",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        1114,
+        0,
+        1225,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_cloud",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        1225,
+        0,
+        1337,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "effect_bubble",
+      "group": "Effects",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        1337,
+        0,
+        1448,
+        230
+      ],
+      "anchor": "center",
+      "size": [
+        256,
+        256
+      ]
+    },
+    {
+      "name": "season_spring_tree",
+      "group": "Seasonal",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        0,
+        220,
+        181,
+        545
+      ],
+      "anchor": "bottom",
+      "size": [
+        176,
+        300
+      ]
+    },
+    {
+      "name": "season_summer_tree",
+      "group": "Seasonal",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        181,
+        220,
+        362,
+        545
+      ],
+      "anchor": "bottom",
+      "size": [
+        121,
+        301
+      ]
+    },
+    {
+      "name": "season_fall_tree",
+      "group": "Seasonal",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        362,
+        220,
+        543,
+        545
+      ],
+      "anchor": "bottom",
+      "size": [
+        103,
+        294
+      ]
+    },
+    {
+      "name": "season_winter_tree",
+      "group": "Seasonal",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        543,
+        220,
+        724,
+        545
+      ],
+      "anchor": "bottom",
+      "size": [
+        140,
+        286
+      ]
+    },
+    {
+      "name": "season_spring_bush",
+      "group": "Seasonal",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        724,
+        220,
+        905,
+        545
+      ],
+      "anchor": "bottom",
+      "size": [
+        181,
+        270
+      ]
+    },
+    {
+      "name": "season_summer_bush",
+      "group": "Seasonal",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        905,
+        220,
+        1086,
+        545
+      ],
+      "anchor": "bottom",
+      "size": [
+        181,
+        156
+      ]
+    },
+    {
+      "name": "season_fall_bush",
+      "group": "Seasonal",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        1086,
+        220,
+        1267,
+        545
+      ],
+      "anchor": "bottom",
+      "size": [
+        181,
+        172
+      ]
+    },
+    {
+      "name": "season_winter_bush",
+      "group": "Seasonal",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        1267,
+        220,
+        1448,
+        545
+      ],
+      "anchor": "bottom",
+      "size": [
+        174,
+        165
+      ]
+    },
+    {
+      "name": "scene_stage_1",
+      "group": "Scenes/Stages",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        0,
+        510,
+        265,
+        880
+      ],
+      "anchor": "center",
+      "size": [
+        210,
+        193
+      ]
+    },
+    {
+      "name": "scene_stage_2",
+      "group": "Scenes/Stages",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        230,
+        510,
+        535,
+        880
+      ],
+      "anchor": "center",
+      "size": [
+        248,
+        227
+      ]
+    },
+    {
+      "name": "scene_stage_3",
+      "group": "Scenes/Stages",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        480,
+        510,
+        810,
+        880
+      ],
+      "anchor": "center",
+      "size": [
+        260,
+        247
+      ]
+    },
+    {
+      "name": "scene_stage_4",
+      "group": "Scenes/Stages",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        740,
+        510,
+        1110,
+        880
+      ],
+      "anchor": "center",
+      "size": [
+        341,
+        310
+      ]
+    },
+    {
+      "name": "scene_stage_5",
+      "group": "Scenes/Stages",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        1030,
+        510,
+        1448,
+        880
+      ],
+      "anchor": "center",
+      "size": [
+        377,
+        331
+      ]
+    },
+    {
+      "name": "scene_clouds",
+      "group": "Scenes/Backgrounds",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        0,
+        835,
+        430,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        395,
+        222
+      ]
+    },
+    {
+      "name": "scene_mountains",
+      "group": "Scenes/Backgrounds",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        380,
+        835,
+        1010,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        495,
+        229
+      ]
+    },
+    {
+      "name": "scene_forest",
+      "group": "Scenes/Backgrounds",
+      "source_sheet": "09_effects_seasons_world_progression.png",
+      "source_box": [
+        900,
+        835,
+        1448,
+        1086
+      ],
+      "anchor": "center",
+      "size": [
+        542,
+        218
+      ]
+    }
+  ]
+}

@@ -54,7 +54,11 @@ struct HabitWeeklyView: View {
     private func row(_ habit: Habit) -> some View {
         HStack {
             NavigationLink { HabitDetailView(habit: habit) } label: {
-                Label(habit.name, systemImage: habit.iconName).lineLimit(1).foregroundStyle(.primary)
+                HStack(spacing: 7) {
+                    HabitArtworkView(iconName: habit.iconName, size: 28, tint: HabitTint.color(for: habit.colorIdentifier))
+                    Text(habit.name).lineLimit(1)
+                }
+                .foregroundStyle(.primary)
             }.frame(maxWidth: .infinity, alignment: .leading)
             ForEach(dates, id: \.self) { date in
                 let complete = store.isCompleted(habit, on: date)

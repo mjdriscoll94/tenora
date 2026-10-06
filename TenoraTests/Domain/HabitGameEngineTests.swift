@@ -76,11 +76,67 @@ final class HabitGameEngineTests: XCTestCase {
         let progress = PlayerProgress(totalXP: 500, level: 5, xpIntoLevel: 0, xpForNextLevel: 200,
                                       totalCompletions: 100, currentMomentum: 7, longestMomentum: 7, perfectDays: 1)
         let ids = HabitAchievementEngine().earnedIDs(progress: progress, perfectWeek: true, backInMotion: true)
-        for id in ["first-step", "getting-started", "momentum-3", "momentum-7", "perfect-day", "perfect-week", "completions-100", "level-5", "back-in-motion"] {
+        for id in ["first-step", "getting-started", "completions-10", "completions-50", "completions-100", "momentum-3", "momentum-7", "perfect-day", "level-5", "back-in-motion"] {
             XCTAssertTrue(ids.contains(id), id)
         }
+        XCTAssertFalse(ids.contains("momentum-14"))
+        XCTAssertFalse(ids.contains("level-10"))
         XCTAssertTrue(HabitRewardCatalog.all.filter { $0.levelRequired <= 5 }.contains { $0.id == "small-tree" })
         XCTAssertFalse(HabitRewardCatalog.all.filter { $0.levelRequired <= 5 }.contains { $0.id == "lantern" })
+    }
+
+    func testReturnMilestonesCountDistinctGapsAndUnlockRecoveryBadges() {
+        let habitID = UUID()
+        let completions = [1, 2, 6, 10].map {
+            HabitCompletion(habitID: habitID, completionDate: date($0), xpAwarded: 10)
+        }
+        let returns = engine.returningMilestoneCount(completions: completions, calendar: calendar)
+        XCTAssertEqual(returns, 2)
+
+        let progress = PlayerProgress(totalXP: 40, level: 1, xpIntoLevel: 40, xpForNextLevel: 100,
+                                      totalCompletions: 4, currentMomentum: 1, longestMomentum: 2, perfectDays: 0)
+        let ids = HabitAchievementEngine().earnedIDs(
+            progress: progress,
+            perfectWeek: false,
+            backInMotion: false,
+            returnCount: returns
+        )
+        XCTAssertTrue(ids.contains("back-in-motion"))
+        XCTAssertTrue(ids.contains("second-wind"))
+        XCTAssertFalse(ids.contains("fresh-start"))
+    }
+
+    func testRewardCatalogHasRegularUniqueUnlocksThroughLevelFifty() {
+        XCTAssertEqual(Set(HabitRewardCatalog.all.map(\.id)).count, HabitRewardCatalog.all.count)
+        XCTAssertEqual(HabitRewardCatalog.all.first?.levelRequired, 1)
+        XCTAssertEqual(HabitRewardCatalog.all.last?.levelRequired, 50)
+        XCTAssertTrue(HabitRewardCatalog.all.allSatisfy { $0.assetName != nil })
+        for index in 1..<HabitRewardCatalog.all.count {
+            XCTAssertLessThan(HabitRewardCatalog.all[index - 1].levelRequired, HabitRewardCatalog.all[index].levelRequired)
+        }
+    }
+
+    func testWorldStagesFollowProgressionThresholds() {
+        XCTAssertEqual(WorldStage(level: 1), .beginning)
+        XCTAssertEqual(WorldStage(level: 4), .beginning)
+        XCTAssertEqual(WorldStage(level: 5), .sprouting)
+        XCTAssertEqual(WorldStage(level: 11), .sprouting)
+        XCTAssertEqual(WorldStage(level: 12), .growing)
+        XCTAssertEqual(WorldStage(level: 20), .flourishing)
+        XCTAssertEqual(WorldStage(level: 30), .thriving)
+        XCTAssertEqual(WorldStage(level: 50), .thriving)
+    }
+
+    func testLaterWorldUpgradesReplaceEarlierStructures() {
+        let unlocked = Set(HabitRewardCatalog.all.map(\.id))
+        let scene = HabitWorldCatalog.scene(unlockedRewardIDs: unlocked, level: 50, season: .summer, lighting: .day)
+        let visible = Set(scene.objects.map(\.id))
+
+        XCTAssertTrue(visible.contains("observatory"))
+        XCTAssertTrue(visible.contains("stone-bridge"))
+        for replaced in ["cabin", "upgraded-cabin", "greenhouse", "windmill", "bridge", "bench", "gazebo"] {
+            XCTAssertFalse(visible.contains(replaced), replaced)
+        }
     }
 
     func testRemovingCompletionRecalculatesXPPerfectDayAndCounts() {

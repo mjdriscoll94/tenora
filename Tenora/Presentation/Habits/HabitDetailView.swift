@@ -36,7 +36,7 @@ struct HabitDetailView: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 18, style: .continuous)
                     .fill(HabitTint.color(for: current.colorIdentifier).opacity(0.16)).frame(width: 68, height: 68)
-                Image(systemName: current.iconName).font(.system(size: 30, weight: .semibold)).foregroundStyle(HabitTint.color(for: current.colorIdentifier))
+                HabitArtworkView(iconName: current.iconName, size: 64, tint: HabitTint.color(for: current.colorIdentifier))
             }
             VStack(alignment: .leading, spacing: 5) {
                 Text(current.name).font(.title2.bold())

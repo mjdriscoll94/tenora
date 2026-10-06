@@ -36,7 +36,7 @@ struct Habit: Identifiable, Codable, Equatable {
     var id: UUID = UUID()
     var name: String
     var details: String = ""
-    var iconName: String = "sparkles"
+    var iconName: String = "habit_icon_planning"
     var colorIdentifier: String = "forest"
     var createdAt: Date = Date()
     var isArchived: Bool = false
@@ -80,6 +80,7 @@ struct HabitAchievement: Identifiable, Equatable {
     let title: String
     let detail: String
     let symbol: String
+    var assetName: String? = nil
 }
 
 struct GameReward: Identifiable, Equatable {
@@ -88,6 +89,7 @@ struct GameReward: Identifiable, Equatable {
     let title: String
     let detail: String
     let symbol: String
+    var assetName: String? = nil
 }
 
 struct HabitCelebration: Identifiable, Equatable {
@@ -97,5 +99,5 @@ struct HabitCelebration: Identifiable, Equatable {
     let title: String
     let detail: String
     let symbol: String
+    var assetName: String? = nil
 }
-

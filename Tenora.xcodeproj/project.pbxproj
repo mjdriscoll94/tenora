@@ -26,9 +26,11 @@
 		2393B8B6054E621075903A5A /* StoredHabitModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD3825F00CF836F52E03EC4 /* StoredHabitModels.swift */; };
 		2BEA67D92CE64346ED4DC289 /* TenoraTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1939D430BE027D318ECB2 /* TenoraTask.swift */; };
 		30A3174F03A6B85D55EE2E92 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6933A55158FECF10EF2EEB92 /* ReminderService.swift */; };
+		32376056CC447F33D8629365 /* HabitArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DCF99DE86C1D5F466EA344 /* HabitArtwork.swift */; };
 		32AF791F93D1EF37ADF8E186 /* AttentionPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA5F503C74A21E3C107415 /* AttentionPreferences.swift */; };
 		340EB1CECF90DBD1E01E6AEB /* HoldPlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2206AB6F9FD70DA8DEEE5E2C /* HoldPlaceView.swift */; };
 		35635E90A53B0319DD9D47B9 /* HabitDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E231AAF29CA61CF2D8D869B1 /* HabitDashboardView.swift */; };
+		358E46D64644A1601CEACA18 /* HabitGameAssetManifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 8269FE43229CDC58955E922C /* HabitGameAssetManifest.json */; };
 		36008BCEE42E99A7EAEE4A3D /* StuckAssistanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360259A7CA3F430445B2D742 /* StuckAssistanceView.swift */; };
 		372A8421BFC36C8C8CF0B8B2 /* TaskStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7103B4F45D830AB456714BEE /* TaskStore.swift */; };
 		3DFA95E7E87EACD8FB4AE016 /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A53CB65C882B6D7CF17EFEB /* InboxView.swift */; };
@@ -183,6 +185,7 @@
 		5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResurfacingEngine.swift; sourceTree = "<group>"; };
 		604F3CF4EBF37F94368BCFC9 /* AddTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTaskView.swift; sourceTree = "<group>"; };
 		61958874194B7B375841513D /* SwiftDataTaskRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataTaskRepositoryTests.swift; sourceTree = "<group>"; };
+		63DCF99DE86C1D5F466EA344 /* HabitArtwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitArtwork.swift; sourceTree = "<group>"; };
 		675BBBBAD84FAABC4FC78C11 /* TenoraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraApp.swift; sourceTree = "<group>"; };
 		67A21DB4A81A3680B2429D5E /* TenoraTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TenoraTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6933A55158FECF10EF2EEB92 /* ReminderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderService.swift; sourceTree = "<group>"; };
@@ -197,6 +200,7 @@
 		7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPriorityEngine.swift; sourceTree = "<group>"; };
 		7E9B00343DE6EEF68759C7B4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		80AED55B2474F7981A77AE21 /* HabitEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEditorView.swift; sourceTree = "<group>"; };
+		8269FE43229CDC58955E922C /* HabitGameAssetManifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = HabitGameAssetManifest.json; sourceTree = "<group>"; };
 		836E8036D961E35CBBDF538C /* WidgetPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPublisher.swift; sourceTree = "<group>"; };
 		8433CE527CC435A423A25CA0 /* TaskStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStoreTests.swift; sourceTree = "<group>"; };
 		8B038186373CD861DF2FABED /* ResumeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumeView.swift; sourceTree = "<group>"; };
@@ -323,6 +327,7 @@
 		1F2356D95C1743F2EB1D859C /* Habits */ = {
 			isa = PBXGroup;
 			children = (
+				63DCF99DE86C1D5F466EA344 /* HabitArtwork.swift */,
 				C4407E9810C86616E5265177 /* HabitCollectionView.swift */,
 				E231AAF29CA61CF2D8D869B1 /* HabitDashboardView.swift */,
 				93713418D0B9463FEE2EF4A7 /* HabitDetailView.swift */,
@@ -579,6 +584,7 @@
 			isa = PBXGroup;
 			children = (
 				9C62C833A4A9B5283A2A3A0C /* Assets.xcassets */,
+				8269FE43229CDC58955E922C /* HabitGameAssetManifest.json */,
 				5CEBD60058A122871403AEA8 /* Info.plist */,
 				477A14FE7DCE18D29CD0FB89 /* PrivacyInfo.xcprivacy */,
 				D2226ECEA8A388C073F70CA3 /* Tenora.entitlements */,
@@ -777,6 +783,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5A4BAFCB67FF377485A1FC59 /* Assets.xcassets in Resources */,
+				358E46D64644A1601CEACA18 /* HabitGameAssetManifest.json in Resources */,
 				42BF030D9039FAA71890E547 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -855,6 +862,7 @@
 				79BB50144F12E9D750F3E0B7 /* DayHorizonEngine.swift in Sources */,
 				06841887A9C11964FCC806EF /* EventKitCalendarRepository.swift in Sources */,
 				737713C44F26DF32D2F20C34 /* Habit.swift in Sources */,
+				32376056CC447F33D8629365 /* HabitArtwork.swift in Sources */,
 				5FAC24A117542C5598C8DF63 /* HabitCollectionView.swift in Sources */,
 				35635E90A53B0319DD9D47B9 /* HabitDashboardView.swift in Sources */,
 				E6BA2F0E79D80B0065E1FAE7 /* HabitDetailView.swift in Sources */,

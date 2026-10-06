@@ -229,7 +229,12 @@ final class HabitStore: ObservableObject {
 
         var unlocks = try context.fetch(FetchDescriptor<StoredGameUnlock>())
         let perfectWeek = engine.hasPerfectWeek(habits: activeHabits, completions: completions, endingAt: clock.now, calendar: calendar)
-        let earned = HabitAchievementEngine().earnedIDs(progress: progress, perfectWeek: perfectWeek, backInMotion: backInMotion)
+        let earned = HabitAchievementEngine().earnedIDs(
+            progress: progress,
+            perfectWeek: perfectWeek,
+            backInMotion: backInMotion,
+            returnCount: engine.returningMilestoneCount(completions: completions, calendar: calendar)
+        )
         let existingAchievementIDs = Set(unlocks.filter { $0.kind == "achievement" }.map(\.id))
         for id in earned.subtracting(existingAchievementIDs) { context.insert(StoredGameUnlock(id: id, kind: "achievement", unlockedAt: clock.now)) }
 
@@ -246,11 +251,18 @@ final class HabitStore: ObservableObject {
         if progress.level > oldProgress.level {
             let reward = HabitRewardCatalog.all.first { $0.levelRequired == progress.level }
             return HabitCelebration(kind: .levelUp, title: "Level \(progress.level)",
-                                    detail: reward.map { "\($0.title) unlocked" } ?? "Your world grew.", symbol: "sparkles")
+                                    detail: reward.map { "\($0.title) unlocked" } ?? "Your world grew.",
+                                    symbol: "sparkles", assetName: reward?.assetName)
         }
         if let id = newAchievements.sorted().first,
            let achievement = HabitAchievementEngine.all.first(where: { $0.id == id }) {
-            return HabitCelebration(kind: .achievement, title: achievement.title, detail: achievement.detail, symbol: achievement.symbol)
+            return HabitCelebration(
+                kind: .achievement,
+                title: achievement.title,
+                detail: achievement.detail,
+                symbol: achievement.symbol,
+                assetName: achievement.assetName
+            )
         }
         if todaySummary.isPerfect {
             return HabitCelebration(kind: .perfectDay, title: "Perfect Day", detail: "Every quest for today is complete.", symbol: "sun.max.fill")
@@ -268,8 +280,8 @@ final class HabitStore: ObservableObject {
         guard scenario != .empty else { try? store.refresh(backInMotion: false); return store }
 
         let start = Calendar.current.date(byAdding: .day, value: scenario == .highLevel ? -90 : -7, to: Date()) ?? Date()
-        let read = Habit(name: "Read 20 Minutes", iconName: "book.fill", colorIdentifier: "forest", createdAt: start, difficulty: .standard)
-        let water = Habit(name: "Drink Water", iconName: "drop.fill", colorIdentifier: "copper", createdAt: start, difficulty: .easy)
+        let read = Habit(name: "Read 20 Minutes", iconName: "habit_icon_book", colorIdentifier: "forest", createdAt: start, difficulty: .standard)
+        let water = Habit(name: "Drink Water", iconName: "habit_icon_water", colorIdentifier: "copper", createdAt: start, difficulty: .easy)
         container.mainContext.insert(StoredHabit(habit: read))
         if scenario != .newPlayer { container.mainContext.insert(StoredHabit(habit: water)) }
 

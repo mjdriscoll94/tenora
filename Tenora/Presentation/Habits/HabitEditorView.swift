@@ -13,23 +13,24 @@ struct HabitEditorView: View {
     @State private var draft: Habit
     @State private var reminderEnabled: Bool
     @State private var saving = false
+    @State private var showingIconPicker = false
     @FocusState private var nameFocused: Bool
 
     private let presets: [HabitPreset] = [
-        .init(name: "Drink Water", icon: "drop.fill", difficulty: .easy),
-        .init(name: "Exercise", icon: "figure.run", difficulty: .challenging),
-        .init(name: "Read", icon: "book.fill", difficulty: .standard),
-        .init(name: "Medication", icon: "pills.fill", difficulty: .easy),
-        .init(name: "Prayer", icon: "hands.sparkles.fill", difficulty: .standard),
-        .init(name: "Bible Reading", icon: "book.closed.fill", difficulty: .standard),
-        .init(name: "Stretch", icon: "figure.flexibility", difficulty: .easy),
-        .init(name: "Walk", icon: "figure.walk", difficulty: .standard),
-        .init(name: "Journal", icon: "pencil.and.scribble", difficulty: .standard),
-        .init(name: "Practice", icon: "music.note", difficulty: .standard),
-        .init(name: "Sleep Routine", icon: "moon.stars.fill", difficulty: .standard)
+        .init(name: "Drink Water", icon: "habit_icon_water", difficulty: .easy),
+        .init(name: "Exercise", icon: "habit_icon_exercise", difficulty: .challenging),
+        .init(name: "Read", icon: "habit_icon_book", difficulty: .standard),
+        .init(name: "Medication", icon: "habit_icon_medication", difficulty: .easy),
+        .init(name: "Prayer", icon: "habit_icon_prayer", difficulty: .standard),
+        .init(name: "Bible Reading", icon: "habit_icon_bible", difficulty: .standard),
+        .init(name: "Stretch", icon: "habit_icon_stretch", difficulty: .easy),
+        .init(name: "Walk", icon: "habit_icon_walk", difficulty: .standard),
+        .init(name: "Journal", icon: "habit_icon_journal", difficulty: .standard),
+        .init(name: "Dishes", icon: "habit_icon_dishes", difficulty: .easy),
+        .init(name: "Laundry", icon: "habit_icon_laundry", difficulty: .standard),
+        .init(name: "Practice Instrument", icon: "habit_icon_music", difficulty: .standard),
+        .init(name: "Sleep Routine", icon: "habit_icon_sleep", difficulty: .standard)
     ]
-
-    private let icons = ["sparkles", "drop.fill", "figure.run", "book.fill", "pills.fill", "hands.sparkles.fill", "book.closed.fill", "figure.flexibility", "figure.walk", "pencil.and.scribble", "music.note", "moon.stars.fill", "leaf.fill", "heart.fill", "sun.max.fill"]
 
     init(habit: Habit? = nil) {
         let value = habit ?? Habit(name: "")
@@ -45,8 +46,11 @@ struct HabitEditorView: View {
                         HStack(spacing: 10) {
                             ForEach(presets) { preset in
                                 Button { apply(preset) } label: {
-                                    Label(preset.name, systemImage: preset.icon)
-                                        .font(.subheadline.weight(.medium)).padding(.horizontal, 12).frame(minHeight: 38)
+                                    HStack(spacing: 7) {
+                                        HabitArtworkView(iconName: preset.icon, size: 32)
+                                        Text(preset.name)
+                                    }
+                                        .font(.subheadline.weight(.medium)).padding(.horizontal, 10).frame(minHeight: 42)
                                         .background(Color.tenoraSage.opacity(0.18), in: Capsule())
                                 }.buttonStyle(.plain)
                             }
@@ -57,9 +61,16 @@ struct HabitEditorView: View {
                 Section("Habit") {
                     TextField("Habit name", text: $draft.name).focused($nameFocused)
                     TextField("Optional notes", text: $draft.details, axis: .vertical).lineLimit(2...5)
-                    Picker("Icon", selection: $draft.iconName) {
-                        ForEach(icons, id: \.self) { Label($0.replacingOccurrences(of: ".fill", with: "").capitalized, systemImage: $0).tag($0) }
+                    Button { showingIconPicker = true } label: {
+                        HStack {
+                            Text("Artwork").foregroundStyle(.primary)
+                            Spacer()
+                            Text(HabitIconCatalog.title(for: draft.iconName)).foregroundStyle(.secondary)
+                            HabitArtworkView(iconName: draft.iconName, size: 42, tint: HabitTint.color(for: draft.colorIdentifier))
+                            Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.tertiary)
+                        }
                     }
+                    .buttonStyle(.plain)
                     Picker("Color", selection: $draft.colorIdentifier) {
                         ForEach(HabitTint.choices, id: \.id) { choice in
                             Label(choice.name, systemImage: "circle.fill").foregroundStyle(choice.color).tag(choice.id)
@@ -108,6 +119,39 @@ struct HabitEditorView: View {
                     Task { await ReminderService.shared.requestAccess() }
                 } else { draft.reminderMinute = nil }
             }
+            .sheet(isPresented: $showingIconPicker) { iconPicker }
+        }
+    }
+
+    private var iconPicker: some View {
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3), spacing: 12) {
+                    ForEach(HabitIconCatalog.all) { option in
+                        Button {
+                            draft.iconName = option.id
+                            showingIconPicker = false
+                        } label: {
+                            VStack(spacing: 7) {
+                                HabitArtworkView(iconName: option.id, size: 72)
+                                Text(option.title).font(.caption.weight(.semibold)).foregroundStyle(.primary).lineLimit(1)
+                                Text(option.category).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+                            }
+                            .frame(maxWidth: .infinity).padding(.vertical, 10)
+                            .background(draft.iconName == option.id ? Color.tenoraSage.opacity(0.30) : Color.tenoraCard, in: RoundedRectangle(cornerRadius: 16))
+                            .overlay { RoundedRectangle(cornerRadius: 16).stroke(draft.iconName == option.id ? Color.tenoraForest : Color.tenoraSage.opacity(0.20), lineWidth: draft.iconName == option.id ? 2 : 1) }
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("\(option.title), \(option.category)")
+                        .accessibilityAddTraits(draft.iconName == option.id ? .isSelected : [])
+                    }
+                }
+                .padding()
+            }
+            .background(TenoraScreenBackground())
+            .navigationTitle("Choose Artwork")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { showingIconPicker = false } } }
         }
     }
 
