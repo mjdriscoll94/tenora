@@ -2,31 +2,30 @@ import SwiftUI
 import UIKit
 
 struct HabitDashboardView: View {
-    private enum Scope: String, CaseIterable, Identifiable {
-        case today = "Today"
-        case all = "All habits"
-        var id: String { rawValue }
+    private enum Scope: CaseIterable, Identifiable {
+        case scheduled
+        case all
+        var id: Self { self }
     }
 
     @EnvironmentObject private var store: HabitStore
     @AppStorage("habits.intro.seen") private var hasSeenIntro = false
     @State private var showingEditor = false
     @State private var showingIntro = false
-    @State private var scope: Scope = .today
+    @State private var scope: Scope = .scheduled
+    @State private var selectedDate = Calendar.autoupdatingCurrent.startOfDay(for: Date())
 
     private let calendar = Calendar.autoupdatingCurrent
 
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 22) {
-                Text(store.today.formatted(.dateTime.weekday(.wide).month(.wide).day()))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                dateNavigator
 
                 if store.activeHabits.isEmpty {
                     emptyState
                 } else {
-                    todayOverview
+                    dayOverview
                     weekCard
                     habitList
                 }
@@ -57,19 +56,74 @@ struct HabitDashboardView: View {
         }
     }
 
-    private var todayOverview: some View {
-        let summary = store.todaySummary
+    private var dateNavigator: some View {
+        HStack(spacing: 12) {
+            dateButton(symbol: "chevron.left", label: "Previous day", identifier: "habit-previous-day") {
+                moveSelectedDate(by: -1)
+            }
+
+            VStack(spacing: 2) {
+                Text(relativeDayTitle)
+                    .font(.caption.weight(.bold))
+                    .tracking(1)
+                    .foregroundStyle(Color.tenoraCopper)
+                    .accessibilityIdentifier("habit-selected-day-label")
+                Text(selectedDate.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))
+                    .font(.headline)
+            }
+            .frame(maxWidth: .infinity)
+
+            if isSelectedToday {
+                dateButton(symbol: "chevron.right", label: "Next day", identifier: "habit-next-day", disabled: true) {}
+            } else {
+                Button("Today") { selectDate(store.today) }
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.tenoraForest)
+                    .frame(minWidth: 44, minHeight: 44)
+                    .accessibilityIdentifier("habit-return-today")
+
+                dateButton(symbol: "chevron.right", label: "Next day", identifier: "habit-next-day") {
+                    moveSelectedDate(by: 1)
+                }
+            }
+        }
+        .padding(12)
+        .tenoraCard(cornerRadius: 18)
+    }
+
+    private func dateButton(
+        symbol: String,
+        label: String,
+        identifier: String,
+        disabled: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.subheadline.weight(.bold))
+                .frame(width: 42, height: 42)
+                .background(Color.tenoraSage.opacity(0.16), in: Circle())
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(disabled ? Color.secondary.opacity(0.35) : Color.tenoraForest)
+        .disabled(disabled)
+        .accessibilityLabel(label)
+        .accessibilityIdentifier(identifier)
+    }
+
+    private var dayOverview: some View {
+        let summary = store.daySummary(on: selectedDate)
         let remaining = max(0, summary.scheduled - summary.completed)
         return HStack(spacing: 20) {
             VStack(alignment: .leading, spacing: 8) {
-                Text("TODAY")
+                Text(relativeDayTitle.uppercased())
                     .font(.caption.weight(.bold))
                     .tracking(1.2)
                     .foregroundStyle(Color.tenoraSage)
-                Text(todayHeadline(summary: summary))
+                Text(dayHeadline(summary: summary))
                     .font(.system(.title2, design: .rounded, weight: .bold))
                     .foregroundStyle(.white)
-                Text(todayDetail(summary: summary, remaining: remaining))
+                Text(dayDetail(summary: summary, remaining: remaining))
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.74))
                     .fixedSize(horizontal: false, vertical: true)
@@ -84,82 +138,131 @@ struct HabitDashboardView: View {
         .accessibilityIdentifier("habit-today-summary")
     }
 
-    private func todayHeadline(summary: HabitDaySummary) -> String {
-        guard summary.scheduled > 0 else { return "Nothing due today" }
+    private func dayHeadline(summary: HabitDaySummary) -> String {
+        guard summary.scheduled > 0 else { return "Nothing scheduled" }
         if summary.completed == summary.scheduled { return "All checked in" }
         return "\(summary.completed) of \(summary.scheduled) complete"
     }
 
-    private func todayDetail(summary: HabitDaySummary, remaining: Int) -> String {
+    private func dayDetail(summary: HabitDaySummary, remaining: Int) -> String {
         guard summary.scheduled > 0 else { return "Your habits are still here when their next scheduled day arrives." }
-        if remaining == 0 { return "You’re done for today. The rest can wait." }
-        if summary.completed == 0 { return "Start with whichever one feels easiest to reach." }
-        return remaining == 1 ? "One habit remains today." : "\(remaining) habits remain today."
+        if remaining == 0 { return isSelectedToday ? "You’re done for today. The rest can wait." : "Everything scheduled for this day was checked in." }
+        if summary.completed == 0 { return isSelectedToday ? "Start with whichever one feels easiest to reach." : "You can still add any check-ins you remember." }
+        if isSelectedToday { return remaining == 1 ? "One habit remains today." : "\(remaining) habits remain today." }
+        return remaining == 1 ? "One check-in is still open for this day." : "\(remaining) check-ins are still open for this day."
     }
 
     private var weekCard: some View {
-        NavigationLink { HabitWeeklyView() } label: {
-            VStack(alignment: .leading, spacing: 16) {
-                HStack {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                NavigationLink { HabitWeeklyView(anchorDate: selectedDate) } label: {
                     VStack(alignment: .leading, spacing: 3) {
-                        Text("THIS WEEK")
+                        Text(weekTitle)
                             .font(.caption.weight(.bold)).tracking(1.1).foregroundStyle(Color.tenoraCopper)
-                        let summary = store.thisWeekSummary()
+                        let summary = selectedWeekSummary
                         Text(summary.scheduled == 0 ? "No check-ins due yet" : "\(summary.completed) of \(summary.scheduled) completed so far")
                             .font(.subheadline).foregroundStyle(.secondary)
                     }
                     Spacer()
                     Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.secondary)
                 }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
 
-                HStack(spacing: 7) {
-                    ForEach(weekDates, id: \.self) { date in
+            HStack(spacing: 7) {
+                ForEach(weekDates, id: \.self) { date in
+                    let isFuture = date > calendar.startOfDay(for: store.today)
+                    Button { selectDate(date) } label: {
                         WeekDayProgressCell(
                             date: date,
                             summary: store.daySummary(on: date),
                             isToday: calendar.isDate(date, inSameDayAs: store.today),
-                            isFuture: date > calendar.startOfDay(for: store.today)
+                            isSelected: calendar.isDate(date, inSameDayAs: selectedDate),
+                            isFuture: isFuture
                         )
                     }
+                    .buttonStyle(.plain)
+                    .disabled(isFuture)
+                    .accessibilityIdentifier("habit-week-day-\(calendar.component(.weekday, from: date))")
                 }
             }
-            .padding(16)
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .padding(16)
         .tenoraCard(cornerRadius: 20)
         .accessibilityIdentifier("habit-week-summary")
     }
 
     private var weekDates: [Date] {
-        guard let start = calendar.dateInterval(of: .weekOfYear, for: store.today)?.start else { return [] }
+        guard let start = calendar.dateInterval(of: .weekOfYear, for: selectedDate)?.start else { return [] }
         return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: start) }
+    }
+
+    private var selectedWeekSummary: HabitPeriodSummary {
+        guard let interval = calendar.dateInterval(of: .weekOfYear, for: selectedDate),
+              let finalDay = calendar.date(byAdding: .day, value: -1, to: interval.end)
+        else { return .init() }
+        return store.periodSummary(from: interval.start, through: min(calendar.startOfDay(for: store.today), finalDay))
+    }
+
+    private var weekTitle: String {
+        if calendar.isDate(selectedDate, equalTo: store.today, toGranularity: .weekOfYear) { return "THIS WEEK" }
+        guard let start = weekDates.first else { return "SELECTED WEEK" }
+        return "WEEK OF \(start.formatted(.dateTime.month(.abbreviated).day()).uppercased())"
     }
 
     private var habitList: some View {
         VStack(alignment: .leading, spacing: 12) {
             Picker("Habit view", selection: $scope) {
-                ForEach(Scope.allCases) { Text($0.rawValue).tag($0) }
+                Text(isSelectedToday ? "Today" : "Selected day").tag(Scope.scheduled)
+                Text("All habits").tag(Scope.all)
             }
             .pickerStyle(.segmented)
 
-            let habits = scope == .today ? store.todayHabits : store.activeHabits
+            let scheduledHabits = store.scheduledHabits(on: selectedDate)
+            let habits = scope == .scheduled ? scheduledHabits : store.activeHabits
             if habits.isEmpty {
                 VStack(spacing: 10) {
-                    Image(systemName: scope == .today ? "calendar.badge.checkmark" : "checklist")
+                    Image(systemName: scope == .scheduled ? "calendar.badge.checkmark" : "checklist")
                         .font(.title2).foregroundStyle(Color.tenoraCopper)
-                    Text(scope == .today ? "No habits are scheduled today" : "No active habits")
+                    Text(scope == .scheduled ? (isSelectedToday ? "No habits are scheduled today" : "No habits were scheduled for this day") : "No active habits")
                         .font(.headline)
-                    Text(scope == .today ? "Switch to All habits to review or edit your routines." : "Create a habit when you’re ready.")
+                    Text(scope == .scheduled ? "Switch to All habits to review or edit your routines." : "Create a habit when you’re ready.")
                         .font(.subheadline).foregroundStyle(.secondary).multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity).padding(24).tenoraCard(cornerRadius: 18)
             } else {
                 ForEach(habits) { habit in
-                    HabitTrackingRow(habit: habit, scheduledToday: store.todayHabits.contains(where: { $0.id == habit.id }))
+                    HabitTrackingRow(
+                        habit: habit,
+                        date: selectedDate,
+                        scheduledOnDate: scheduledHabits.contains(where: { $0.id == habit.id })
+                    )
                 }
             }
         }
+    }
+
+    private var isSelectedToday: Bool {
+        calendar.isDate(selectedDate, inSameDayAs: store.today)
+    }
+
+    private var relativeDayTitle: String {
+        if isSelectedToday { return "Today" }
+        if calendar.isDateInYesterday(selectedDate) { return "Yesterday" }
+        return selectedDate.formatted(.dateTime.weekday(.wide))
+    }
+
+    private func moveSelectedDate(by days: Int) {
+        guard let candidate = calendar.date(byAdding: .day, value: days, to: selectedDate) else { return }
+        selectDate(candidate)
+    }
+
+    private func selectDate(_ date: Date) {
+        let today = calendar.startOfDay(for: store.today)
+        let candidate = calendar.startOfDay(for: date)
+        guard candidate <= today else { return }
+        withAnimation(.easeInOut(duration: 0.2)) { selectedDate = candidate }
     }
 
     private var emptyState: some View {
@@ -207,6 +310,7 @@ private struct WeekDayProgressCell: View {
     let date: Date
     let summary: HabitDaySummary
     let isToday: Bool
+    let isSelected: Bool
     let isFuture: Bool
 
     private var complete: Bool { summary.scheduled > 0 && summary.completed == summary.scheduled }
@@ -228,7 +332,10 @@ private struct WeekDayProgressCell: View {
                 }
             }
             .frame(width: 34, height: 34)
-            .overlay { Circle().stroke(isToday ? Color.tenoraCopper : Color.clear, lineWidth: 2) }
+            .overlay { Circle().stroke(isSelected ? Color.tenoraCopper : Color.clear, lineWidth: 2.5) }
+            .overlay(alignment: .bottom) {
+                if isToday && !isSelected { Circle().fill(Color.tenoraCopper).frame(width: 5, height: 5).offset(y: 5) }
+            }
         }
         .frame(maxWidth: .infinity)
         .accessibilityElement(children: .ignore)
@@ -239,10 +346,12 @@ private struct WeekDayProgressCell: View {
 private struct HabitTrackingRow: View {
     @EnvironmentObject private var store: HabitStore
     let habit: Habit
-    let scheduledToday: Bool
+    let date: Date
+    let scheduledOnDate: Bool
 
-    private var completed: Bool { store.isCompleted(habit) }
+    private var completed: Bool { store.isCompleted(habit, on: date) }
     private var tint: Color { HabitTint.color(for: habit.colorIdentifier) }
+    private var isToday: Bool { Calendar.autoupdatingCurrent.isDate(date, inSameDayAs: store.today) }
 
     var body: some View {
         HStack(spacing: 14) {
@@ -257,25 +366,26 @@ private struct HabitTrackingRow: View {
                     Text(habit.name)
                         .font(.headline).foregroundStyle(.primary)
                         .strikethrough(completed, color: .secondary)
-                    Text(store.recentConsistencyText(for: habit))
+                    Text(rowDetail)
                         .font(.caption).foregroundStyle(.secondary)
-                    if !scheduledToday {
+                    if !scheduledOnDate {
                         Text(habit.scheduleSummary).font(.caption2.weight(.medium)).foregroundStyle(tint)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
 
-            if scheduledToday {
+            if scheduledOnDate || completed {
                 Button {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                    Task { await store.toggleCompletion(habit) }
+                    Task { await store.toggleCompletion(habit, on: date) }
                 } label: {
                     Image(systemName: completed ? "checkmark.circle.fill" : "circle")
                         .font(.system(size: 30, weight: .regular)).foregroundStyle(tint)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(completed ? "Undo completion for \(habit.name)" : "Complete \(habit.name)")
+                .accessibilityLabel(completed ? "Undo completion for \(habit.name) on \(formattedDate)" : "Complete \(habit.name) on \(formattedDate)")
+                .accessibilityIdentifier("habit-toggle-\(habit.name)")
             } else {
                 Image(systemName: "chevron.right").font(.caption.weight(.bold)).foregroundStyle(.tertiary)
             }
@@ -283,9 +393,19 @@ private struct HabitTrackingRow: View {
         .padding(15)
         .tenoraCard(cornerRadius: 18)
         .accessibilityAction(named: completed ? "Undo" : "Complete") {
-            guard scheduledToday else { return }
-            Task { await store.toggleCompletion(habit) }
+            guard scheduledOnDate || completed else { return }
+            Task { await store.toggleCompletion(habit, on: date) }
         }
+    }
+
+    private var rowDetail: String {
+        if completed { return isToday ? "Checked in today" : "Checked in \(formattedDate)" }
+        if scheduledOnDate { return isToday ? store.recentConsistencyText(for: habit) : "Scheduled for \(formattedDate)" }
+        return "Not scheduled for \(formattedDate)"
+    }
+
+    private var formattedDate: String {
+        date.formatted(.dateTime.weekday(.wide).month(.abbreviated).day())
     }
 }
 

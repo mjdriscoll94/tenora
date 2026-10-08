@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HabitWeeklyView: View {
     @EnvironmentObject private var store: HabitStore
+    let anchorDate: Date
     private let calendar = Calendar.autoupdatingCurrent
 
     var body: some View {
@@ -21,12 +22,18 @@ struct HabitWeeklyView: View {
             }
             .padding()
         }
-        .background(TenoraScreenBackground()).navigationTitle("This Week")
+        .background(TenoraScreenBackground()).navigationTitle(navigationTitle)
     }
 
     private var dates: [Date] {
-        guard let start = calendar.dateInterval(of: .weekOfYear, for: store.today)?.start else { return [] }
+        guard let start = calendar.dateInterval(of: .weekOfYear, for: anchorDate)?.start else { return [] }
         return (0..<7).compactMap { calendar.date(byAdding: .day, value: $0, to: start) }
+    }
+
+    private var navigationTitle: String {
+        calendar.isDate(anchorDate, equalTo: store.today, toGranularity: .weekOfYear)
+            ? "This Week"
+            : "Week of \(dates.first?.formatted(.dateTime.month(.abbreviated).day()) ?? "")"
     }
 
     private var dateRange: String {
@@ -35,7 +42,7 @@ struct HabitWeeklyView: View {
     }
 
     private var overview: some View {
-        let summary = store.thisWeekSummary()
+        let summary = selectedWeekSummary
         return HStack(spacing: 0) {
             metric("Completed", "\(summary.completed) / \(summary.scheduled)")
             Divider().frame(height: 36)
@@ -44,6 +51,13 @@ struct HabitWeeklyView: View {
             metric("Active days", "\(summary.activeDays)")
         }
         .padding(16).tenoraCard(cornerRadius: 18)
+    }
+
+    private var selectedWeekSummary: HabitPeriodSummary {
+        guard let interval = calendar.dateInterval(of: .weekOfYear, for: anchorDate),
+              let finalDay = calendar.date(byAdding: .day, value: -1, to: interval.end)
+        else { return .init() }
+        return store.periodSummary(from: interval.start, through: min(calendar.startOfDay(for: store.today), finalDay))
     }
 
     private func metric(_ title: String, _ value: String) -> some View {

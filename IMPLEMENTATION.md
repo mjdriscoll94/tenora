@@ -101,7 +101,7 @@ Inbox rows follow the same compact gesture language as the rest of Tenora: tap o
 
 ## Habit tracking
 
-Habits are presented as a practical check-in system rather than a game. The Habits tab opens with a concise today summary, a seven-day progress strip, and one-tap check-ins for routines due today. Users can switch to all active habits without maintaining a separate list.
+Habits are presented as a practical check-in system rather than a game. The Habits tab opens with a concise daily summary, a seven-day progress strip, and one-tap check-ins for routines due on the selected day. Users can move backward and forward through past dates, tap directly into a day in the weekly strip, and return to Today in one step. Future dates remain read-only. Users can also switch to all active habits without maintaining a separate list.
 
 Each habit supports an everyday schedule, selected weekdays, a flexible weekly target, or a repeating day interval. Optional reminders use the same local notification permission as the rest of Tenora. The editor includes quick-start routines, 36 visual icons, and the app's forest, copper, sage, and ink palette.
 

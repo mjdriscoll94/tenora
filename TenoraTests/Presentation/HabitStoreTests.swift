@@ -44,4 +44,24 @@ final class HabitStoreTests: XCTestCase {
         XCTAssertEqual(store.progress.totalCompletions, 0)
         XCTAssertFalse(store.isCompleted(habit))
     }
+
+    func testPreviousDayCheckInIsStoredOnSelectedDate() async throws {
+        let (container, store) = try makeStore()
+        let calendar = Calendar.autoupdatingCurrent
+        let yesterday = try XCTUnwrap(calendar.date(byAdding: .day, value: -1, to: Date()))
+        let createdAt = try XCTUnwrap(calendar.date(byAdding: .day, value: -3, to: Date()))
+        let habit = Habit(name: "Stretch", createdAt: createdAt)
+
+        let saved = await store.save(habit)
+        let checkedIn = await store.toggleCompletion(habit, on: yesterday)
+        XCTAssertTrue(saved)
+        XCTAssertTrue(checkedIn)
+        XCTAssertTrue(store.isCompleted(habit, on: yesterday))
+        XCTAssertFalse(store.isCompleted(habit))
+
+        let reopened = HabitStore(modelContext: container.mainContext)
+        await reopened.load()
+        XCTAssertTrue(reopened.isCompleted(habit, on: yesterday))
+        XCTAssertFalse(reopened.isCompleted(habit))
+    }
 }

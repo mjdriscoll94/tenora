@@ -17,6 +17,24 @@ final class AttentionLoopUITests: XCTestCase {
         XCTAssertFalse(app.staticTexts["Level"].exists)
         XCTAssertFalse(app.staticTexts["Quest"].exists)
 
+        let previousDay = app.buttons["habit-previous-day"]
+        XCTAssertTrue(previousDay.exists)
+        previousDay.tap()
+        let selectedDay = app.staticTexts["habit-selected-day-label"]
+        XCTAssertTrue(selectedDay.waitForExistence(timeout: 2))
+        XCTAssertEqual(selectedDay.label, "Yesterday")
+
+        let previousCheckIn = app.buttons["habit-toggle-Read 20 Minutes"]
+        XCTAssertTrue(previousCheckIn.waitForExistence(timeout: 2))
+        previousCheckIn.tap()
+        let becameCompleted = expectation(
+            for: NSPredicate(format: "label BEGINSWITH %@", "Undo completion"),
+            evaluatedWith: previousCheckIn
+        )
+        wait(for: [becameCompleted], timeout: 2)
+
+        XCTAssertTrue(app.buttons["habit-return-today"].exists)
+
         let screenshot = XCTAttachment(screenshot: app.screenshot())
         screenshot.name = "Tenora Functional Habit Tracker"
         screenshot.lifetime = .keepAlways
