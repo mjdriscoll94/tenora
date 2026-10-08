@@ -6,24 +6,29 @@ final class HabitStore: ObservableObject {
     @Published private(set) var habits: [Habit] = []
     @Published private(set) var completions: [HabitCompletion] = []
     @Published private(set) var progress = PlayerProgress()
-    @Published private(set) var achievementIDs: Set<String> = []
-    @Published private(set) var rewardIDs: Set<String> = []
-    @Published var celebration: HabitCelebration?
     @Published private(set) var errorMessage: String?
 
     private let context: ModelContext
+    private let retainedContainer: ModelContainer?
     private let clock: any TenoraClock
     private let calendar: Calendar
-    private let engine = HabitGameEngine()
+    private let engine = HabitTrackingEngine()
     var didChange: (() async -> Void)?
 
-    init(modelContext: ModelContext, clock: any TenoraClock = SystemClock(), calendar: Calendar = .autoupdatingCurrent) {
+    init(
+        modelContext: ModelContext,
+        clock: any TenoraClock = SystemClock(),
+        calendar: Calendar = .autoupdatingCurrent,
+        retainedContainer: ModelContainer? = nil
+    ) {
         context = modelContext
+        self.retainedContainer = retainedContainer
         self.clock = clock
         self.calendar = calendar
     }
 
     var activeHabits: [Habit] { habits.filter { !$0.isArchived } }
+    var today: Date { clock.now }
 
     var todayHabits: [Habit] {
         engine.scheduleCalculator.scheduledHabits(activeHabits, on: clock.now, completions: completions, calendar: calendar)
@@ -31,6 +36,14 @@ final class HabitStore: ObservableObject {
 
     var todaySummary: HabitDaySummary {
         engine.daySummary(habits: activeHabits, completions: completions, on: clock.now, calendar: calendar)
+    }
+
+    func scheduledHabits(on date: Date) -> [Habit] {
+        engine.scheduleCalculator.scheduledHabits(activeHabits, on: date, completions: completions, calendar: calendar)
+    }
+
+    func daySummary(on date: Date) -> HabitDaySummary {
+        engine.daySummary(habits: activeHabits, completions: completions, on: date, calendar: calendar)
     }
 
     func isCompleted(_ habit: Habit, on date: Date? = nil) -> Bool {
@@ -48,7 +61,7 @@ final class HabitStore: ObservableObject {
 
     func load() async {
         do {
-            try refresh(backInMotion: false)
+            try refresh()
             errorMessage = nil
             await didChange?()
         } catch {
@@ -68,7 +81,7 @@ final class HabitStore: ObservableObject {
             if let stored = try context.fetch(descriptor).first { stored.update(from: clean) }
             else { context.insert(StoredHabit(habit: clean)) }
             try context.save()
-            try refresh(backInMotion: false)
+            try refresh()
             errorMessage = nil
             await didChange?()
             return true
@@ -94,7 +107,7 @@ final class HabitStore: ObservableObject {
             let storedCompletions = try context.fetch(FetchDescriptor<StoredHabitCompletion>(predicate: #Predicate { $0.habitID == id }))
             storedCompletions.forEach(context.delete)
             try context.save()
-            try refresh(backInMotion: false)
+            try refresh()
             await didChange?()
             return true
         } catch {
@@ -107,34 +120,23 @@ final class HabitStore: ObservableObject {
     @discardableResult
     func toggleCompletion(_ habit: Habit, on date: Date? = nil) async -> Bool {
         let targetDate = date ?? clock.now
-        let oldProgress = progress
-        let previous = completions
         do {
             let id = habit.id
             let stored = try context.fetch(FetchDescriptor<StoredHabitCompletion>(predicate: #Predicate { $0.habitID == id }))
             if let existing = stored.first(where: { calendar.isDate($0.completionDate, inSameDayAs: targetDate) }) {
                 context.delete(existing)
                 try context.save()
-                try refresh(backInMotion: false)
-                celebration = nil
+                try refresh()
             } else {
-                let backInMotion = engine.isBackInMotion(previousCompletions: previous, completingAt: targetDate, calendar: calendar)
                 let completion = HabitCompletion(
                     habitID: habit.id,
                     completionDate: targetDate,
-                    xpAwarded: engine.xpAward(for: habit.difficulty),
+                    xpAwarded: 0,
                     createdAt: clock.now
                 )
                 context.insert(StoredHabitCompletion(completion: completion))
                 try context.save()
-                let previousAchievements = achievementIDs
-                try refresh(backInMotion: backInMotion)
-                celebration = celebrationFor(
-                    habit: habit,
-                    xp: completion.xpAwarded,
-                    oldProgress: oldProgress,
-                    newAchievements: achievementIDs.subtracting(previousAchievements)
-                )
+                try refresh()
             }
             errorMessage = nil
             await didChange?()
@@ -165,9 +167,6 @@ final class HabitStore: ObservableObject {
             habits = []
             completions = []
             progress = PlayerProgress()
-            achievementIDs = []
-            rewardIDs = []
-            celebration = nil
             await didChange?()
             return true
         } catch {
@@ -176,9 +175,11 @@ final class HabitStore: ObservableObject {
         }
     }
 
-    func completionRate(for habit: Habit, through date: Date? = nil) -> Double {
+    func completionRate(for habit: Habit, through date: Date? = nil, lastDays: Int? = nil) -> Double {
         let end = date ?? clock.now
-        let start = calendar.startOfDay(for: habit.createdAt)
+        let created = calendar.startOfDay(for: habit.createdAt)
+        let windowStart = lastDays.flatMap { calendar.date(byAdding: .day, value: -max(0, $0 - 1), to: calendar.startOfDay(for: end)) }
+        let start = max(created, windowStart ?? created)
         var day = start
         var scheduled = 0
         var complete = 0
@@ -193,10 +194,33 @@ final class HabitStore: ObservableObject {
         return scheduled == 0 ? 0 : Double(complete) / Double(scheduled)
     }
 
-    func xpEarned(for habit: Habit) -> Int { completions(for: habit).reduce(0) { $0 + $1.xpAwarded } }
+    func periodSummary(from start: Date, through end: Date, habits: [Habit]? = nil) -> HabitPeriodSummary {
+        let includedHabits = habits ?? activeHabits
+        var day = calendar.startOfDay(for: start)
+        let last = calendar.startOfDay(for: end)
+        var scheduled = 0
+        var completed = 0
+        var activeDays = 0
+        while day <= last {
+            let summary = engine.daySummary(habits: includedHabits, completions: completions, on: day, calendar: calendar)
+            scheduled += summary.scheduled
+            completed += summary.completed
+            if summary.completed > 0 { activeDays += 1 }
+            guard let next = calendar.date(byAdding: .day, value: 1, to: day), next > day else { break }
+            day = next
+        }
+        return HabitPeriodSummary(scheduled: scheduled, completed: completed, activeDays: activeDays)
+    }
 
-    func currentMomentum(for habit: Habit) -> Int {
-        engine.progress(habits: [habit], completions: completions.filter { $0.habitID == habit.id }, now: clock.now, calendar: calendar).currentMomentum
+    func thisWeekSummary(for habit: Habit? = nil) -> HabitPeriodSummary {
+        guard let interval = calendar.dateInterval(of: .weekOfYear, for: clock.now) else { return .init() }
+        return periodSummary(from: interval.start, through: clock.now, habits: habit.map { [$0] })
+    }
+
+    func recentConsistencyText(for habit: Habit) -> String {
+        let summary = thisWeekSummary(for: habit)
+        guard summary.scheduled > 0 else { return "No check-ins due yet this week" }
+        return "This week: \(summary.completed) of \(summary.scheduled)"
     }
 
     func weeklySummary(containing date: Date? = nil) -> [HabitDaySummary] {
@@ -210,15 +234,14 @@ final class HabitStore: ObservableObject {
     }
 
     var widgetSnapshot: HabitWidgetSnapshot {
-        let quests = todayHabits.map {
-            HabitWidgetQuest(id: $0.id, title: $0.name, iconName: $0.iconName,
-                             xp: engine.xpAward(for: $0.difficulty), isCompleted: isCompleted($0))
+        let habits = todayHabits.map {
+            HabitWidgetHabit(id: $0.id, title: $0.name, iconName: $0.iconName, isCompleted: isCompleted($0))
         }
-        return HabitWidgetSnapshot(updatedAt: clock.now, quests: quests, momentum: progress.currentMomentum,
-                                   level: progress.level, completedCount: quests.filter(\.isCompleted).count, totalCount: quests.count)
+        return HabitWidgetSnapshot(updatedAt: clock.now, habits: habits,
+                                   completedCount: habits.filter(\.isCompleted).count, totalCount: habits.count)
     }
 
-    private func refresh(backInMotion: Bool) throws {
+    private func refresh() throws {
         habits = try context.fetch(FetchDescriptor<StoredHabit>(sortBy: [SortDescriptor(\.createdAt)])).map(\.domainModel)
         completions = try context.fetch(FetchDescriptor<StoredHabitCompletion>(sortBy: [SortDescriptor(\.completionDate)])).map(\.domainModel)
         progress = engine.progress(habits: activeHabits, completions: completions, now: clock.now, calendar: calendar)
@@ -227,47 +250,7 @@ final class HabitStore: ObservableObject {
         if let storedProgress { storedProgress.update(from: progress) }
         else { context.insert(StoredPlayerProgress(progress: progress)) }
 
-        var unlocks = try context.fetch(FetchDescriptor<StoredGameUnlock>())
-        let perfectWeek = engine.hasPerfectWeek(habits: activeHabits, completions: completions, endingAt: clock.now, calendar: calendar)
-        let earned = HabitAchievementEngine().earnedIDs(
-            progress: progress,
-            perfectWeek: perfectWeek,
-            backInMotion: backInMotion,
-            returnCount: engine.returningMilestoneCount(completions: completions, calendar: calendar)
-        )
-        let existingAchievementIDs = Set(unlocks.filter { $0.kind == "achievement" }.map(\.id))
-        for id in earned.subtracting(existingAchievementIDs) { context.insert(StoredGameUnlock(id: id, kind: "achievement", unlockedAt: clock.now)) }
-
-        let eligibleRewards = Set(HabitRewardCatalog.all.filter { $0.levelRequired <= progress.level }.map(\.id))
-        let existingRewardIDs = Set(unlocks.filter { $0.kind == "reward" }.map(\.id))
-        for id in eligibleRewards.subtracting(existingRewardIDs) { context.insert(StoredGameUnlock(id: id, kind: "reward", unlockedAt: clock.now)) }
         try context.save()
-        unlocks = try context.fetch(FetchDescriptor<StoredGameUnlock>())
-        achievementIDs = Set(unlocks.filter { $0.kind == "achievement" }.map(\.id))
-        rewardIDs = Set(unlocks.filter { $0.kind == "reward" }.map(\.id))
-    }
-
-    private func celebrationFor(habit: Habit, xp: Int, oldProgress: PlayerProgress, newAchievements: Set<String>) -> HabitCelebration {
-        if progress.level > oldProgress.level {
-            let reward = HabitRewardCatalog.all.first { $0.levelRequired == progress.level }
-            return HabitCelebration(kind: .levelUp, title: "Level \(progress.level)",
-                                    detail: reward.map { "\($0.title) unlocked" } ?? "Your world grew.",
-                                    symbol: "sparkles", assetName: reward?.assetName)
-        }
-        if let id = newAchievements.sorted().first,
-           let achievement = HabitAchievementEngine.all.first(where: { $0.id == id }) {
-            return HabitCelebration(
-                kind: .achievement,
-                title: achievement.title,
-                detail: achievement.detail,
-                symbol: achievement.symbol,
-                assetName: achievement.assetName
-            )
-        }
-        if todaySummary.isPerfect {
-            return HabitCelebration(kind: .perfectDay, title: "Perfect Day", detail: "Every quest for today is complete.", symbol: "sun.max.fill")
-        }
-        return HabitCelebration(kind: .completion, title: habit.name, detail: "+\(xp) XP", symbol: "checkmark")
     }
 
     #if DEBUG
@@ -276,8 +259,8 @@ final class HabitStore: ObservableObject {
             for: StoredTask.self, StoredHabit.self, StoredHabitCompletion.self, StoredPlayerProgress.self, StoredGameUnlock.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
-        let store = HabitStore(modelContext: container.mainContext)
-        guard scenario != .empty else { try? store.refresh(backInMotion: false); return store }
+        let store = HabitStore(modelContext: container.mainContext, retainedContainer: container)
+        guard scenario != .empty else { try? store.refresh(); return store }
 
         let start = Calendar.current.date(byAdding: .day, value: scenario == .highLevel ? -90 : -7, to: Date()) ?? Date()
         let read = Habit(name: "Read 20 Minutes", iconName: "habit_icon_book", colorIdentifier: "forest", createdAt: start, difficulty: .standard)
@@ -286,20 +269,20 @@ final class HabitStore: ObservableObject {
         if scenario != .newPlayer { container.mainContext.insert(StoredHabit(habit: water)) }
 
         if scenario == .partial || scenario == .perfect {
-            container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: read.id, completionDate: Date(), xpAwarded: 20)))
+            container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: read.id, completionDate: Date(), xpAwarded: 0)))
         }
         if scenario == .perfect {
-            container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: water.id, completionDate: Date(), xpAwarded: 10)))
+            container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: water.id, completionDate: Date(), xpAwarded: 0)))
         }
         if scenario == .highLevel {
             for offset in 0..<90 {
                 let day = Calendar.current.date(byAdding: .day, value: -offset, to: Date()) ?? Date()
-                container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: read.id, completionDate: day, xpAwarded: 30)))
-                container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: water.id, completionDate: day, xpAwarded: 30)))
+                container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: read.id, completionDate: day, xpAwarded: 0)))
+                container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: water.id, completionDate: day, xpAwarded: 0)))
             }
         }
         try? container.mainContext.save()
-        try? store.refresh(backInMotion: false)
+        try? store.refresh()
         return store
     }
     #endif

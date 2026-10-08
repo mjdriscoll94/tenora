@@ -1,6 +1,6 @@
 # Tenora 1.0 production checklist
 
-Last audited: September 30, 2026
+Last audited: October 8, 2026
 
 ## Automated checks completed
 
@@ -36,6 +36,7 @@ Last audited: September 30, 2026
 - [ ] Notification permission, delivery, and Done / Later / Tomorrow actions from a cold launch.
 - [ ] Just Start timer notification after locking the phone.
 - [ ] Small and medium widgets with the shared App Group.
+- [ ] Habit schedules, reminders, historical corrections, and the habits widget after force-quit/relaunch.
 - [ ] Siri/App Shortcut discovery and capture deep links.
 - [ ] Dynamic Type, VoiceOver actions, dark appearance, and reduced motion.
 - [ ] Data export and confirmed deletion of local data.

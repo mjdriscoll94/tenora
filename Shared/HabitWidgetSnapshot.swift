@@ -1,10 +1,9 @@
 import Foundation
 
-struct HabitWidgetQuest: Codable, Identifiable, Equatable {
+struct HabitWidgetHabit: Codable, Identifiable, Equatable {
     let id: UUID
     let title: String
     let iconName: String
-    let xp: Int
     var isCompleted: Bool
 }
 
@@ -14,11 +13,39 @@ struct HabitWidgetSnapshot: Codable, Equatable {
     static let pendingKey = "tenora.habit.widget.pending.v1"
 
     let updatedAt: Date
-    var quests: [HabitWidgetQuest]
-    let momentum: Int
-    let level: Int
+    var habits: [HabitWidgetHabit]
     var completedCount: Int
     let totalCount: Int
+
+    private enum CodingKeys: String, CodingKey {
+        case updatedAt, habits, quests, completedCount, totalCount
+    }
+
+    init(updatedAt: Date, habits: [HabitWidgetHabit], completedCount: Int, totalCount: Int) {
+        self.updatedAt = updatedAt
+        self.habits = habits
+        self.completedCount = completedCount
+        self.totalCount = totalCount
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        updatedAt = try values.decode(Date.self, forKey: .updatedAt)
+        habits = try values.decodeIfPresent([HabitWidgetHabit].self, forKey: .habits)
+            ?? values.decodeIfPresent([HabitWidgetHabit].self, forKey: .quests)
+            ?? []
+        completedCount = try values.decodeIfPresent(Int.self, forKey: .completedCount)
+            ?? habits.filter(\.isCompleted).count
+        totalCount = try values.decodeIfPresent(Int.self, forKey: .totalCount) ?? habits.count
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var values = encoder.container(keyedBy: CodingKeys.self)
+        try values.encode(updatedAt, forKey: .updatedAt)
+        try values.encode(habits, forKey: .habits)
+        try values.encode(completedCount, forKey: .completedCount)
+        try values.encode(totalCount, forKey: .totalCount)
+    }
 
     static func read() -> Self? {
         guard let data = UserDefaults(suiteName: groupID)?.data(forKey: key) else { return nil }

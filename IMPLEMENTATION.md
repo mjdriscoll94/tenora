@@ -99,6 +99,16 @@ When no prior thread exists, recovery does not dead-end or show an empty history
 
 Inbox rows follow the same compact gesture language as the rest of Tenora: tap opens the task, swipe right completes it, and swipe left offers Not now as the full-swipe action plus Keep in front today as a secondary choice. Long-press exposes Start or Resume, Keep in front, Not now, and Done without requiring the user to open task details. Done and Not now are also registered as named accessibility actions so the shortcuts are available without relying on touch gestures.
 
+## Habit tracking
+
+Habits are presented as a practical check-in system rather than a game. The Habits tab opens with a concise today summary, a seven-day progress strip, and one-tap check-ins for routines due today. Users can switch to all active habits without maintaining a separate list.
+
+Each habit supports an everyday schedule, selected weekdays, a flexible weekly target, or a repeating day interval. Optional reminders use the same local notification permission as the rest of Tenora. The editor includes quick-start routines, 36 visual icons, and the app's forest, copper, sage, and ink palette.
+
+The detail screen shows 30-day consistency, this week's result, total check-ins, active days, an editable six-week history, and recent activity. Past check-ins can be added or removed to correct forgotten entries. The weekly view provides the same correction controls across every active habit. Existing saved habits and completion history remain compatible; legacy game fields stay internal only to avoid a destructive SwiftData migration.
+
+The habits widget mirrors today's due habits and accepts check-ins through the shared App Group snapshot. Widget snapshots created by the earlier quest-based version continue to decode during migration.
+
 ## User settings
 
 The main Settings screen stays intentionally short and routes to dedicated pages for Weekly Schedule, Calendar, Reminders, Recovery, Data & Privacy, and About. Explanatory copy lives on those destination pages rather than in the main menu.

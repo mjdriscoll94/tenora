@@ -4,7 +4,6 @@ struct HabitPreset: Identifiable {
     let id = UUID()
     let name: String
     let icon: String
-    let difficulty: HabitDifficulty
 }
 
 struct HabitEditorView: View {
@@ -17,19 +16,19 @@ struct HabitEditorView: View {
     @FocusState private var nameFocused: Bool
 
     private let presets: [HabitPreset] = [
-        .init(name: "Drink Water", icon: "habit_icon_water", difficulty: .easy),
-        .init(name: "Exercise", icon: "habit_icon_exercise", difficulty: .challenging),
-        .init(name: "Read", icon: "habit_icon_book", difficulty: .standard),
-        .init(name: "Medication", icon: "habit_icon_medication", difficulty: .easy),
-        .init(name: "Prayer", icon: "habit_icon_prayer", difficulty: .standard),
-        .init(name: "Bible Reading", icon: "habit_icon_bible", difficulty: .standard),
-        .init(name: "Stretch", icon: "habit_icon_stretch", difficulty: .easy),
-        .init(name: "Walk", icon: "habit_icon_walk", difficulty: .standard),
-        .init(name: "Journal", icon: "habit_icon_journal", difficulty: .standard),
-        .init(name: "Dishes", icon: "habit_icon_dishes", difficulty: .easy),
-        .init(name: "Laundry", icon: "habit_icon_laundry", difficulty: .standard),
-        .init(name: "Practice Instrument", icon: "habit_icon_music", difficulty: .standard),
-        .init(name: "Sleep Routine", icon: "habit_icon_sleep", difficulty: .standard)
+        .init(name: "Drink Water", icon: "habit_icon_water"),
+        .init(name: "Exercise", icon: "habit_icon_exercise"),
+        .init(name: "Read", icon: "habit_icon_book"),
+        .init(name: "Medication", icon: "habit_icon_medication"),
+        .init(name: "Prayer", icon: "habit_icon_prayer"),
+        .init(name: "Bible Reading", icon: "habit_icon_bible"),
+        .init(name: "Stretch", icon: "habit_icon_stretch"),
+        .init(name: "Walk", icon: "habit_icon_walk"),
+        .init(name: "Journal", icon: "habit_icon_journal"),
+        .init(name: "Dishes", icon: "habit_icon_dishes"),
+        .init(name: "Laundry", icon: "habit_icon_laundry"),
+        .init(name: "Practice Instrument", icon: "habit_icon_music"),
+        .init(name: "Sleep Routine", icon: "habit_icon_sleep")
     ]
 
     init(habit: Habit? = nil) {
@@ -63,7 +62,7 @@ struct HabitEditorView: View {
                     TextField("Optional notes", text: $draft.details, axis: .vertical).lineLimit(2...5)
                     Button { showingIconPicker = true } label: {
                         HStack {
-                            Text("Artwork").foregroundStyle(.primary)
+                            Text("Icon").foregroundStyle(.primary)
                             Spacer()
                             Text(HabitIconCatalog.title(for: draft.iconName)).foregroundStyle(.secondary)
                             HabitArtworkView(iconName: draft.iconName, size: 42, tint: HabitTint.color(for: draft.colorIdentifier))
@@ -84,16 +83,7 @@ struct HabitEditorView: View {
                     }
                     scheduleControls
                 } header: { Text("Schedule") }
-                  footer: { Text("Choose a rhythm that makes the habit easy to find without requiring a perfect week.") }
-
-                Section {
-                    Picker("Difficulty", selection: $draft.difficulty) {
-                        ForEach(HabitDifficulty.allCases) { difficulty in
-                            Text("\(difficulty.title) · \(HabitGameEngine().xpAward(for: difficulty)) XP").tag(difficulty)
-                        }
-                    }
-                } header: { Text("Quest reward") }
-                  footer: { Text("Difficulty only changes XP. It is not a judgment about the habit or your effort.") }
+                  footer: { Text("Choose a rhythm that reflects real life. You can change it whenever your schedule changes.") }
 
                 Section {
                     Toggle("Remind me", isOn: $reminderEnabled)
@@ -149,7 +139,7 @@ struct HabitEditorView: View {
                 .padding()
             }
             .background(TenoraScreenBackground())
-            .navigationTitle("Choose Artwork")
+            .navigationTitle("Choose an Icon")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { showingIconPicker = false } } }
         }
@@ -164,16 +154,15 @@ struct HabitEditorView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Days").font(.subheadline).foregroundStyle(.secondary)
                 HStack(spacing: 6) {
-                    ForEach(Array(Calendar.current.veryShortWeekdaySymbols.enumerated()), id: \.offset) { index, symbol in
-                        let weekday = index + 1
+                    ForEach(weekdayChoices, id: \.weekday) { choice in
                         Button {
-                            if draft.schedule.weekdays.contains(weekday) { draft.schedule.weekdays.remove(weekday) }
-                            else { draft.schedule.weekdays.insert(weekday) }
+                            if draft.schedule.weekdays.contains(choice.weekday) { draft.schedule.weekdays.remove(choice.weekday) }
+                            else { draft.schedule.weekdays.insert(choice.weekday) }
                         } label: {
-                            Text(symbol).font(.caption.weight(.bold)).frame(width: 34, height: 34)
-                                .background(draft.schedule.weekdays.contains(weekday) ? Color.tenoraForest : Color.tenoraSage.opacity(0.14), in: Circle())
-                                .foregroundStyle(draft.schedule.weekdays.contains(weekday) ? .white : .primary)
-                        }.buttonStyle(.plain).accessibilityLabel(Calendar.current.weekdaySymbols[index])
+                            Text(choice.symbol).font(.caption.weight(.bold)).frame(width: 34, height: 34)
+                                .background(draft.schedule.weekdays.contains(choice.weekday) ? Color.tenoraForest : Color.tenoraSage.opacity(0.14), in: Circle())
+                                .foregroundStyle(draft.schedule.weekdays.contains(choice.weekday) ? .white : .primary)
+                        }.buttonStyle(.plain).accessibilityLabel(choice.name)
                     }
                 }
             }
@@ -197,10 +186,17 @@ struct HabitEditorView: View {
         )
     }
 
+    private var weekdayChoices: [(weekday: Int, symbol: String, name: String)] {
+        let calendar = Calendar.current
+        return (0..<calendar.weekdaySymbols.count).map { offset in
+            let weekday = (offset + calendar.firstWeekday - 1) % calendar.weekdaySymbols.count + 1
+            return (weekday, calendar.veryShortWeekdaySymbols[weekday - 1], calendar.weekdaySymbols[weekday - 1])
+        }
+    }
+
     private func apply(_ preset: HabitPreset) {
         draft.name = preset.name
         draft.iconName = preset.icon
-        draft.difficulty = preset.difficulty
     }
 
     private func save() {

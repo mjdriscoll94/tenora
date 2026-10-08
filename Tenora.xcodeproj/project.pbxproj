@@ -27,12 +27,13 @@
 		2BEA67D92CE64346ED4DC289 /* TenoraTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1939D430BE027D318ECB2 /* TenoraTask.swift */; };
 		30A3174F03A6B85D55EE2E92 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6933A55158FECF10EF2EEB92 /* ReminderService.swift */; };
 		32376056CC447F33D8629365 /* HabitArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DCF99DE86C1D5F466EA344 /* HabitArtwork.swift */; };
+		324E8FAD36D5D401DA850D3A /* HabitTrackingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E2FBC5F97D8EAD28F6C3C2 /* HabitTrackingEngine.swift */; };
 		32AF791F93D1EF37ADF8E186 /* AttentionPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA5F503C74A21E3C107415 /* AttentionPreferences.swift */; };
 		340EB1CECF90DBD1E01E6AEB /* HoldPlaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2206AB6F9FD70DA8DEEE5E2C /* HoldPlaceView.swift */; };
 		35635E90A53B0319DD9D47B9 /* HabitDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E231AAF29CA61CF2D8D869B1 /* HabitDashboardView.swift */; };
-		358E46D64644A1601CEACA18 /* HabitGameAssetManifest.json in Resources */ = {isa = PBXBuildFile; fileRef = 8269FE43229CDC58955E922C /* HabitGameAssetManifest.json */; };
 		36008BCEE42E99A7EAEE4A3D /* StuckAssistanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360259A7CA3F430445B2D742 /* StuckAssistanceView.swift */; };
 		372A8421BFC36C8C8CF0B8B2 /* TaskStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7103B4F45D830AB456714BEE /* TaskStore.swift */; };
+		3C5159C284A3EBE3F3AA6936 /* HabitTrackingEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EC718BD556CB8E2D352731 /* HabitTrackingEngineTests.swift */; };
 		3DFA95E7E87EACD8FB4AE016 /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A53CB65C882B6D7CF17EFEB /* InboxView.swift */; };
 		403609666CE3263ECAB9C958 /* AgentBridgeSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDA64E65F12BB008E1CC197 /* AgentBridgeSyncService.swift */; };
 		407A2E1D409D679C508202E9 /* AgentBridgeOAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2AB20BB875340E79477903 /* AgentBridgeOAuthClient.swift */; };
@@ -43,7 +44,6 @@
 		55537D5C4CE1A7BFDBCC6A00 /* AgentBridgeSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE95205C16E1A275CDC9A52D /* AgentBridgeSnapshot.swift */; };
 		5A4BAFCB67FF377485A1FC59 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9C62C833A4A9B5283A2A3A0C /* Assets.xcassets */; };
 		5A5AD50A65F5686658A16919 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F8853A90211A4B982F760F2 /* SettingsView.swift */; };
-		5FAC24A117542C5598C8DF63 /* HabitCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4407E9810C86616E5265177 /* HabitCollectionView.swift */; };
 		60FEFCA2E15B9D0201854426 /* AddTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 604F3CF4EBF37F94368BCFC9 /* AddTaskView.swift */; };
 		6329FB0E673FA5E466B8EB3E /* AttentionLoopUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542383F66EBA91110223583F /* AttentionLoopUITests.swift */; };
 		644E2AFB793684717395777A /* LostTrackRecoveryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D764B39990454B15DBC7C90F /* LostTrackRecoveryView.swift */; };
@@ -52,7 +52,6 @@
 		6C72525EB19B50DA6209BD56 /* TenoraRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */; };
 		6D48EF0408EBBA662E06234D /* ResurfacingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */; };
 		6F083C1DCD34E705F67D4028 /* AppRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F19E6E8CD40C49962E57D3 /* AppRuntime.swift */; };
-		72E3AC2F7A54B223A21B60E9 /* HabitGameEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B36F0884BF3F07B3FC4B5B4 /* HabitGameEngine.swift */; };
 		737713C44F26DF32D2F20C34 /* Habit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA747D4781160DEC2BF368B9 /* Habit.swift */; };
 		756F3F8C64A3C26AC4854241 /* WidgetPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836E8036D961E35CBBDF538C /* WidgetPublisher.swift */; };
 		785471ADFD779481990FF92E /* JustStartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D79121D1E428AB1FF0FDD53 /* JustStartView.swift */; };
@@ -84,7 +83,6 @@
 		BCB410D06BF33C2AFCCAF696 /* AboutSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B86EE5F7D85D17A44DE5EB8 /* AboutSettingsView.swift */; };
 		C32467DAE01914D3C2B1C922 /* TransitionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CEB3DCC1A9E4C642CF2A756 /* TransitionStore.swift */; };
 		C4BD3ABAF521AED9DEDE8252 /* TransitionPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = C126DD5B2154D6CD5A5E23C5 /* TransitionPlan.swift */; };
-		C5E19C31EBD4016758B2A6B0 /* HabitGameEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7663601441E4AC27DB54D526 /* HabitGameEngineTests.swift */; };
 		C6F2A596E352B76CC0163AE7 /* TaskEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280A223B544BC7B3F89E81C8 /* TaskEditor.swift */; };
 		D38B1A595D4B0BDBD2BB0C7D /* CalendarStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B8721CBD26427721185F52 /* CalendarStore.swift */; };
 		D3DDCCD541043387E702CB84 /* ReturnTriggerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B8E439EC8238F9CEE34E3A0 /* ReturnTriggerEngine.swift */; };
@@ -100,7 +98,6 @@
 		ECA88619CA0CB9CBD5ED08B7 /* WorkingScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0F402F160274492F263C08 /* WorkingScheduleView.swift */; };
 		F0F2676A336AA0641FDAC392 /* TenoraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675BBBBAD84FAABC4FC78C11 /* TenoraApp.swift */; };
 		F2D618D935E8515463619602 /* AgentBridgeConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03CCC010B34D5320027778E /* AgentBridgeConfiguration.swift */; };
-		F38B5786F1E5914F61235834 /* HabitWorldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDFEF49A3D5B978827B24A72 /* HabitWorldView.swift */; };
 		F5BB42BDCC888B6C857013B1 /* CalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */; };
 		F87D76931A25DFDC59728325 /* SwiftDataTaskRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61958874194B7B375841513D /* SwiftDataTaskRepositoryTests.swift */; };
 		FB4E2F41072050CF199FD9BD /* CalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */; };
@@ -193,18 +190,15 @@
 		6FEADB9C842341BBFE93BAC7 /* TaskEditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditorTests.swift; sourceTree = "<group>"; };
 		7103B4F45D830AB456714BEE /* TaskStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStore.swift; sourceTree = "<group>"; };
 		72EBDF80FCA5CB223ECEA993 /* DataPrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPrivacySettingsView.swift; sourceTree = "<group>"; };
-		7663601441E4AC27DB54D526 /* HabitGameEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitGameEngineTests.swift; sourceTree = "<group>"; };
 		7896AE69EBCE9FAF58815FD6 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
 		7A53CB65C882B6D7CF17EFEB /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
 		7D79121D1E428AB1FF0FDD53 /* JustStartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JustStartView.swift; sourceTree = "<group>"; };
 		7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskPriorityEngine.swift; sourceTree = "<group>"; };
 		7E9B00343DE6EEF68759C7B4 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		80AED55B2474F7981A77AE21 /* HabitEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitEditorView.swift; sourceTree = "<group>"; };
-		8269FE43229CDC58955E922C /* HabitGameAssetManifest.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = HabitGameAssetManifest.json; sourceTree = "<group>"; };
 		836E8036D961E35CBBDF538C /* WidgetPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPublisher.swift; sourceTree = "<group>"; };
 		8433CE527CC435A423A25CA0 /* TaskStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStoreTests.swift; sourceTree = "<group>"; };
 		8B038186373CD861DF2FABED /* ResumeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumeView.swift; sourceTree = "<group>"; };
-		8B36F0884BF3F07B3FC4B5B4 /* HabitGameEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitGameEngine.swift; sourceTree = "<group>"; };
 		8B3B79C90A2DD2800B812252 /* CalendarStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStoreTests.swift; sourceTree = "<group>"; };
 		8B8E439EC8238F9CEE34E3A0 /* ReturnTriggerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReturnTriggerEngine.swift; sourceTree = "<group>"; };
 		90B8721CBD26427721185F52 /* CalendarStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStore.swift; sourceTree = "<group>"; };
@@ -226,10 +220,10 @@
 		C03CCC010B34D5320027778E /* AgentBridgeConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeConfiguration.swift; sourceTree = "<group>"; };
 		C126DD5B2154D6CD5A5E23C5 /* TransitionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionPlan.swift; sourceTree = "<group>"; };
 		C37F3FD4897A41789F7650FC /* TransitionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionPlanView.swift; sourceTree = "<group>"; };
-		C4407E9810C86616E5265177 /* HabitCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitCollectionView.swift; sourceTree = "<group>"; };
 		CFB1939D430BE027D318ECB2 /* TenoraTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraTask.swift; sourceTree = "<group>"; };
 		D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraRoute.swift; sourceTree = "<group>"; };
 		D2226ECEA8A388C073F70CA3 /* Tenora.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tenora.entitlements; sourceTree = "<group>"; };
+		D2E2FBC5F97D8EAD28F6C3C2 /* HabitTrackingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTrackingEngine.swift; sourceTree = "<group>"; };
 		D764B39990454B15DBC7C90F /* LostTrackRecoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LostTrackRecoveryView.swift; sourceTree = "<group>"; };
 		DEBD863E438A9164DFAFB3B3 /* WidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshot.swift; sourceTree = "<group>"; };
 		DF0F402F160274492F263C08 /* WorkingScheduleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingScheduleView.swift; sourceTree = "<group>"; };
@@ -237,10 +231,10 @@
 		E3197B14D4577EA491823ED0 /* AgentBridgeTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeTokenStore.swift; sourceTree = "<group>"; };
 		E38104CFAAA9B1F9B1E62ECA /* TransitionStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionStoreTests.swift; sourceTree = "<group>"; };
 		E60B9C1E87BB4040D684F879 /* Tenora.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Tenora.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E8EC718BD556CB8E2D352731 /* HabitTrackingEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTrackingEngineTests.swift; sourceTree = "<group>"; };
 		EC6C3E3B4D480D6870CCBE17 /* TenoraWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraWidgets.swift; sourceTree = "<group>"; };
 		ECD3A86FF0217FBDF1AC7F96 /* AvailabilityEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityEngine.swift; sourceTree = "<group>"; };
 		ED6F94B8FF23335A2A9EF582 /* HabitStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitStoreTests.swift; sourceTree = "<group>"; };
-		EDFEF49A3D5B978827B24A72 /* HabitWorldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitWorldView.swift; sourceTree = "<group>"; };
 		F09D1338468E0A708CBA17ED /* ReviewEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewEngineTests.swift; sourceTree = "<group>"; };
 		F1A59288033B3920E4AA9539 /* AvailabilityEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityEngineTests.swift; sourceTree = "<group>"; };
 		F397661F77BEED30C63991C5 /* WorkingScheduleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingScheduleTests.swift; sourceTree = "<group>"; };
@@ -313,7 +307,7 @@
 				5BEA5F503C74A21E3C107415 /* AttentionPreferences.swift */,
 				ECD3A86FF0217FBDF1AC7F96 /* AvailabilityEngine.swift */,
 				0E04727DCD4984B8396189FE /* DayHorizonEngine.swift */,
-				8B36F0884BF3F07B3FC4B5B4 /* HabitGameEngine.swift */,
+				D2E2FBC5F97D8EAD28F6C3C2 /* HabitTrackingEngine.swift */,
 				F7FF88060CCA737FB8B089CB /* ReminderPlanner.swift */,
 				5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */,
 				8B8E439EC8238F9CEE34E3A0 /* ReturnTriggerEngine.swift */,
@@ -328,13 +322,11 @@
 			isa = PBXGroup;
 			children = (
 				63DCF99DE86C1D5F466EA344 /* HabitArtwork.swift */,
-				C4407E9810C86616E5265177 /* HabitCollectionView.swift */,
 				E231AAF29CA61CF2D8D869B1 /* HabitDashboardView.swift */,
 				93713418D0B9463FEE2EF4A7 /* HabitDetailView.swift */,
 				80AED55B2474F7981A77AE21 /* HabitEditorView.swift */,
 				324322CB6A9010F94F61F95E /* HabitStore.swift */,
 				25F189E04A9711C2EE5877E4 /* HabitWeeklyView.swift */,
-				EDFEF49A3D5B978827B24A72 /* HabitWorldView.swift */,
 			);
 			path = Habits;
 			sourceTree = "<group>";
@@ -517,7 +509,7 @@
 			children = (
 				B9ED8DF54E8B8CB2B4EF0E7E /* AgentBridgeSnapshotTests.swift */,
 				F1A59288033B3920E4AA9539 /* AvailabilityEngineTests.swift */,
-				7663601441E4AC27DB54D526 /* HabitGameEngineTests.swift */,
+				E8EC718BD556CB8E2D352731 /* HabitTrackingEngineTests.swift */,
 				0CCF9D44CFCCC227BF002888 /* ReminderPlannerTests.swift */,
 				37321E3F7287D21A2716E2BC /* ResurfacingEngineTests.swift */,
 				33822CD21A913AB5F111CB4F /* ReturnTriggerAndHorizonTests.swift */,
@@ -584,7 +576,6 @@
 			isa = PBXGroup;
 			children = (
 				9C62C833A4A9B5283A2A3A0C /* Assets.xcassets */,
-				8269FE43229CDC58955E922C /* HabitGameAssetManifest.json */,
 				5CEBD60058A122871403AEA8 /* Info.plist */,
 				477A14FE7DCE18D29CD0FB89 /* PrivacyInfo.xcprivacy */,
 				D2226ECEA8A388C073F70CA3 /* Tenora.entitlements */,
@@ -783,7 +774,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5A4BAFCB67FF377485A1FC59 /* Assets.xcassets in Resources */,
-				358E46D64644A1601CEACA18 /* HabitGameAssetManifest.json in Resources */,
 				42BF030D9039FAA71890E547 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -798,8 +788,8 @@
 				82EE04DE38E456B14034BED0 /* AgentBridgeSnapshotTests.swift in Sources */,
 				0B0DFADD94148FE03736D015 /* AvailabilityEngineTests.swift in Sources */,
 				E5C547BC8E8E140AC6966DF8 /* CalendarStoreTests.swift in Sources */,
-				C5E19C31EBD4016758B2A6B0 /* HabitGameEngineTests.swift in Sources */,
 				81DC58F12B6DAB31910134F6 /* HabitStoreTests.swift in Sources */,
+				3C5159C284A3EBE3F3AA6936 /* HabitTrackingEngineTests.swift in Sources */,
 				4D87E9862A7B5F07302E5C08 /* ReminderPlannerTests.swift in Sources */,
 				FD2795F09FD35262B448FD83 /* ResurfacingEngineTests.swift in Sources */,
 				0EFC3B132C806F86DD78386F /* ReturnTriggerAndHorizonTests.swift in Sources */,
@@ -863,15 +853,13 @@
 				06841887A9C11964FCC806EF /* EventKitCalendarRepository.swift in Sources */,
 				737713C44F26DF32D2F20C34 /* Habit.swift in Sources */,
 				32376056CC447F33D8629365 /* HabitArtwork.swift in Sources */,
-				5FAC24A117542C5598C8DF63 /* HabitCollectionView.swift in Sources */,
 				35635E90A53B0319DD9D47B9 /* HabitDashboardView.swift in Sources */,
 				E6BA2F0E79D80B0065E1FAE7 /* HabitDetailView.swift in Sources */,
 				FCF805D4459C344EF71217D3 /* HabitEditorView.swift in Sources */,
-				72E3AC2F7A54B223A21B60E9 /* HabitGameEngine.swift in Sources */,
 				9E937895BF5AEC7A161355B5 /* HabitStore.swift in Sources */,
+				324E8FAD36D5D401DA850D3A /* HabitTrackingEngine.swift in Sources */,
 				0189AB457FC9055C28CFBA69 /* HabitWeeklyView.swift in Sources */,
 				D6FAAE697F128211EB98C7DF /* HabitWidgetSnapshot.swift in Sources */,
-				F38B5786F1E5914F61235834 /* HabitWorldView.swift in Sources */,
 				340EB1CECF90DBD1E01E6AEB /* HoldPlaceView.swift in Sources */,
 				3DFA95E7E87EACD8FB4AE016 /* InboxView.swift in Sources */,
 				785471ADFD779481990FF92E /* JustStartView.swift in Sources */,

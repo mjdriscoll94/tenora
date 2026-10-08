@@ -75,29 +75,12 @@ struct HabitDaySummary: Equatable {
     var completionFraction: Double { scheduled == 0 ? 0 : Double(completed) / Double(scheduled) }
 }
 
-struct HabitAchievement: Identifiable, Equatable {
-    let id: String
-    let title: String
-    let detail: String
-    let symbol: String
-    var assetName: String? = nil
-}
+struct HabitPeriodSummary: Equatable {
+    var scheduled = 0
+    var completed = 0
+    var activeDays = 0
 
-struct GameReward: Identifiable, Equatable {
-    let id: String
-    let levelRequired: Int
-    let title: String
-    let detail: String
-    let symbol: String
-    var assetName: String? = nil
-}
-
-struct HabitCelebration: Identifiable, Equatable {
-    enum Kind: Equatable { case completion, perfectDay, achievement, levelUp }
-    let id = UUID()
-    let kind: Kind
-    let title: String
-    let detail: String
-    let symbol: String
-    var assetName: String? = nil
+    var completionFraction: Double {
+        scheduled == 0 ? 0 : Double(completed) / Double(scheduled)
+    }
 }

@@ -183,7 +183,7 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
                       delivery > now else { continue }
                 let content = UNMutableNotificationContent()
                 content.title = habit.name
-                content.body = "This quest is still waiting for today. One small step counts."
+                content.body = "A gentle reminder for today. Check it in whenever it fits."
                 content.sound = .default
                 content.categoryIdentifier = "HABIT"
                 content.userInfo = ["habitID": habit.id.uuidString]

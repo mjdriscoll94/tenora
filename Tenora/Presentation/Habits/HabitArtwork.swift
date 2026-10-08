@@ -1,5 +1,20 @@
 import SwiftUI
 
+enum HabitTint {
+    static let choices: [(id: String, name: String, color: Color)] = [
+        ("forest", "Forest", .tenoraForest),
+        ("copper", "Copper", .tenoraCopper),
+        ("sage", "Sage", .tenoraSage),
+        ("ink", "Ink", .tenoraInk),
+        ("sun", "Gold", Color(red: 0.90, green: 0.62, blue: 0.25)),
+        ("rose", "Rose", Color(red: 0.78, green: 0.39, blue: 0.48))
+    ]
+
+    static func color(for identifier: String) -> Color {
+        choices.first { $0.id == identifier }?.color ?? .tenoraForest
+    }
+}
+
 struct HabitIconOption: Identifiable, Equatable {
     let id: String
     let title: String

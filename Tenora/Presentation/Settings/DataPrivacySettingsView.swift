@@ -21,7 +21,7 @@ struct DataPrivacySettingsView: View {
             } header: {
                 Text("Storage")
             } footer: {
-                Text("Tasks, habits, progress, working hours, attention preferences, and calendar-derived availability remain local to this device. Calendar events are read from Apple Calendar and are not copied into Tenora's database.")
+                Text("Tasks, habits, check-in history, working hours, attention preferences, and calendar-derived availability remain local to this device. Calendar events are read from Apple Calendar and are not copied into Tenora's database.")
             }
 
             Section {
@@ -29,7 +29,7 @@ struct DataPrivacySettingsView: View {
             } header: {
                 Text("Export")
             } footer: {
-                Text("Creates a JSON file containing your tasks, habits, habit completions, progression, transition plans, and saved preference values. Calendar events are not exported.")
+                Text("Creates a JSON file containing your tasks, habits, habit check-ins, transition plans, and saved preference values. Calendar events are not exported.")
             }
 
             Section {
@@ -38,7 +38,7 @@ struct DataPrivacySettingsView: View {
             } header: {
                 Text("Delete")
             } footer: {
-                Text("This removes tasks, habits, progress, transition plans, reminder reservations, and Tenora preferences from this device. It does not change calendar or notification permissions in iOS Settings.")
+                Text("This removes tasks, habits, check-in history, transition plans, reminder reservations, and Tenora preferences from this device. It does not change calendar or notification permissions in iOS Settings.")
             }
 
             if let statusMessage {
@@ -75,9 +75,6 @@ struct DataPrivacySettingsView: View {
             tasks: store.tasks,
             habits: habitStore.habits,
             habitCompletions: habitStore.completions,
-            playerProgress: habitStore.progress,
-            achievementIDs: habitStore.achievementIDs.sorted(),
-            rewardIDs: habitStore.rewardIDs.sorted(),
             transitionPlans: transitionStore.plans,
             workingSchedule: AttentionPreferences.schedule,
             reminderLevel: AttentionPreferences.reminderLevel.rawValue,
@@ -123,9 +120,6 @@ private struct TenoraExportPayload: Codable {
     let tasks: [TenoraTask]
     let habits: [Habit]
     let habitCompletions: [HabitCompletion]
-    let playerProgress: PlayerProgress
-    let achievementIDs: [String]
-    let rewardIDs: [String]
     let transitionPlans: [TransitionPlan]
     let workingSchedule: WorkingSchedule
     let reminderLevel: String

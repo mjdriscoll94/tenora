@@ -91,7 +91,7 @@ struct TenoraNowWidget: Widget {
 
 struct CompleteHabitIntent: AppIntent {
     static var title: LocalizedStringResource = "Complete Habit"
-    static var description = IntentDescription("Completes a Tenora quest from the Habits widget.")
+    static var description = IntentDescription("Checks in a Tenora habit from the Habits widget.")
     static var openAppWhenRun = false
 
     @Parameter(title: "Habit ID") var habitID: String
@@ -103,9 +103,9 @@ struct CompleteHabitIntent: AppIntent {
         guard let id = UUID(uuidString: habitID) else { return .result() }
         HabitWidgetSnapshot.queueCompletion(id: id)
         if var snapshot = HabitWidgetSnapshot.read(),
-           let index = snapshot.quests.firstIndex(where: { $0.id == id && !$0.isCompleted }) {
-            snapshot.quests[index].isCompleted = true
-            snapshot.completedCount = snapshot.quests.filter(\.isCompleted).count
+           let index = snapshot.habits.firstIndex(where: { $0.id == id && !$0.isCompleted }) {
+            snapshot.habits[index].isCompleted = true
+            snapshot.completedCount = snapshot.habits.filter(\.isCompleted).count
             snapshot.write()
         }
         WidgetCenter.shared.reloadTimelines(ofKind: "TenoraHabits")
@@ -122,8 +122,8 @@ struct HabitProvider: TimelineProvider {
     func placeholder(in context: Context) -> HabitEntry {
         HabitEntry(date: Date(), snapshot: HabitWidgetSnapshot(
             updatedAt: Date(),
-            quests: [HabitWidgetQuest(id: UUID(), title: "Take one small step", iconName: "leaf.fill", xp: 10, isCompleted: false)],
-            momentum: 3, level: 2, completedCount: 1, totalCount: 3
+            habits: [HabitWidgetHabit(id: UUID(), title: "Take one small step", iconName: "leaf.fill", isCompleted: false)],
+            completedCount: 1, totalCount: 3
         ))
     }
 
@@ -145,9 +145,9 @@ struct HabitWidgetView: View {
         let snapshot = entry.snapshot
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("TODAY'S QUESTS").font(.caption2.weight(.bold)).tracking(0.8).foregroundStyle(Color(red: 0.72, green: 0.67, blue: 1.0))
+                Text("TODAY'S HABITS").font(.caption2.weight(.bold)).tracking(0.8).foregroundStyle(Color(red: 0.72, green: 0.67, blue: 1.0))
                 Spacer()
-                Text("LV \(snapshot?.level ?? 1)").font(.caption2.weight(.bold)).foregroundStyle(.white.opacity(0.72))
+                Text(entry.date.formatted(.dateTime.weekday(.abbreviated))).font(.caption2.weight(.bold)).foregroundStyle(.white.opacity(0.72))
             }
             Text("\(snapshot?.completedCount ?? 0) / \(snapshot?.totalCount ?? 0)")
                 .font(.title2.bold())
@@ -155,31 +155,30 @@ struct HabitWidgetView: View {
                 .tint(Color(red: 0.48, green: 0.36, blue: 1.0))
             if family == .systemMedium {
                 VStack(spacing: 5) {
-                    ForEach(Array((snapshot?.quests ?? []).prefix(4))) { quest in
+                    ForEach(Array((snapshot?.habits ?? []).prefix(4))) { habit in
                         HStack(spacing: 8) {
-                            if quest.isCompleted {
+                            if habit.isCompleted {
                                 Image(systemName: "checkmark.circle.fill").foregroundStyle(Color(red: 0.24, green: 0.68, blue: 0.94))
                             } else {
-                                Button(intent: CompleteHabitIntent(habitID: quest.id)) {
+                                Button(intent: CompleteHabitIntent(habitID: habit.id)) {
                                     Image(systemName: "circle").foregroundStyle(.white.opacity(0.78))
-                                }.buttonStyle(.plain).accessibilityLabel("Complete \(quest.title)")
+                                }.buttonStyle(.plain).accessibilityLabel("Check in \(habit.title)")
                             }
-                            Text(quest.title).font(.caption).lineLimit(1)
+                            Text(habit.title).font(.caption).lineLimit(1)
                             Spacer()
-                            Text("\(quest.xp) XP").font(.caption2).foregroundStyle(.white.opacity(0.60))
                         }
                     }
                 }
-            } else if let quest = snapshot?.quests.first(where: { !$0.isCompleted }) {
-                Button(intent: CompleteHabitIntent(habitID: quest.id)) {
-                    Label(quest.title, systemImage: "circle").font(.caption).lineLimit(2)
-                }.buttonStyle(.plain).accessibilityLabel("Complete \(quest.title)")
+            } else if let habit = snapshot?.habits.first(where: { !$0.isCompleted }) {
+                Button(intent: CompleteHabitIntent(habitID: habit.id)) {
+                    Label(habit.title, systemImage: "circle").font(.caption).lineLimit(2)
+                }.buttonStyle(.plain).accessibilityLabel("Check in \(habit.title)")
             } else {
-                Text((snapshot?.totalCount ?? 0) == 0 ? "Open Tenora to create a habit" : "Every quest is complete")
+                Text((snapshot?.totalCount ?? 0) == 0 ? "Open Tenora to create a habit" : "Everything is checked in")
                     .font(.caption).foregroundStyle(.white.opacity(0.72))
             }
             Spacer(minLength: 0)
-            Label("Momentum \(snapshot?.momentum ?? 0)", systemImage: "flame.fill")
+            Text("Small steps count")
                 .font(.caption2.weight(.semibold)).foregroundStyle(.white.opacity(0.72))
         }
         .foregroundStyle(.white)
@@ -193,8 +192,8 @@ struct HabitWidgetView: View {
 struct TenoraHabitsWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: "TenoraHabits", provider: HabitProvider()) { HabitWidgetView(entry: $0) }
-            .configurationDisplayName("Today's Quests")
-            .description("See your habit progress and complete a quest in one tap.")
+            .configurationDisplayName("Today's Habits")
+            .description("See today's habits and check in with one tap.")
             .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

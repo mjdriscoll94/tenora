@@ -32,7 +32,22 @@ struct TenoraApp: App {
 }
 
 private struct TenoraRootView: View {
+    @ViewBuilder
     var body: some View {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-habit-tracker-test") {
+            NavigationStack { HabitDashboardView() }
+                .environmentObject(HabitStore.preview(.partial))
+        } else {
+            standardRoot
+        }
+        #else
+        standardRoot
+        #endif
+    }
+
+    @ViewBuilder
+    private var standardRoot: some View {
         if TenoraFeatures.agentBridgeEnabled {
             AgentAccountRootView()
         } else {

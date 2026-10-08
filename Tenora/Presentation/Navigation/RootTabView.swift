@@ -47,7 +47,7 @@ struct RootTabView: View {
                 HabitDashboardView()
                     .toolbar { settingsButton }
             }
-            .tabItem { Label("Habits", systemImage: "sparkles") }
+            .tabItem { Label("Habits", systemImage: "checkmark.circle") }
             .tag(3)
         }
         .sheet(isPresented: $isAddingTask) {

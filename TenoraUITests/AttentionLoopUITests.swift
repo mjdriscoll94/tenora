@@ -2,6 +2,28 @@ import XCTest
 
 final class AttentionLoopUITests: XCTestCase {
     @MainActor
+    func testHabitTrackerShowsPracticalProgressWithoutGameLanguage() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing", "-habit-tracker-test"]
+        app.launch()
+
+        XCTAssertTrue(app.descendants(matching: .any)["habit-today-summary"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.descendants(matching: .any)["habit-week-summary"].exists)
+        XCTAssertTrue(app.buttons["Today"].exists)
+        XCTAssertTrue(app.buttons["All habits"].exists)
+        XCTAssertTrue(app.staticTexts["Read 20 Minutes"].exists)
+        XCTAssertTrue(app.staticTexts["Drink Water"].exists)
+        XCTAssertFalse(app.staticTexts["XP"].exists)
+        XCTAssertFalse(app.staticTexts["Level"].exists)
+        XCTAssertFalse(app.staticTexts["Quest"].exists)
+
+        let screenshot = XCTAttachment(screenshot: app.screenshot())
+        screenshot.name = "Tenora Functional Habit Tracker"
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+    }
+
+    @MainActor
     func testSettingsMenuStaysConciseAndRoutesToDetails() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]

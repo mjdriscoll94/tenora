@@ -15,35 +15,33 @@ final class HabitStoreTests: XCTestCase {
         return (container, HabitStore(modelContext: container.mainContext))
     }
 
-    func testHabitAndProgressPersistAcrossStoreReload() async throws {
+    func testHabitAndCheckInPersistAcrossStoreReload() async throws {
         let (container, store) = try makeStore()
         let habit = Habit(name: "Read", difficulty: .standard)
         let saved = await store.save(habit)
         let completed = await store.toggleCompletion(habit)
         XCTAssertTrue(saved)
         XCTAssertTrue(completed)
-        XCTAssertEqual(store.progress.totalXP, 20)
+        XCTAssertEqual(store.progress.totalCompletions, 1)
 
         let reopened = HabitStore(modelContext: container.mainContext)
         await reopened.load()
         XCTAssertEqual(reopened.habits.map(\.name), ["Read"])
         XCTAssertEqual(reopened.completions.count, 1)
-        XCTAssertEqual(reopened.progress.totalXP, 20)
-        XCTAssertTrue(reopened.achievementIDs.contains("first-step"))
+        XCTAssertEqual(reopened.progress.totalCompletions, 1)
+        XCTAssertTrue(reopened.isCompleted(habit))
     }
 
-    func testUndoCompletionRecalculatesButKeepsEarnedUnlock() async throws {
+    func testUndoCompletionRecalculatesTrackingSummary() async throws {
         let (_, store) = try makeStore()
         let habit = Habit(name: "Walk", difficulty: .easy)
         let saved = await store.save(habit)
         let completed = await store.toggleCompletion(habit)
         XCTAssertTrue(saved)
         XCTAssertTrue(completed)
-        XCTAssertTrue(store.achievementIDs.contains("first-step"))
         let undone = await store.toggleCompletion(habit)
         XCTAssertTrue(undone)
-        XCTAssertEqual(store.progress.totalXP, 0)
         XCTAssertEqual(store.progress.totalCompletions, 0)
-        XCTAssertTrue(store.achievementIDs.contains("first-step"), "Earned rewards never disappear")
+        XCTAssertFalse(store.isCompleted(habit))
     }
 }
