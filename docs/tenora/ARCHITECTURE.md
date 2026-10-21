@@ -55,7 +55,8 @@ flowchart TD
 ### Application startup and dependency ownership
 
 - `TenoraApp` injects one `AppRuntime` into the SwiftUI environment.
-- `AppRuntime` is a `@MainActor` singleton that creates one `ModelContainer`, `TaskStore`, `HabitStore`, `CalendarStore`, and `TransitionStore`.
+- `AppRuntime` is a `@MainActor` singleton that resolves the active local profile, creates its settings/outbox/repositories, then creates one `ModelContainer`, `TaskStore`, `HabitStore`, `CalendarStore`, and `TransitionStore`.
+- Presentation stores depend on repository protocols. `HabitStore` no longer imports or queries SwiftData, and the settings screens observe `AppSettingsStore` rather than owning raw defaults keys.
 - SwiftData initialization now uses the explicit V1 schema. An ordinary persistent-store open failure shows a non-destructive recovery screen backed by a temporary in-memory container; the original store is not deleted.
 - Store `didChange` closures fan changes out to widgets, notifications, calendar-trigger resolution, and—only when compiled with `TENORA_AGENT_BRIDGE_ENABLED`—snapshot synchronization.
 - `RootTabView` owns a four-tab `TabView`, deep-link routing, task/habit sheets, scene lifecycle refresh, and a repeating 60-second foreground refresh loop.
@@ -92,16 +93,23 @@ container, but immutable stores created by the last distributed binary are not y
 in. The task-tags representation is deliberately unchanged in V1 because replacing its
 inferred transformer changed the schema signature during compatibility testing.
 
+The `offline` profile deliberately retains the original store location. Any future
+authenticated profile receives a separate store under `Application Support/Tenora Profiles`.
+Switching profiles currently requires rebuilding `AppRuntime` through a normal app launch;
+live account switching belongs to Phase 3.
+
 ### Other local persistence
 
 | Location | Information |
 |---|---|
-| Standard `UserDefaults` | Weekly working schedule and legacy start/end, capacity choice, selected calendars, buffer/minimum gap, reminder level/window, recovery settings, focused task UUID, last-left time, onboarding, transition plans, pending notification actions, notification reservations, Agent Bridge toggles/last sync |
-| App Group `UserDefaults` | Task/calendar widget snapshot, habit widget snapshot, queued interactive habit-completion IDs |
+| Standard `UserDefaults` | `UserDefaultsSettingsRepository` stores Tenora preferences under `profile.<profile>.settings.v1.*`. The offline profile copies and mirrors legacy keys for compatibility. Agent Bridge preferences remain isolated in its disabled subsystem. |
+| App Group `UserDefaults` | Active-profile marker plus profile-keyed task/calendar widget snapshot, habit widget snapshot, and queued interactive habit-completion IDs |
+| Application Support JSON | `FileMutationOutbox` stores durable mutation envelopes in one atomic file per local profile. Nothing reads these files for upload yet. |
 | Keychain | Agent Bridge OAuth token bundle, using `AfterFirstUnlockThisDeviceOnly` |
 | EventKit | Calendar events are read live and are not persisted in SwiftData |
 
-This fragmentation matters for account switching and migration: deleting a SwiftData store is not equivalent to deleting a user's Tenora state.
+The profile namespace now prevents ordinary cross-profile reads, but deletion and export
+must still coordinate SwiftData, settings, outbox, App Group state, and Keychain.
 
 ### Backup, restore, and deletion
 
@@ -259,7 +267,7 @@ flowchart LR
 
 1. **Presentation:** Existing SwiftUI screens continue to call stores/view models.
 2. **Domain:** Existing priority, availability, resurfacing, recovery, and habit engines remain deterministic and provider-independent.
-3. **Repository:** Replace direct persistence in feature stores with protocols for tasks, habits, completions, settings, and households. A repository writes local data and enqueues sync mutations in one logical operation.
+3. **Repository:** Task, habit, completion, retained progress, transition, settings, and profile protocols are implemented locally. Household repositories arrive only with the household model. Phase 4 must make local data and outbox writes transactionally consistent before transmission.
 4. **Local database:** Versioned SwiftData contains personal and cached shared records plus sync metadata. Secrets stay in Keychain.
 5. **Sync coordinator:** Uploads idempotent mutations, downloads changes after a cursor, updates local state, resolves expected conflicts, and reports actionable failures without blocking personal use.
 6. **Auth session:** Owns account state independently from Agent Bridge and maps the provider identity to a stable Tenora user UUID.
@@ -456,7 +464,7 @@ The outbox stores `clientMutationID`, entity ID/type, intended operation, base s
 See [PROGRESS.md](PROGRESS.md) for commands and exact results. In summary:
 
 - Unsigned generic iPhone build: passed, including Tenora and TenoraWidgets.
-- iOS unit tests: 96/96 passed.
+- iOS unit tests: 105/105 passed after Phase 2 (the Phase 1 baseline was 96/96).
 - iOS UI tests: 9/9 passed.
 - Agent Bridge TypeScript build: passed.
 - Agent Bridge tests: 6/6 passed.
@@ -465,7 +473,7 @@ See [PROGRESS.md](PROGRESS.md) for commands and exact results. In summary:
 ## Required implementation sequence
 
 1. Data safety: complete for the clean-start initial release; release fixtures and the tags migration gate become mandatory before V2.
-2. Persistence boundaries: repositories for all record families and account-aware settings; no user-facing household feature yet.
+2. Persistence boundaries: complete; repositories, profile namespaces, compatibility settings, widget isolation, and a dormant durable outbox are in place.
 3. Cloud foundation: stable Tenora identity, Postgres schema, RLS, audit, API, CI security tests.
 4. Personal sync pilot: idempotent outbox/cursor protocol and reversible private import.
 5. Household identity: create/join/invite/revoke/transfer ownership.

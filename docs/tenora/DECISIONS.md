@@ -169,3 +169,22 @@ capture would delay the initial release without protecting user data that must b
 **Guardrail:** This is a one-time pre-release decision, not permission for future builds
 to delete user data automatically. The versioned schema, backup/restore, safe startup,
 and preservation-first migration rules remain in the codebase for all post-release data.
+
+## D-018 — Namespace local state before introducing identity
+
+**Decision:** Every local persistence surface now accepts a `LocalProfileID`. The existing
+installation is the stable `offline` profile; future authenticated profiles use separate
+SwiftData files, versioned settings keys, outbox files, widget snapshots, focus state, and
+pending action queues.
+
+**Why:** Authentication must not be allowed to arrive before local isolation. Otherwise,
+sign-out or account switching could expose one adult's focused task, habits, schedule, or
+widget content to another adult using the same device.
+
+**Compatibility:** Only the `offline` profile may read and mirror the pre-namespace
+UserDefaults keys. Authenticated profiles never fall back to those keys. This bridge stays
+for at least one stable release and must be removed through an explicit later migration.
+
+**Consequence:** Phase 2 creates local profiles and an outbox but does not create accounts,
+send mutations, or change the source of truth. Phase 3 owns identity/session lifecycle;
+Phase 4 must make local-record and outbox writes transactionally consistent before sync is enabled.

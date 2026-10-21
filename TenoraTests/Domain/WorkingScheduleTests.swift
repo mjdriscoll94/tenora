@@ -87,6 +87,7 @@ final class WorkingScheduleTests: XCTestCase {
         }
     }
 
+    @MainActor
     func testTimeChangesPersistWhenScheduleEditorIsRecreated() throws {
         let suiteName = "com.tenora.tests.working-schedule.\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))

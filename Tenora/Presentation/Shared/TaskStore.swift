@@ -11,6 +11,7 @@ final class TaskStore: ObservableObject {
     private let priorityEngine: TaskPriorityEngine
     private let resurfacingEngine: ResurfacingEngine
     private let calendar: Calendar
+    private let settings: SettingsRepository?
     var didChange: (([TenoraTask]) async -> Void)?
 
     init(
@@ -18,14 +19,17 @@ final class TaskStore: ObservableObject {
         clock: any TenoraClock = SystemClock(),
         priorityEngine: TaskPriorityEngine = TaskPriorityEngine(),
         resurfacingEngine: ResurfacingEngine = ResurfacingEngine(),
-        calendar: Calendar = .autoupdatingCurrent
+        calendar: Calendar = .autoupdatingCurrent,
+        settings: SettingsRepository? = nil
     ) {
         self.repository = repository
         self.clock = clock
         self.priorityEngine = priorityEngine
         self.resurfacingEngine = resurfacingEngine
         self.calendar = calendar
-        focusedTaskID = UserDefaults.standard.string(forKey: "focusedTask").flatMap(UUID.init(uuidString:))
+        self.settings = settings
+        focusedTaskID = (settings?.string(for: .focusedTaskID) ?? UserDefaults.standard.string(forKey: "focusedTask"))
+            .flatMap(UUID.init(uuidString:))
     }
 
     var inboxTasks: [TenoraTask] {
@@ -180,7 +184,8 @@ final class TaskStore: ObservableObject {
 
     private func setFocus(_ id: UUID?) {
         focusedTaskID = id
-        UserDefaults.standard.set(id?.uuidString, forKey: "focusedTask")
+        if let settings { settings.set(id?.uuidString, for: .focusedTaskID) }
+        else { UserDefaults.standard.set(id?.uuidString, forKey: "focusedTask") }
     }
 
     func restoreFocusedTaskID(_ id: UUID?) {

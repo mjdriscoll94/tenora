@@ -19,8 +19,10 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
     private var lastDay: Date?
     private var lastZone: String?
     private var lastStatus: UNAuthorizationStatus?
+    private var settings: SettingsRepository?
 
-    func configure() {
+    func configure(settings: SettingsRepository? = nil) {
+        if let settings { self.settings = settings }
         center.delegate = self
         let taskCategory = UNNotificationCategory(identifier: "TASK", actions: [
             UNNotificationAction(identifier: "DONE", title: "Done", options: []),
@@ -61,14 +63,14 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
             let currentRevision = revision
             let snapshot = latestTasks
             await refreshStatus()
-            guard AttentionPreferences.taskRemindersEnabled,
+            guard taskRemindersEnabled,
                   [.authorized, .provisional, .ephemeral].contains(status) else {
                 let pending = await center.pendingNotificationRequests()
                 center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.identifier.hasPrefix("tenora.reminder.") }.map(\.identifier))
                 lastSignature = nil
                 return
             }
-            let preferenceSignature = "\(AttentionPreferences.reminderLevel.rawValue)|\(AttentionPreferences.reminderStartMinute)|\(AttentionPreferences.reminderEndMinute)"
+            let preferenceSignature = "\(reminderLevel.rawValue)|\(reminderStartMinute)|\(reminderEndMinute)"
             let signature = try? JSONEncoder().encode([String(data: (try? JSONEncoder().encode(snapshot)) ?? Data(), encoding: .utf8) ?? "", preferenceSignature])
             let day = Calendar.current.startOfDay(for: Date())
             let zone = TimeZone.current.identifier
@@ -86,18 +88,20 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
             }.map { $0.request.identifier })
             errorMessage = nil
             let now = Date()
-            let oldSlots = UserDefaults.standard.array(forKey: "reminderReservations") as? [Date] ?? []
+            let oldSlots = settings?.object(for: .reminderReservations) as? [Date]
+                ?? UserDefaults.standard.array(forKey: "reminderReservations") as? [Date] ?? []
             let used = oldSlots.filter { $0 <= now && $0 >= Calendar.current.startOfDay(for: now) }
             let plan = ReminderPlanner().plan(
                 tasks: snapshot,
                 now: now,
                 usedSlots: used,
-                dailyLimit: AttentionPreferences.reminderLevel.dailyLimit,
-                deliveryStartMinute: AttentionPreferences.reminderStartMinute,
-                deliveryEndMinute: AttentionPreferences.reminderEndMinute
+                dailyLimit: reminderLevel.dailyLimit,
+                deliveryStartMinute: reminderStartMinute,
+                deliveryEndMinute: reminderEndMinute
             )
             // Slots already due remain spent even when tasks change or a notification is dismissed.
-            UserDefaults.standard.set(used + plan.map(\.date), forKey: "reminderReservations")
+            if let settings { settings.set(used + plan.map(\.date), for: .reminderReservations) }
+            else { UserDefaults.standard.set(used + plan.map(\.date), forKey: "reminderReservations") }
             for (index, reminder) in plan.enumerated() {
                 let content = UNMutableNotificationContent()
                 content.title = reminder.title
@@ -243,16 +247,20 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
         guard ["DONE", "LATER", "TOMORROW", "KEEP_GOING", "DONE_FOR_NOW"].contains(action) else { return }
         if await handleAction?(id, action) != true {
             // Keep the requested decision across a failed save or cold launch.
-            var queued = UserDefaults.standard.array(forKey: "pendingReminderActions") as? [[String: String]] ?? []
+            var queued = settings?.object(for: .pendingReminderActions) as? [[String: String]]
+                ?? UserDefaults.standard.array(forKey: "pendingReminderActions") as? [[String: String]] ?? []
             queued.append(["id": id.uuidString, "action": action])
-            UserDefaults.standard.set(queued, forKey: "pendingReminderActions")
+            if let settings { settings.set(queued, for: .pendingReminderActions) }
+            else { UserDefaults.standard.set(queued, forKey: "pendingReminderActions") }
             errorMessage = "Open Tenora to finish saving your reminder decision."
         }
     }
 
     func drainActions() async {
-        let queued = UserDefaults.standard.array(forKey: "pendingReminderActions") as? [[String: String]] ?? []
-        UserDefaults.standard.removeObject(forKey: "pendingReminderActions")
+        let queued = settings?.object(for: .pendingReminderActions) as? [[String: String]]
+            ?? UserDefaults.standard.array(forKey: "pendingReminderActions") as? [[String: String]] ?? []
+        if let settings { settings.remove(.pendingReminderActions) }
+        else { UserDefaults.standard.removeObject(forKey: "pendingReminderActions") }
         for entry in queued {
             if let value = entry["id"], let id = UUID(uuidString: value), let action = entry["action"] { await process(id: id, action: action) }
         }
@@ -263,11 +271,28 @@ final class ReminderService: NSObject, ObservableObject, UNUserNotificationCente
         center.removePendingNotificationRequests(withIdentifiers: pending.filter { $0.identifier.hasPrefix("tenora.") }.map(\.identifier))
         let delivered = await center.deliveredNotifications()
         center.removeDeliveredNotifications(withIdentifiers: delivered.filter { $0.request.identifier.hasPrefix("tenora.") }.map { $0.request.identifier })
-        UserDefaults.standard.removeObject(forKey: "reminderReservations")
+        if let settings { settings.remove(.reminderReservations) }
+        else { UserDefaults.standard.removeObject(forKey: "reminderReservations") }
         lastSignature = nil
     }
 
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions { [.banner, .sound] }
+
+    private var taskRemindersEnabled: Bool {
+        settings?.bool(for: .taskRemindersEnabled, default: true) ?? AttentionPreferences.taskRemindersEnabled
+    }
+
+    private var reminderLevel: ReminderLevel {
+        ReminderLevel(rawValue: settings?.string(for: .reminderLevel) ?? "") ?? AttentionPreferences.reminderLevel
+    }
+
+    private var reminderStartMinute: Int {
+        settings?.integer(for: .reminderStartMinute, default: 9 * 60) ?? AttentionPreferences.reminderStartMinute
+    }
+
+    private var reminderEndMinute: Int {
+        settings?.integer(for: .reminderEndMinute, default: 20 * 60) ?? AttentionPreferences.reminderEndMinute
+    }
 }
 
 final class TenoraAppDelegate: NSObject, UIApplicationDelegate {

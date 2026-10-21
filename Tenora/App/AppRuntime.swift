@@ -11,6 +11,10 @@ final class AppRuntime {
     let calendar: CalendarStore
     let transitions: TransitionStore
     let habits: HabitStore
+    let appSettings: AppSettingsStore
+    let profileID: LocalProfileID
+    let settings: SettingsRepository
+    let outbox: MutationOutbox?
 
     private init() {
         let uiTesting: Bool
@@ -19,6 +23,13 @@ final class AppRuntime {
         #else
         uiTesting = false
         #endif
+
+        let profileRepository = UserDefaultsProfileRepository()
+        profileID = profileRepository.activeProfileID
+        settings = UserDefaultsSettingsRepository(profileID: profileID)
+        appSettings = AppSettingsStore(repository: settings)
+        ReminderService.shared.configure(settings: settings)
+        outbox = try? FileMutationOutbox()
 
         let resolvedContainer: ModelContainer
         let resolvedIssue: PersistenceIssue?
@@ -30,10 +41,10 @@ final class AppRuntime {
             if uiTesting {
                 resolvedContainer = try TenoraModelContainerFactory.makeInMemory()
             } else {
-                resolvedContainer = try TenoraModelContainerFactory.makePersistent()
+                resolvedContainer = try TenoraModelContainerFactory.makePersistent(profileID: profileID)
             }
             #else
-            resolvedContainer = try TenoraModelContainerFactory.makePersistent()
+            resolvedContainer = try TenoraModelContainerFactory.makePersistent(profileID: profileID)
             #endif
             resolvedIssue = nil
         } catch {
@@ -51,11 +62,28 @@ final class AppRuntime {
 
         container = resolvedContainer
         persistenceIssue = resolvedIssue
-        tasks = TaskStore(repository: SwiftDataTaskRepository(modelContext: container.mainContext))
-        habits = HabitStore(modelContext: container.mainContext)
+        tasks = TaskStore(
+            repository: SwiftDataTaskRepository(
+                modelContext: container.mainContext,
+                profileID: profileID,
+                outbox: outbox
+            ),
+            settings: settings
+        )
+        let habitRepository = SwiftDataHabitRepository(
+            modelContext: container.mainContext,
+            profileID: profileID,
+            outbox: outbox
+        )
+        habits = HabitStore(
+            habitRepository: habitRepository,
+            completionRepository: habitRepository,
+            progressRepository: habitRepository,
+            retainedRepository: habitRepository
+        )
         let calendarRepository = EventKitCalendarRepository()
-        calendar = CalendarStore(repository: calendarRepository)
-        transitions = TransitionStore()
+        calendar = CalendarStore(repository: calendarRepository, settings: settings)
+        transitions = TransitionStore(repository: UserDefaultsTransitionRepository(settings: settings, outbox: outbox))
 
         do {
             #if DEBUG
@@ -127,8 +155,9 @@ final class AppRuntime {
 
     func publishWidget() {
         WidgetPublisher.publish(tasks: tasks.tasks, events: calendar.events,
-            calendarKnown: calendar.availability != nil, focusedTaskID: tasks.focusedTaskID)
-        WidgetPublisher.publishHabits(habits.widgetSnapshot)
+            calendarKnown: calendar.availability != nil, focusedTaskID: tasks.focusedTaskID,
+            profileID: profileID, settings: settings)
+        WidgetPublisher.publishHabits(habits.widgetSnapshot, profileID: profileID)
     }
 }
 

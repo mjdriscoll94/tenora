@@ -1,10 +1,15 @@
 import SwiftUI
 
+@MainActor
 struct WorkingScheduleView: View {
     @StateObject private var editor: WorkingScheduleEditor
     private var weekdays: [Int] { (0..<7).map { (Calendar.current.firstWeekday - 1 + $0) % 7 + 1 } }
 
     init() { _editor = StateObject(wrappedValue: WorkingScheduleEditor()) }
+
+    init(settings: SettingsRepository, onSave: ((String) -> Void)? = nil) {
+        _editor = StateObject(wrappedValue: WorkingScheduleEditor(settings: settings, onSave: onSave))
+    }
 
     var body: some View {
         List {
@@ -93,17 +98,31 @@ private struct WorkDayView: View {
     }
 }
 
+@MainActor
 final class WorkingScheduleEditor: ObservableObject {
     @Published private(set) var schedule: WorkingSchedule
 
-    private let defaults: UserDefaults
+    private let settings: SettingsRepository
+    private let onSave: ((String) -> Void)?
 
-    init(defaults: UserDefaults = .standard) {
-        self.defaults = defaults
+    convenience init() {
+        self.init(settings: UserDefaultsSettingsRepository(profileID: .offline))
+    }
+
+    init(settings: SettingsRepository, onSave: ((String) -> Void)? = nil) {
+        self.settings = settings
+        self.onSave = onSave
         schedule = AttentionPreferences.schedule(
-            from: defaults.string(forKey: AttentionPreferences.scheduleKey) ?? "",
-            fallback: AttentionPreferences.workingHours(from: defaults)
+            from: settings.string(for: .workingSchedule) ?? "",
+            fallback: WorkingHours(
+                startHour: settings.integer(for: .legacyWorkStart, default: 8),
+                endHour: settings.integer(for: .legacyWorkEnd, default: 18)
+            )
         )
+    }
+
+    convenience init(defaults: UserDefaults) {
+        self.init(settings: UserDefaultsSettingsRepository(profileID: .offline, defaults: defaults))
     }
 
     /// Replaces the complete day value before publishing it, ensuring nested controls
@@ -117,7 +136,8 @@ final class WorkingScheduleEditor: ObservableObject {
         guard updated.isValid,
               let data = try? JSONEncoder().encode(updated),
               let json = String(data: data, encoding: .utf8) else { return false }
-        defaults.set(json, forKey: AttentionPreferences.scheduleKey)
+        settings.set(json, for: .workingSchedule)
+        onSave?(json)
         schedule = updated
         return true
     }

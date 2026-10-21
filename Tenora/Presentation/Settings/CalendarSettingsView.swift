@@ -3,11 +3,8 @@ import UIKit
 
 struct CalendarSettingsView: View {
     @EnvironmentObject private var calendarStore: CalendarStore
+    @EnvironmentObject private var settings: AppSettingsStore
     @Environment(\.openURL) private var openURL
-    @AppStorage(AttentionPreferences.useAllCalendarsKey) private var useAllCalendars = true
-    @AppStorage(AttentionPreferences.meetingBufferMinutesKey) private var meetingBufferMinutes = 0
-    @AppStorage(AttentionPreferences.minimumGapMinutesKey) private var minimumGapMinutes = 15
-    @State private var selectedCalendarIDs = AttentionPreferences.selectedCalendarIDs
 
     var body: some View {
         Form {
@@ -23,14 +20,14 @@ struct CalendarSettingsView: View {
 
             if calendarStore.authorization == .fullAccess {
                 Section {
-                    Picker("Meeting buffer", selection: $meetingBufferMinutes) {
+                    Picker("Meeting buffer", selection: $settings.meetingBufferMinutes) {
                         Text("None").tag(0)
                         Text("5 minutes").tag(5)
                         Text("10 minutes").tag(10)
                         Text("15 minutes").tag(15)
                         Text("30 minutes").tag(30)
                     }
-                    Picker("Minimum usable gap", selection: $minimumGapMinutes) {
+                    Picker("Minimum usable gap", selection: $settings.minimumGapMinutes) {
                         Text("Any length").tag(0)
                         Text("10 minutes").tag(10)
                         Text("15 minutes").tag(15)
@@ -44,8 +41,8 @@ struct CalendarSettingsView: View {
                 }
 
                 Section {
-                    Toggle("Use all calendars", isOn: $useAllCalendars)
-                    if !useAllCalendars {
+                    Toggle("Use all calendars", isOn: $settings.useAllCalendars)
+                    if !settings.useAllCalendars {
                         ForEach(calendarStore.availableCalendars) { calendar in
                             Toggle(isOn: selectionBinding(calendar.id)) {
                                 VStack(alignment: .leading, spacing: 2) {
@@ -68,19 +65,18 @@ struct CalendarSettingsView: View {
         .navigationTitle("Calendar")
         .task {
             await calendarStore.refresh()
-            if selectedCalendarIDs.isEmpty {
-                selectedCalendarIDs = Set(calendarStore.availableCalendars.map(\.id))
+            if settings.selectedCalendarIDs.isEmpty {
+                settings.selectedCalendarIDs = Set(calendarStore.availableCalendars.map(\.id))
             }
         }
-        .onChange(of: useAllCalendars) { _, newValue in
-            if !newValue, selectedCalendarIDs.isEmpty {
-                selectedCalendarIDs = Set(calendarStore.availableCalendars.map(\.id))
-                AttentionPreferences.saveSelectedCalendarIDs(selectedCalendarIDs)
+        .onChange(of: settings.useAllCalendars) { _, newValue in
+            if !newValue, settings.selectedCalendarIDs.isEmpty {
+                settings.selectedCalendarIDs = Set(calendarStore.availableCalendars.map(\.id))
             }
             refresh()
         }
-        .onChange(of: meetingBufferMinutes) { _, _ in refresh() }
-        .onChange(of: minimumGapMinutes) { _, _ in refresh() }
+        .onChange(of: settings.meetingBufferMinutes) { _, _ in refresh() }
+        .onChange(of: settings.minimumGapMinutes) { _, _ in refresh() }
     }
 
     @ViewBuilder
@@ -109,14 +105,15 @@ struct CalendarSettingsView: View {
 
     private func selectionBinding(_ id: String) -> Binding<Bool> {
         Binding(
-            get: { selectedCalendarIDs.contains(id) },
+            get: { settings.selectedCalendarIDs.contains(id) },
             set: { selected in
+                var identifiers = settings.selectedCalendarIDs
                 if selected {
-                    selectedCalendarIDs.insert(id)
-                } else if selectedCalendarIDs.count > 1 {
-                    selectedCalendarIDs.remove(id)
+                    identifiers.insert(id)
+                } else if identifiers.count > 1 {
+                    identifiers.remove(id)
                 }
-                AttentionPreferences.saveSelectedCalendarIDs(selectedCalendarIDs)
+                settings.selectedCalendarIDs = identifiers
                 refresh()
             }
         )

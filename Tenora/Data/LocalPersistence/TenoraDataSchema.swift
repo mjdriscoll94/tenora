@@ -32,8 +32,21 @@ enum TenoraModelContainerFactory {
         )
     }
 
-    static func makePersistent() throws -> ModelContainer {
+    static func makePersistent(profileID: LocalProfileID = .offline) throws -> ModelContainer {
         let schema = Schema(versionedSchema: TenoraSchemaV1.self)
+        if profileID != .offline {
+            let support = try FileManager.default.url(
+                for: .applicationSupportDirectory,
+                in: .userDomainMask,
+                appropriateFor: nil,
+                create: true
+            )
+            let directory = support
+                .appending(path: "Tenora Profiles", directoryHint: .isDirectory)
+                .appending(path: profileID.storageComponent, directoryHint: .isDirectory)
+            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            return try make(at: directory.appending(path: "Tenora.store"))
+        }
         return try ModelContainer(
             for: schema,
             migrationPlan: TenoraMigrationPlan.self,

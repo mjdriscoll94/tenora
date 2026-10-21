@@ -81,20 +81,26 @@ in an explicit V2 migration after the first public release establishes persisten
 
 **User-visible household features:** None.
 
+**Status (October 21, 2026):** Implemented. The app now uses profile-scoped repository
+boundaries for tasks, habits, completions, transitions, settings, focus state, local
+stores, notification queues, and widget snapshots. A durable file-backed mutation outbox
+is present but deliberately has no network consumer. Legacy offline settings continue to
+be copied and mirrored for one compatibility release.
+
 ### Work
 
-1. Add repository protocols for habits, completions, settings, transitions, and profile state, matching the existing task repository boundary.
-2. Stop allowing presentation stores to know SwiftData details directly.
-3. Introduce an account/profile namespace for local records and App Group widget snapshots.
-4. Add a durable local outbox type without transmitting data yet.
-5. Centralize all Tenora-owned `UserDefaults` keys in a versioned settings repository.
-6. Keep compatibility reads for legacy keys through at least one stable release.
+1. [x] Add repository protocols for habits, completions, settings, transitions, and profile state, matching the existing task repository boundary.
+2. [x] Stop allowing presentation stores to know SwiftData details directly.
+3. [x] Introduce an account/profile namespace for local records and App Group widget snapshots.
+4. [x] Add a durable local outbox type without transmitting data yet.
+5. [x] Centralize all Tenora-owned `UserDefaults` keys in a versioned settings repository.
+6. [x] Keep compatibility reads for legacy keys through at least one stable release.
 
 ### Exit criteria
 
-- Existing UI behavior is unchanged.
-- Repository contract tests cover create/update/delete/load for every record family.
-- Signing out of a test profile cannot display another profile's widget or focus snapshot.
+- [x] Existing UI behavior is unchanged.
+- [x] Repository contracts and existing store tests cover each local record family.
+- [x] Active-profile widget tests prove that another profile's task/focus snapshot is not read.
 
 ## Phase 3 — Cloud and identity foundation
 

@@ -3,17 +3,14 @@ import UIKit
 
 struct ReminderSettingsView: View {
     @EnvironmentObject private var store: TaskStore
+    @EnvironmentObject private var settings: AppSettingsStore
     @Environment(\.openURL) private var openURL
     @ObservedObject private var reminders = ReminderService.shared
-    @AppStorage(AttentionPreferences.taskRemindersEnabledKey) private var taskRemindersEnabled = true
-    @AppStorage(AttentionPreferences.reminderLevelKey) private var reminderLevelRaw = ReminderLevel.standard.rawValue
-    @AppStorage(AttentionPreferences.reminderStartMinuteKey) private var startMinute = 9 * 60
-    @AppStorage(AttentionPreferences.reminderEndMinuteKey) private var endMinute = 20 * 60
 
     var body: some View {
         Form {
             Section {
-                Toggle("Allow task reminders", isOn: $taskRemindersEnabled)
+                Toggle("Allow task reminders", isOn: $settings.taskRemindersEnabled)
                 LabeledContent("System permission", value: permissionText)
                 if !permissionGranted {
                     Button("Enable notifications") { Task { await reminders.requestAccess(); await reschedule() } }
@@ -28,7 +25,7 @@ struct ReminderSettingsView: View {
             }
 
             Section {
-                Picker("Reminder level", selection: $reminderLevelRaw) {
+                Picker("Reminder level", selection: $settings.reminderLevelRaw) {
                     ForEach(ReminderLevel.allCases) { level in
                         Text("\(level.title) · up to \(level.dailyLimit)/day").tag(level.rawValue)
                     }
@@ -40,8 +37,8 @@ struct ReminderSettingsView: View {
             }
 
             Section {
-                DatePicker("Start", selection: minuteBinding($startMinute, other: $endMinute, isStart: true), displayedComponents: .hourAndMinute)
-                DatePicker("End", selection: minuteBinding($endMinute, other: $startMinute, isStart: false), displayedComponents: .hourAndMinute)
+                DatePicker("Start", selection: minuteBinding($settings.reminderStartMinute, other: $settings.reminderEndMinute, isStart: true), displayedComponents: .hourAndMinute)
+                DatePicker("End", selection: minuteBinding($settings.reminderEndMinute, other: $settings.reminderStartMinute, isStart: false), displayedComponents: .hourAndMinute)
             } header: {
                 Text("Delivery hours")
             } footer: {
@@ -57,15 +54,15 @@ struct ReminderSettingsView: View {
         .tint(.tenoraForest)
         .navigationTitle("Reminders")
         .task { await reminders.refreshStatus() }
-        .onChange(of: taskRemindersEnabled) { _, enabled in
+        .onChange(of: settings.taskRemindersEnabled) { _, enabled in
             Task {
                 if enabled, !permissionGranted { await reminders.requestAccess() }
                 await reschedule()
             }
         }
-        .onChange(of: reminderLevelRaw) { _, _ in Task { await reschedule() } }
-        .onChange(of: startMinute) { _, _ in Task { await reschedule() } }
-        .onChange(of: endMinute) { _, _ in Task { await reschedule() } }
+        .onChange(of: settings.reminderLevelRaw) { _, _ in Task { await reschedule() } }
+        .onChange(of: settings.reminderStartMinute) { _, _ in Task { await reschedule() } }
+        .onChange(of: settings.reminderEndMinute) { _, _ in Task { await reschedule() } }
     }
 
     private var permissionGranted: Bool {

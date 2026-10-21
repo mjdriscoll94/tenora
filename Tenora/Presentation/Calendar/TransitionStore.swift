@@ -3,16 +3,17 @@ import Foundation
 @MainActor
 final class TransitionStore: ObservableObject {
     @Published private(set) var plans: [TransitionPlan] = []
-    private let defaults: UserDefaults
-    private let key: String
+    private let repository: TransitionRepository
     var didChange: (([TransitionPlan]) async -> Void)?
 
-    init(defaults: UserDefaults = .standard, key: String = "transitionPlans") {
-        self.defaults = defaults
-        self.key = key
-        if let data = defaults.data(forKey: key) {
-            plans = (try? JSONDecoder().decode([TransitionPlan].self, from: data)) ?? []
-        }
+    init(repository: TransitionRepository) {
+        self.repository = repository
+        plans = repository.fetchTransitionPlans()
+    }
+
+    convenience init(defaults: UserDefaults = .standard) {
+        let settings = UserDefaultsSettingsRepository(profileID: .offline, defaults: defaults)
+        self.init(repository: UserDefaultsTransitionRepository(settings: settings))
     }
 
     func plan(for event: CalendarEvent) -> TransitionPlan? {
@@ -59,6 +60,6 @@ final class TransitionStore: ObservableObject {
     }
 
     private func persist() {
-        defaults.set(try? JSONEncoder().encode(plans), forKey: key)
+        try? repository.replaceTransitionPlans(plans)
     }
 }

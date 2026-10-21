@@ -13,6 +13,7 @@ final class CalendarStore: ObservableObject {
     private let clock: any TenoraClock
     private let calendar: Calendar
     private let workingHoursOverride: WorkingHours?
+    private let settings: SettingsRepository?
     private var loadedDay: Date?
     var didChange: (() -> Void)?
 
@@ -21,13 +22,15 @@ final class CalendarStore: ObservableObject {
         availabilityEngine: AvailabilityEngine = AvailabilityEngine(),
         clock: any TenoraClock = SystemClock(),
         calendar: Calendar = .autoupdatingCurrent,
-        workingHours: WorkingHours? = nil
+        workingHours: WorkingHours? = nil,
+        settings: SettingsRepository? = nil
     ) {
         self.repository = repository
         self.availabilityEngine = availabilityEngine
         self.clock = clock
         self.calendar = calendar
         self.workingHoursOverride = workingHours
+        self.settings = settings
         authorization = repository.authorizationStatus()
     }
 
@@ -39,11 +42,11 @@ final class CalendarStore: ObservableObject {
         return availabilityEngine.snapshot(
             at: clock.now,
             events: events,
-            workingHours: workingHoursOverride ?? AttentionPreferences.workingHours,
+            workingHours: workingHoursOverride ?? preferredWorkingHours,
             calendar: calendar,
-            schedule: workingHoursOverride == nil ? AttentionPreferences.schedule : nil,
-            meetingBufferMinutes: AttentionPreferences.meetingBufferMinutes,
-            minimumGapMinutes: AttentionPreferences.minimumGapMinutes
+            schedule: workingHoursOverride == nil ? preferredSchedule : nil,
+            meetingBufferMinutes: settings?.integer(for: .meetingBufferMinutes, default: 0) ?? AttentionPreferences.meetingBufferMinutes,
+            minimumGapMinutes: settings?.integer(for: .minimumGapMinutes, default: 15) ?? AttentionPreferences.minimumGapMinutes
         )
     }
 
@@ -89,16 +92,16 @@ final class CalendarStore: ObservableObject {
         let dayStart = calendar.startOfDay(for: clock.now)
         guard let dayEnd = calendar.date(byAdding: .day, value: 1, to: dayStart) else { return }
         // An evening shift can need tomorrow's events before midnight arrives.
-        let shiftEnd = workingHoursOverride == nil ? AttentionPreferences.schedule.intervals(around: clock.now, calendar: calendar).map(\.end).max() : nil
+        let shiftEnd = workingHoursOverride == nil ? preferredSchedule.intervals(around: clock.now, calendar: calendar).map(\.end).max() : nil
         let horizonEnd = max(dayEnd, shiftEnd ?? dayEnd)
 
         do {
             availableCalendars = try await repository.calendars()
             let fetchedEvents = try await repository.events(in: DateInterval(start: dayStart, end: horizonEnd))
-            if AttentionPreferences.useAllCalendars {
+            if settings?.bool(for: .useAllCalendars, default: true) ?? AttentionPreferences.useAllCalendars {
                 events = fetchedEvents
             } else {
-                let selected = AttentionPreferences.selectedCalendarIDs
+                let selected = preferredCalendarIDs
                 events = fetchedEvents.filter { event in
                     guard let identifier = event.calendarIdentifier else { return false }
                     return selected.contains(identifier)
@@ -111,5 +114,29 @@ final class CalendarStore: ObservableObject {
             loadedDay = nil
             errorMessage = "Tenora couldn't load today's events."
         }
+    }
+
+    private var preferredWorkingHours: WorkingHours {
+        guard let settings else { return AttentionPreferences.workingHours }
+        return WorkingHours(
+            startHour: settings.integer(for: .legacyWorkStart, default: 8),
+            endHour: settings.integer(for: .legacyWorkEnd, default: 18)
+        )
+    }
+
+    private var preferredSchedule: WorkingSchedule {
+        guard let settings else { return AttentionPreferences.schedule }
+        return AttentionPreferences.schedule(
+            from: settings.string(for: .workingSchedule) ?? "",
+            fallback: preferredWorkingHours
+        )
+    }
+
+    private var preferredCalendarIDs: Set<String> {
+        guard let data = settings?.data(for: .selectedCalendarIDs),
+              let values = try? JSONDecoder().decode([String].self, from: data) else {
+            return AttentionPreferences.selectedCalendarIDs
+        }
+        return Set(values)
     }
 }

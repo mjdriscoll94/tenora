@@ -10,6 +10,7 @@ struct TenoraApp: App {
     @StateObject private var calendarStore: CalendarStore
     @StateObject private var transitionStore: TransitionStore
     @StateObject private var habitStore: HabitStore
+    @StateObject private var appSettings: AppSettingsStore
 
     init() {
         let runtime = AppRuntime.shared
@@ -19,6 +20,7 @@ struct TenoraApp: App {
         _calendarStore = StateObject(wrappedValue: runtime.calendar)
         _transitionStore = StateObject(wrappedValue: runtime.transitions)
         _habitStore = StateObject(wrappedValue: runtime.habits)
+        _appSettings = StateObject(wrappedValue: runtime.appSettings)
     }
 
     var body: some Scene {
@@ -28,6 +30,7 @@ struct TenoraApp: App {
                 .environmentObject(calendarStore)
                 .environmentObject(transitionStore)
                 .environmentObject(habitStore)
+                .environmentObject(appSettings)
         }
         .modelContainer(modelContainer)
     }
@@ -105,12 +108,12 @@ private struct PersistenceRecoveryView: View {
 
 private struct AgentAccountRootView: View {
     @ObservedObject private var bridge = AgentBridgeSyncService.shared
-    @AppStorage("account.onboardingCompleted") private var onboardingCompleted = false
+    @EnvironmentObject private var settings: AppSettingsStore
 
     var body: some View {
         Group {
-            if bridge.configuration != nil, !bridge.isConnected, !onboardingCompleted {
-                AccountOnboardingView(onContinueOffline: { onboardingCompleted = true })
+            if bridge.configuration != nil, !bridge.isConnected, !settings.onboardingCompleted {
+                AccountOnboardingView(onContinueOffline: { settings.onboardingCompleted = true })
             } else {
                 RootTabView()
             }
@@ -123,7 +126,7 @@ private struct AccountOnboardingView: View {
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
     @ObservedObject private var bridge = AgentBridgeSyncService.shared
-    @AppStorage("account.onboardingCompleted") private var onboardingCompleted = false
+    @EnvironmentObject private var settings: AppSettingsStore
     let onContinueOffline: () -> Void
 
     var body: some View {
@@ -183,7 +186,7 @@ private struct AccountOnboardingView: View {
         Task {
             guard await bridge.connect(mode: mode) else { return }
             await bridge.syncNow(tasks: taskStore.tasks, events: calendarStore.events, focusedTaskID: taskStore.focusedTaskID)
-            onboardingCompleted = true
+            settings.onboardingCompleted = true
         }
     }
 }

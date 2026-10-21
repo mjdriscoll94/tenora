@@ -1,10 +1,14 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject private var settings: AppSettingsStore
+
     var body: some View {
         Form {
             Section {
-                destination("Weekly schedule", icon: "calendar.badge.clock") { WorkingScheduleView() }
+                destination("Weekly schedule", icon: "calendar.badge.clock") {
+                    WorkingScheduleView(settings: settings.repository) { settings.workingScheduleJSON = $0 }
+                }
                 destination("Calendar", icon: "calendar") { CalendarSettingsView() }
                 destination("Reminders", icon: "bell") { ReminderSettingsView() }
                 destination("Recovery", icon: "arrow.uturn.backward.circle") { RecoverySettingsView() }

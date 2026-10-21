@@ -2,9 +2,7 @@ import SwiftUI
 
 struct RootTabView: View {
     @Environment(\.scenePhase) private var scenePhase
-    @AppStorage("workStart") private var workStart = 8
-    @AppStorage("workEnd") private var workEnd = 18
-    @AppStorage(AttentionPreferences.scheduleKey) private var workingSchedule = ""
+    @EnvironmentObject private var settings: AppSettingsStore
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
     @EnvironmentObject private var transitionStore: TransitionStore
@@ -16,7 +14,6 @@ struct RootTabView: View {
     @State private var captureTitle = ""
     @State private var selectedTab = 0
     @State private var missingTask = false
-    @AppStorage("lastLeftTenora") private var lastLeft = 0.0
     @State private var showingResume = false
     @State private var returnSince: Date?
 
@@ -108,11 +105,11 @@ struct RootTabView: View {
                 reminders.openedHabitID = nil
             }
         }
-        .onChange(of: workStart) { _, _ in Task { await calendarStore.refresh() } }
-        .onChange(of: workEnd) { _, _ in Task { await calendarStore.refresh() } }
-        .onChange(of: workingSchedule) { _, _ in Task { await calendarStore.refresh(); await taskStore.load() } }
+        .onChange(of: settings.legacyWorkStart) { _, _ in Task { await calendarStore.refresh() } }
+        .onChange(of: settings.legacyWorkEnd) { _, _ in Task { await calendarStore.refresh() } }
+        .onChange(of: settings.workingScheduleJSON) { _, _ in Task { await calendarStore.refresh(); await taskStore.load() } }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .background { lastLeft = Date().timeIntervalSince1970 }
+            if phase == .background { settings.lastLeft = Date().timeIntervalSince1970 }
         }
         .task(id: scenePhase) {
             await handleScenePhase()
@@ -120,10 +117,7 @@ struct RootTabView: View {
     }
 
     private var currentCapacityMode: TaskCapacityMode {
-        let defaults = UserDefaults.standard
-        let rawValue = defaults.string(forKey: AttentionPreferences.capacityModeKey) ?? TaskCapacityMode.balanced.rawValue
-        let selectedAt = defaults.double(forKey: AttentionPreferences.capacitySelectedAtKey)
-        return AttentionPreferences.capacityMode(rawValue: rawValue, selectedAt: selectedAt, now: Date())
+        settings.capacityMode(at: Date())
     }
 
     private func handleScenePhase() async {
@@ -133,10 +127,10 @@ struct RootTabView: View {
         await habitStore.load()
         await habitStore.drainWidgetActions()
         if shouldOfferRecovery {
-            returnSince = Date(timeIntervalSince1970: lastLeft)
+            returnSince = Date(timeIntervalSince1970: settings.lastLeft)
             showingResume = true
         }
-        lastLeft = 0
+        settings.lastLeft = 0
         repeat {
             await taskStore.load()
             await habitStore.load()
@@ -154,8 +148,7 @@ struct RootTabView: View {
     }
 
     private var shouldOfferRecovery: Bool {
-        lastLeft > 0
-            && AttentionPreferences.shouldOfferRecovery(lastLeft: Date(timeIntervalSince1970: lastLeft), now: Date())
+        settings.shouldOfferRecovery(now: Date())
             && taskStore.resumeTask != nil
             && !isAddingTask
             && openedTask == nil

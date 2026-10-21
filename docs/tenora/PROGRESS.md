@@ -1,7 +1,7 @@
 # Tenora Family Transition — Progress and Verification
 
 **Last updated:** October 21, 2026
-**Current phase:** Phase 1 complete; ready for Phase 2
+**Current phase:** Phase 2 complete; ready for Phase 3 planning/provisioning
 **Implementation state:** No household or cloud collaboration features implemented. Historical-data gates were waived for the initial pre-release rollout because current development data may be discarded.
 
 ## Work completed
@@ -23,6 +23,13 @@
 - Prevented the practical habit tracker from overwriting preserved XP, level, and unlock-era progress values.
 - Repaired the calendar settings UI test with a stable accessibility identifier.
 - Added regression tests for full backup/restore, altered-file rejection, orphan-record rejection without live-data mutation, unversioned-store reopening, and legacy game-progress preservation.
+- Added repository protocols and concrete local repositories for habits, completions, retained progress, transitions, settings, profiles, and a mutation outbox.
+- Removed SwiftData knowledge from `HabitStore`; presentation stores now depend on domain repository contracts.
+- Added profile-specific SwiftData locations while preserving the original offline store URL.
+- Moved active settings UI and calendar/reminder behavior to a versioned, profile-scoped settings repository with compatibility reads for existing keys.
+- Namespaced task/habit widget snapshots and pending habit actions by active profile.
+- Added a durable, profile-separated JSON mutation outbox without enabling any upload or cloud behavior.
+- Added Phase 2 contract tests for settings isolation, outbox persistence, habit persistence/mutations, transition mutations, and widget/focus isolation.
 
 ## Repository changes in Phase 1
 
@@ -36,6 +43,20 @@
 - Planning documents updated with verified implementation status and remaining gates.
 
 ## Verified baseline
+
+### Phase 2 verification
+
+- Unsigned generic-device Debug build: passed.
+- Final unit suite: 105 executed, 105 passed, 0 failed or skipped on iPhone 16 Pro / iOS 18.3.1.
+- UI suite: 9 executed, 9 passed, 0 failed in the post-refactor full run.
+- Combined current coverage: 114 tests (105 unit + 9 UI).
+- Final unit result bundle: `/tmp/TenoraPhase2FinalUnitTests3/Logs/Test/Test-Tenora-2026.10.21_14-15-14--0500.xcresult`.
+- The full post-refactor run passed before the final collision-proof profile-path encoding test was added; that last change does not alter offline UI behavior and is covered by the final unit run.
+
+The new Phase 2 tests prove legacy preference adoption only by the offline profile,
+cross-profile settings isolation, collision-free provider-subject storage paths, durable
+and profile-separated outbox recovery, repository persistence/mutation contracts, and
+active-profile widget/focus isolation.
 
 ### iOS build
 

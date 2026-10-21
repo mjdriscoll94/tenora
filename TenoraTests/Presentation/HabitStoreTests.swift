@@ -12,7 +12,13 @@ final class HabitStoreTests: XCTestCase {
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         containers.append(container)
-        return (container, HabitStore(modelContext: container.mainContext))
+        let repository = SwiftDataHabitRepository(modelContext: container.mainContext)
+        return (container, HabitStore(
+            habitRepository: repository,
+            completionRepository: repository,
+            progressRepository: repository,
+            retainedRepository: repository
+        ))
     }
 
     func testHabitAndCheckInPersistAcrossStoreReload() async throws {
@@ -24,7 +30,13 @@ final class HabitStoreTests: XCTestCase {
         XCTAssertTrue(completed)
         XCTAssertEqual(store.progress.totalCompletions, 1)
 
-        let reopened = HabitStore(modelContext: container.mainContext)
+        let repository = SwiftDataHabitRepository(modelContext: container.mainContext)
+        let reopened = HabitStore(
+            habitRepository: repository,
+            completionRepository: repository,
+            progressRepository: repository,
+            retainedRepository: repository
+        )
         await reopened.load()
         XCTAssertEqual(reopened.habits.map(\.name), ["Read"])
         XCTAssertEqual(reopened.completions.count, 1)
@@ -59,7 +71,13 @@ final class HabitStoreTests: XCTestCase {
         XCTAssertTrue(store.isCompleted(habit, on: yesterday))
         XCTAssertFalse(store.isCompleted(habit))
 
-        let reopened = HabitStore(modelContext: container.mainContext)
+        let repository = SwiftDataHabitRepository(modelContext: container.mainContext)
+        let reopened = HabitStore(
+            habitRepository: repository,
+            completionRepository: repository,
+            progressRepository: repository,
+            retainedRepository: repository
+        )
         await reopened.load()
         XCTAssertTrue(reopened.isCompleted(habit, on: yesterday))
         XCTAssertFalse(reopened.isCompleted(habit))

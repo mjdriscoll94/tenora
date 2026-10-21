@@ -4,13 +4,12 @@ struct TodayView: View {
     @EnvironmentObject private var taskStore: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
     @EnvironmentObject private var transitionStore: TransitionStore
+    @EnvironmentObject private var settings: AppSettingsStore
     @State private var reviewKind: ReviewKind?
     @State private var holdingTask: TenoraTask?
     @State private var showingLostTrackRecovery = false
     @State private var justStartTask: TenoraTask?
     @State private var stuckTask: TenoraTask?
-    @AppStorage(AttentionPreferences.capacityModeKey) private var capacityModeRaw = TaskCapacityMode.balanced.rawValue
-    @AppStorage(AttentionPreferences.capacitySelectedAtKey) private var capacitySelectedAt = 0.0
 
     var body: some View {
         ScrollView {
@@ -368,7 +367,7 @@ struct TodayView: View {
     }
 
     private var remainingResurfacedTasks: [TenoraTask] {
-        let context = TaskPriorityEngine.Context(now: calendarStore.currentDate, availableMinutes: calendarStore.availability?.availableMinutes, schedule: AttentionPreferences.schedule)
+        let context = TaskPriorityEngine.Context(now: calendarStore.currentDate, availableMinutes: calendarStore.availability?.availableMinutes, schedule: settings.schedule)
         return Array(taskStore.resurfacedTasks.filter {
             $0.id != recommendation?.id
                 && !$0.isKeptInFront(at: calendarStore.currentDate)
@@ -385,21 +384,19 @@ struct TodayView: View {
     }
 
     private var capacityMode: TaskCapacityMode {
-        AttentionPreferences.capacityMode(
-            rawValue: capacityModeRaw,
-            selectedAt: capacitySelectedAt,
-            now: calendarStore.currentDate
-        )
+        settings.capacityMode(at: calendarStore.currentDate)
     }
 
     private func selectCapacity(_ mode: TaskCapacityMode) {
-        capacityModeRaw = mode.rawValue
-        capacitySelectedAt = mode == .balanced ? 0 : calendarStore.currentDate.timeIntervalSince1970
+        settings.capacityModeRaw = mode.rawValue
+        settings.capacitySelectedAt = mode == .balanced ? 0 : calendarStore.currentDate.timeIntervalSince1970
         WidgetPublisher.publish(
             tasks: taskStore.tasks,
             events: calendarStore.events,
             calendarKnown: calendarStore.availability != nil,
-            focusedTaskID: taskStore.focusedTaskID
+            focusedTaskID: taskStore.focusedTaskID,
+            profileID: settings.repository.profileID,
+            settings: settings.repository
         )
     }
 

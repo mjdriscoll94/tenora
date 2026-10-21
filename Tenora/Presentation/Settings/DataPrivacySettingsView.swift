@@ -6,6 +6,7 @@ struct DataPrivacySettingsView: View {
     @EnvironmentObject private var store: TaskStore
     @EnvironmentObject private var transitionStore: TransitionStore
     @EnvironmentObject private var habitStore: HabitStore
+    @EnvironmentObject private var settings: AppSettingsStore
     @Environment(\.modelContext) private var modelContext
     @State private var showingExporter = false
     @State private var exportDocument = TenoraExportDocument(data: Data())
@@ -120,6 +121,8 @@ struct DataPrivacySettingsView: View {
                 let current = try TenoraDataArchive.make(context: modelContext, transitionPlans: transitionStore.plans)
                 try TenoraDataArchive.savePreRestoreCopy(current)
                 try TenoraDataArchive.restore(payload, context: modelContext)
+                settings.repository.refreshFromLegacyStore()
+                settings.reload()
                 await transitionStore.replaceAll(payload.transitionPlans)
                 await store.load()
                 await habitStore.load()
@@ -147,7 +150,8 @@ struct DataPrivacySettingsView: View {
             }
             await transitionStore.removeAll()
             await ReminderService.shared.removeAllTenoraNotifications()
-            AttentionPreferences.resetLocalPreferences()
+            try? AppRuntime.shared.outbox?.removeAll(profileID: AppRuntime.shared.profileID)
+            settings.reset()
             statusMessage = "All local Tenora data was deleted."
             deleting = false
         }

@@ -40,6 +40,7 @@ struct StuckAssistanceView: View {
     let task: TenoraTask
     @EnvironmentObject private var store: TaskStore
     @EnvironmentObject private var calendarStore: CalendarStore
+    @EnvironmentObject private var settings: AppSettingsStore
     @Environment(\.dismiss) private var dismiss
     @State private var selectedReason: StuckReason?
     @State private var nextStep: String
@@ -317,12 +318,7 @@ struct StuckAssistanceView: View {
     }
 
     private var currentCapacityMode: TaskCapacityMode {
-        let defaults = UserDefaults.standard
-        return AttentionPreferences.capacityMode(
-            rawValue: defaults.string(forKey: AttentionPreferences.capacityModeKey) ?? TaskCapacityMode.balanced.rawValue,
-            selectedAt: defaults.double(forKey: AttentionPreferences.capacitySelectedAtKey),
-            now: calendarStore.currentDate
-        )
+        settings.capacityMode(at: calendarStore.currentDate)
     }
 
     private func beginShortStart(minutes: Int) {

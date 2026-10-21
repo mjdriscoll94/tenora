@@ -1,15 +1,14 @@
 import SwiftUI
 
 struct RecoverySettingsView: View {
-    @AppStorage(AttentionPreferences.recoveryEnabledKey) private var recoveryEnabled = true
-    @AppStorage(AttentionPreferences.recoveryDelayKey) private var recoveryDelayRaw = RecoveryPromptDelay.fifteenMinutes.rawValue
+    @EnvironmentObject private var settings: AppSettingsStore
 
     var body: some View {
         Form {
             Section {
-                Toggle("Offer help when I return", isOn: $recoveryEnabled)
-                if recoveryEnabled {
-                    Picker("Offer recovery", selection: $recoveryDelayRaw) {
+                Toggle("Offer help when I return", isOn: $settings.recoveryEnabled)
+                if settings.recoveryEnabled {
+                    Picker("Offer recovery", selection: $settings.recoveryDelayRaw) {
                         ForEach(RecoveryPromptDelay.allCases) { delay in
                             Text(delay.title).tag(delay.rawValue)
                         }

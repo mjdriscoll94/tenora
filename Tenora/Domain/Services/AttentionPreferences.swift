@@ -14,7 +14,8 @@ enum AttentionPreferences {
     static let reminderEndMinuteKey = "reminders.endMinute"
     static let recoveryEnabledKey = "recovery.enabled"
     static let recoveryDelayKey = "recovery.delay"
-    static var schedule: WorkingSchedule { schedule(from: UserDefaults.standard.string(forKey: scheduleKey) ?? "") }
+    static var scheduleKeyValue: String { UserDefaults.standard.string(forKey: scheduleKey) ?? "" }
+    static var schedule: WorkingSchedule { schedule(from: scheduleKeyValue) }
 
     static func schedule(from json: String, fallback: WorkingHours? = nil) -> WorkingSchedule {
         if let data = json.data(using: .utf8), let decoded = try? JSONDecoder().decode(WorkingSchedule.self, from: data), decoded.isValid { return decoded }

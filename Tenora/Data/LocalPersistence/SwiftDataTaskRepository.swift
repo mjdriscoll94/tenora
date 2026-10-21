@@ -4,9 +4,13 @@ import SwiftData
 @MainActor
 final class SwiftDataTaskRepository: TaskRepository {
     private let modelContext: ModelContext
+    private let profileID: LocalProfileID
+    private let outbox: MutationOutbox?
 
-    init(modelContext: ModelContext) {
+    init(modelContext: ModelContext, profileID: LocalProfileID = .offline, outbox: MutationOutbox? = nil) {
         self.modelContext = modelContext
+        self.profileID = profileID
+        self.outbox = outbox
     }
 
     func fetchTasks() async throws -> [TenoraTask] {
@@ -28,6 +32,13 @@ final class SwiftDataTaskRepository: TaskRepository {
             modelContext.insert(StoredTask(task: task))
         }
         try modelContext.save()
+        try outbox?.enqueue(LocalMutation(
+            profileID: profileID,
+            entity: .task,
+            recordID: task.id.uuidString,
+            operation: .upsert,
+            payload: try JSONEncoder().encode(task)
+        ))
     }
 
     func delete(id: UUID) async throws {
@@ -38,6 +49,12 @@ final class SwiftDataTaskRepository: TaskRepository {
         if let storedTask = try modelContext.fetch(descriptor).first {
             modelContext.delete(storedTask)
             try modelContext.save()
+            try outbox?.enqueue(LocalMutation(
+                profileID: profileID,
+                entity: .task,
+                recordID: id.uuidString,
+                operation: .delete
+            ))
         }
     }
 

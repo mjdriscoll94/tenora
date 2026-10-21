@@ -9,7 +9,7 @@ struct HabitDashboardView: View {
     }
 
     @EnvironmentObject private var store: HabitStore
-    @AppStorage("habits.intro.seen") private var hasSeenIntro = false
+    @EnvironmentObject private var settings: AppSettingsStore
     @State private var showingEditor = false
     @State private var showingIntro = false
     @State private var scope: Scope = .scheduled
@@ -42,12 +42,12 @@ struct HabitDashboardView: View {
             }
         }
         .sheet(isPresented: $showingEditor) { HabitEditorView() }
-        .sheet(isPresented: $showingIntro, onDismiss: { hasSeenIntro = true }) {
-            HabitIntroView { hasSeenIntro = true; showingIntro = false; showingEditor = true }
+        .sheet(isPresented: $showingIntro, onDismiss: { settings.habitsIntroSeen = true }) {
+            HabitIntroView { settings.habitsIntroSeen = true; showingIntro = false; showingEditor = true }
         }
         .task {
             await store.load()
-            if !hasSeenIntro && store.activeHabits.isEmpty && !ProcessInfo.processInfo.arguments.contains("-habit-tracker-test") { showingIntro = true }
+            if !settings.habitsIntroSeen && store.activeHabits.isEmpty && !ProcessInfo.processInfo.arguments.contains("-habit-tracker-test") { showingIntro = true }
         }
         .overlay(alignment: .bottom) {
             if let error = store.errorMessage {
@@ -447,8 +447,8 @@ private struct HabitIntroView: View {
 }
 
 #if DEBUG
-#Preview("Empty") { NavigationStack { HabitDashboardView() }.environmentObject(HabitStore.preview(.empty)) }
-#Preview("In progress") { NavigationStack { HabitDashboardView() }.environmentObject(HabitStore.preview(.partial)) }
-#Preview("Complete") { NavigationStack { HabitDashboardView() }.environmentObject(HabitStore.preview(.perfect)) }
-#Preview("Dark mode") { NavigationStack { HabitDashboardView() }.environmentObject(HabitStore.preview(.partial)).preferredColorScheme(.dark) }
+#Preview("Empty") { NavigationStack { HabitDashboardView() }.environmentObject(HabitStore.preview(.empty)).environmentObject(AppSettingsStore(repository: UserDefaultsSettingsRepository(profileID: .offline))) }
+#Preview("In progress") { NavigationStack { HabitDashboardView() }.environmentObject(HabitStore.preview(.partial)).environmentObject(AppSettingsStore(repository: UserDefaultsSettingsRepository(profileID: .offline))) }
+#Preview("Complete") { NavigationStack { HabitDashboardView() }.environmentObject(HabitStore.preview(.perfect)).environmentObject(AppSettingsStore(repository: UserDefaultsSettingsRepository(profileID: .offline))) }
+#Preview("Dark mode") { NavigationStack { HabitDashboardView() }.environmentObject(HabitStore.preview(.partial)).environmentObject(AppSettingsStore(repository: UserDefaultsSettingsRepository(profileID: .offline))).preferredColorScheme(.dark) }
 #endif

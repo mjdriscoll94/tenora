@@ -1,5 +1,4 @@
 import Foundation
-import SwiftData
 
 @MainActor
 final class HabitStore: ObservableObject {
@@ -8,21 +7,27 @@ final class HabitStore: ObservableObject {
     @Published private(set) var progress = PlayerProgress()
     @Published private(set) var errorMessage: String?
 
-    private let context: ModelContext
-    private let retainedContainer: ModelContainer?
+    private let habitRepository: HabitRepository
+    private let completionRepository: HabitCompletionRepository
+    private let progressRepository: HabitProgressRepository
+    private let retainedRepository: AnyObject?
     private let clock: any TenoraClock
     private let calendar: Calendar
     private let engine = HabitTrackingEngine()
     var didChange: (() async -> Void)?
 
     init(
-        modelContext: ModelContext,
+        habitRepository: HabitRepository,
+        completionRepository: HabitCompletionRepository,
+        progressRepository: HabitProgressRepository,
         clock: any TenoraClock = SystemClock(),
         calendar: Calendar = .autoupdatingCurrent,
-        retainedContainer: ModelContainer? = nil
+        retainedRepository: AnyObject? = nil
     ) {
-        context = modelContext
-        self.retainedContainer = retainedContainer
+        self.habitRepository = habitRepository
+        self.completionRepository = completionRepository
+        self.progressRepository = progressRepository
+        self.retainedRepository = retainedRepository
         self.clock = clock
         self.calendar = calendar
     }
@@ -76,11 +81,7 @@ final class HabitStore: ObservableObject {
         var clean = habit
         clean.name = cleanName
         do {
-            let id = clean.id
-            let descriptor = FetchDescriptor<StoredHabit>(predicate: #Predicate { $0.id == id })
-            if let stored = try context.fetch(descriptor).first { stored.update(from: clean) }
-            else { context.insert(StoredHabit(habit: clean)) }
-            try context.save()
+            try habitRepository.saveHabit(clean)
             try refresh()
             errorMessage = nil
             await didChange?()
@@ -101,12 +102,8 @@ final class HabitStore: ObservableObject {
     @discardableResult
     func delete(_ habit: Habit) async -> Bool {
         do {
-            let id = habit.id
-            let storedHabits = try context.fetch(FetchDescriptor<StoredHabit>(predicate: #Predicate { $0.id == id }))
-            storedHabits.forEach(context.delete)
-            let storedCompletions = try context.fetch(FetchDescriptor<StoredHabitCompletion>(predicate: #Predicate { $0.habitID == id }))
-            storedCompletions.forEach(context.delete)
-            try context.save()
+            try completionRepository.deleteHabitCompletions(habitID: habit.id)
+            try habitRepository.deleteHabit(id: habit.id)
             try refresh()
             await didChange?()
             return true
@@ -121,12 +118,10 @@ final class HabitStore: ObservableObject {
     func toggleCompletion(_ habit: Habit, on date: Date? = nil) async -> Bool {
         let targetDate = date ?? clock.now
         do {
-            let id = habit.id
-            let stored = try context.fetch(FetchDescriptor<StoredHabitCompletion>(predicate: #Predicate { $0.habitID == id }))
-            if let existing = stored.first(where: { calendar.isDate($0.completionDate, inSameDayAs: targetDate) }) {
-                context.delete(existing)
-                try context.save()
-                try refresh()
+            if let existing = completions.first(where: {
+                $0.habitID == habit.id && calendar.isDate($0.completionDate, inSameDayAs: targetDate)
+            }) {
+                try completionRepository.deleteHabitCompletion(id: existing.id)
             } else {
                 let completion = HabitCompletion(
                     habitID: habit.id,
@@ -134,10 +129,9 @@ final class HabitStore: ObservableObject {
                     xpAwarded: 0,
                     createdAt: clock.now
                 )
-                context.insert(StoredHabitCompletion(completion: completion))
-                try context.save()
-                try refresh()
+                try completionRepository.saveHabitCompletion(completion)
             }
+            try refresh()
             errorMessage = nil
             await didChange?()
             return true
@@ -159,11 +153,9 @@ final class HabitStore: ObservableObject {
 
     func deleteAll() async -> Bool {
         do {
-            for model in try context.fetch(FetchDescriptor<StoredHabit>()) { context.delete(model) }
-            for model in try context.fetch(FetchDescriptor<StoredHabitCompletion>()) { context.delete(model) }
-            for model in try context.fetch(FetchDescriptor<StoredPlayerProgress>()) { context.delete(model) }
-            for model in try context.fetch(FetchDescriptor<StoredGameUnlock>()) { context.delete(model) }
-            try context.save()
+            try completionRepository.deleteAllHabitCompletions()
+            try habitRepository.deleteAllHabits()
+            try progressRepository.deleteAllHabitProgress()
             habits = []
             completions = []
             progress = PlayerProgress()
@@ -242,51 +234,57 @@ final class HabitStore: ObservableObject {
     }
 
     private func refresh() throws {
-        habits = try context.fetch(FetchDescriptor<StoredHabit>(sortBy: [SortDescriptor(\.createdAt)])).map(\.domainModel)
-        completions = try context.fetch(FetchDescriptor<StoredHabitCompletion>(sortBy: [SortDescriptor(\.completionDate)])).map(\.domainModel)
+        habits = try habitRepository.fetchHabits()
+        completions = try completionRepository.fetchHabitCompletions()
         let practicalProgress = engine.progress(habits: activeHabits, completions: completions, now: clock.now, calendar: calendar)
 
-        let storedProgress = try context.fetch(FetchDescriptor<StoredPlayerProgress>()).first
-        if let storedProgress {
-            progress = storedProgress.mergingTracking(from: practicalProgress)
-            storedProgress.updateTracking(from: practicalProgress)
+        if let storedProgress = try progressRepository.fetchPlayerProgress() {
+            progress = PlayerProgress(
+                totalXP: storedProgress.totalXP,
+                level: storedProgress.level,
+                xpIntoLevel: storedProgress.xpIntoLevel,
+                xpForNextLevel: storedProgress.xpForNextLevel,
+                totalCompletions: practicalProgress.totalCompletions,
+                currentMomentum: practicalProgress.currentMomentum,
+                longestMomentum: max(storedProgress.longestMomentum, practicalProgress.longestMomentum),
+                perfectDays: practicalProgress.perfectDays
+            )
         } else {
             progress = practicalProgress
-            context.insert(StoredPlayerProgress(progress: practicalProgress))
         }
-
-        try context.save()
+        try progressRepository.savePlayerProgress(progress)
     }
 
     #if DEBUG
     static func preview(_ scenario: HabitPreviewScenario) -> HabitStore {
-        let container = try! ModelContainer(
-            for: StoredTask.self, StoredHabit.self, StoredHabitCompletion.self, StoredPlayerProgress.self, StoredGameUnlock.self,
-            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        let repository = InMemoryHabitRepository()
+        let store = HabitStore(
+            habitRepository: repository,
+            completionRepository: repository,
+            progressRepository: repository,
+            retainedRepository: repository
         )
-        let store = HabitStore(modelContext: container.mainContext, retainedContainer: container)
         guard scenario != .empty else { try? store.refresh(); return store }
 
         let start = Calendar.current.date(byAdding: .day, value: scenario == .highLevel ? -90 : -7, to: Date()) ?? Date()
         let read = Habit(name: "Read 20 Minutes", iconName: "habit_icon_book", colorIdentifier: "forest", createdAt: start, difficulty: .standard)
         let water = Habit(name: "Drink Water", iconName: "habit_icon_water", colorIdentifier: "copper", createdAt: start, difficulty: .easy)
-        container.mainContext.insert(StoredHabit(habit: read))
-        if scenario != .newPlayer { container.mainContext.insert(StoredHabit(habit: water)) }
+        try? repository.saveHabit(read)
+        if scenario != .newPlayer { try? repository.saveHabit(water) }
 
         if scenario == .partial || scenario == .perfect {
-            container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: read.id, completionDate: Date(), xpAwarded: 0)))
+            try? repository.saveHabitCompletion(HabitCompletion(habitID: read.id, completionDate: Date(), xpAwarded: 0))
         }
         if scenario == .perfect {
-            container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: water.id, completionDate: Date(), xpAwarded: 0)))
+            try? repository.saveHabitCompletion(HabitCompletion(habitID: water.id, completionDate: Date(), xpAwarded: 0))
         }
         if scenario == .highLevel {
             for offset in 0..<90 {
                 let day = Calendar.current.date(byAdding: .day, value: -offset, to: Date()) ?? Date()
-                container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: read.id, completionDate: day, xpAwarded: 0)))
-                container.mainContext.insert(StoredHabitCompletion(completion: HabitCompletion(habitID: water.id, completionDate: day, xpAwarded: 0)))
+                try? repository.saveHabitCompletion(HabitCompletion(habitID: read.id, completionDate: day, xpAwarded: 0))
+                try? repository.saveHabitCompletion(HabitCompletion(habitID: water.id, completionDate: day, xpAwarded: 0))
             }
         }
-        try? container.mainContext.save()
         try? store.refresh()
         return store
     }
