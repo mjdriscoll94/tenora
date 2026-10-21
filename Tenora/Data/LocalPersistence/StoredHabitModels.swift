@@ -109,6 +109,28 @@ final class StoredPlayerProgress {
         longestMomentum = progress.longestMomentum
         perfectDays = progress.perfectDays
     }
+
+    /// The practical tracker still refreshes completion statistics, but retired game
+    /// values remain byte-for-byte available for a future user-directed migration.
+    func updateTracking(from practical: PlayerProgress) {
+        totalCompletions = practical.totalCompletions
+        currentMomentum = practical.currentMomentum
+        longestMomentum = max(longestMomentum, practical.longestMomentum)
+        perfectDays = practical.perfectDays
+    }
+
+    func mergingTracking(from practical: PlayerProgress) -> PlayerProgress {
+        PlayerProgress(
+            totalXP: totalXP,
+            level: level,
+            xpIntoLevel: xpIntoLevel,
+            xpForNextLevel: xpForNextLevel,
+            totalCompletions: practical.totalCompletions,
+            currentMomentum: practical.currentMomentum,
+            longestMomentum: max(longestMomentum, practical.longestMomentum),
+            perfectDays: practical.perfectDays
+        )
+    }
 }
 
 @Model

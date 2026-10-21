@@ -1,12 +1,17 @@
 import SwiftUI
+import SwiftData
 import UniformTypeIdentifiers
 
 struct DataPrivacySettingsView: View {
     @EnvironmentObject private var store: TaskStore
     @EnvironmentObject private var transitionStore: TransitionStore
     @EnvironmentObject private var habitStore: HabitStore
+    @Environment(\.modelContext) private var modelContext
     @State private var showingExporter = false
     @State private var exportDocument = TenoraExportDocument(data: Data())
+    @State private var showingImporter = false
+    @State private var pendingRestore: TenoraBackupPayload?
+    @State private var showingRestoreConfirmation = false
     @State private var showingDeleteConfirmation = false
     @State private var deleting = false
     @State private var statusMessage: String?
@@ -25,11 +30,12 @@ struct DataPrivacySettingsView: View {
             }
 
             Section {
-                Button("Export Tenora data") { prepareExport() }
+                Button("Export Tenora backup") { prepareExport() }
+                Button("Restore Tenora backup") { showingImporter = true }
             } header: {
-                Text("Export")
+                Text("Backup & Restore")
             } footer: {
-                Text("Creates a JSON file containing your tasks, habits, habit check-ins, transition plans, and saved preference values. Calendar events are not exported.")
+                Text("Backups include tasks, habits, check-ins, transition plans, saved settings, and preserved game progress. Restoring validates the file and saves a local recovery copy first. Calendar events and sign-in tokens are never included.")
             }
 
             Section {
@@ -57,6 +63,19 @@ struct DataPrivacySettingsView: View {
         ) { result in
             if case .failure = result { statusMessage = "The export was not saved." }
         }
+        .fileImporter(isPresented: $showingImporter, allowedContentTypes: [.json]) { result in
+            handleImport(result)
+        }
+        .confirmationDialog(
+            "Replace current Tenora data with this backup?",
+            isPresented: $showingRestoreConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Restore backup", role: .destructive) { restorePendingBackup() }
+            Button("Cancel", role: .cancel) { pendingRestore = nil }
+        } message: {
+            Text("Tenora will first preserve a recovery copy of the current data. Calendar events and account tokens are not changed.")
+        }
         .confirmationDialog(
             "Delete all Tenora data?",
             isPresented: $showingDeleteConfirmation,
@@ -70,27 +89,47 @@ struct DataPrivacySettingsView: View {
     }
 
     private func prepareExport() {
-        let payload = TenoraExportPayload(
-            exportedAt: Date(),
-            tasks: store.tasks,
-            habits: habitStore.habits,
-            habitCompletions: habitStore.completions,
-            transitionPlans: transitionStore.plans,
-            workingSchedule: AttentionPreferences.schedule,
-            reminderLevel: AttentionPreferences.reminderLevel.rawValue,
-            reminderStartMinute: AttentionPreferences.reminderStartMinute,
-            reminderEndMinute: AttentionPreferences.reminderEndMinute,
-            recoveryDelay: AttentionPreferences.recoveryDelay.rawValue
-        )
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        encoder.dateEncodingStrategy = .iso8601
-        guard let data = try? encoder.encode(payload) else {
+        do {
+            let data = try TenoraDataArchive.make(context: modelContext, transitionPlans: transitionStore.plans)
+            exportDocument = TenoraExportDocument(data: data)
+            showingExporter = true
+        } catch {
             statusMessage = "Tenora couldn't prepare the export."
-            return
         }
-        exportDocument = TenoraExportDocument(data: data)
-        showingExporter = true
+    }
+
+    private func handleImport(_ result: Result<URL, Error>) {
+        do {
+            let url = try result.get()
+            let accessing = url.startAccessingSecurityScopedResource()
+            defer { if accessing { url.stopAccessingSecurityScopedResource() } }
+            pendingRestore = try TenoraDataArchive.decode(Data(contentsOf: url))
+            showingRestoreConfirmation = true
+            statusMessage = nil
+        } catch {
+            statusMessage = (error as? LocalizedError)?.errorDescription ?? "Tenora couldn't read that backup."
+        }
+    }
+
+    private func restorePendingBackup() {
+        guard let payload = pendingRestore else { return }
+        pendingRestore = nil
+        deleting = true
+        Task {
+            do {
+                let current = try TenoraDataArchive.make(context: modelContext, transitionPlans: transitionStore.plans)
+                try TenoraDataArchive.savePreRestoreCopy(current)
+                try TenoraDataArchive.restore(payload, context: modelContext)
+                await transitionStore.replaceAll(payload.transitionPlans)
+                await store.load()
+                await habitStore.load()
+                store.restoreFocusedTaskID(payload.preferences.focusedTaskID)
+                statusMessage = "Your Tenora backup was restored."
+            } catch {
+                statusMessage = (error as? LocalizedError)?.errorDescription ?? "Tenora couldn't restore that backup."
+            }
+            deleting = false
+        }
     }
 
     private func deleteAllData() {
@@ -113,19 +152,6 @@ struct DataPrivacySettingsView: View {
             deleting = false
         }
     }
-}
-
-private struct TenoraExportPayload: Codable {
-    let exportedAt: Date
-    let tasks: [TenoraTask]
-    let habits: [Habit]
-    let habitCompletions: [HabitCompletion]
-    let transitionPlans: [TransitionPlan]
-    let workingSchedule: WorkingSchedule
-    let reminderLevel: String
-    let reminderStartMinute: Int
-    let reminderEndMinute: Int
-    let recoveryDelay: String
 }
 
 private struct TenoraExportDocument: FileDocument {

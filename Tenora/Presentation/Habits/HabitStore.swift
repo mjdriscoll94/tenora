@@ -244,11 +244,16 @@ final class HabitStore: ObservableObject {
     private func refresh() throws {
         habits = try context.fetch(FetchDescriptor<StoredHabit>(sortBy: [SortDescriptor(\.createdAt)])).map(\.domainModel)
         completions = try context.fetch(FetchDescriptor<StoredHabitCompletion>(sortBy: [SortDescriptor(\.completionDate)])).map(\.domainModel)
-        progress = engine.progress(habits: activeHabits, completions: completions, now: clock.now, calendar: calendar)
+        let practicalProgress = engine.progress(habits: activeHabits, completions: completions, now: clock.now, calendar: calendar)
 
         let storedProgress = try context.fetch(FetchDescriptor<StoredPlayerProgress>()).first
-        if let storedProgress { storedProgress.update(from: progress) }
-        else { context.insert(StoredPlayerProgress(progress: progress)) }
+        if let storedProgress {
+            progress = storedProgress.mergingTracking(from: practicalProgress)
+            storedProgress.updateTracking(from: practicalProgress)
+        } else {
+            progress = practicalProgress
+            context.insert(StoredPlayerProgress(progress: practicalProgress))
+        }
 
         try context.save()
     }

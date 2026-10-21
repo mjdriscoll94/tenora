@@ -5,6 +5,7 @@ import SwiftUI
 struct TenoraApp: App {
     @UIApplicationDelegateAdaptor(TenoraAppDelegate.self) private var appDelegate
     private let modelContainer: ModelContainer
+    private let persistenceIssue: PersistenceIssue?
     @StateObject private var taskStore: TaskStore
     @StateObject private var calendarStore: CalendarStore
     @StateObject private var transitionStore: TransitionStore
@@ -13,6 +14,7 @@ struct TenoraApp: App {
     init() {
         let runtime = AppRuntime.shared
         modelContainer = runtime.container
+        persistenceIssue = runtime.persistenceIssue
         _taskStore = StateObject(wrappedValue: runtime.tasks)
         _calendarStore = StateObject(wrappedValue: runtime.calendar)
         _transitionStore = StateObject(wrappedValue: runtime.transitions)
@@ -21,7 +23,7 @@ struct TenoraApp: App {
 
     var body: some Scene {
         WindowGroup {
-            TenoraRootView()
+            TenoraRootView(persistenceIssue: persistenceIssue)
                 .environmentObject(taskStore)
                 .environmentObject(calendarStore)
                 .environmentObject(transitionStore)
@@ -32,17 +34,25 @@ struct TenoraApp: App {
 }
 
 private struct TenoraRootView: View {
+    let persistenceIssue: PersistenceIssue?
+
     @ViewBuilder
     var body: some View {
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("-habit-tracker-test") {
             NavigationStack { HabitDashboardView() }
                 .environmentObject(HabitStore.preview(.partial))
+        } else if let persistenceIssue {
+            PersistenceRecoveryView(issue: persistenceIssue)
         } else {
             standardRoot
         }
         #else
-        standardRoot
+        if let persistenceIssue {
+            PersistenceRecoveryView(issue: persistenceIssue)
+        } else {
+            standardRoot
+        }
         #endif
     }
 
@@ -52,6 +62,43 @@ private struct TenoraRootView: View {
             AgentAccountRootView()
         } else {
             RootTabView()
+        }
+    }
+}
+
+private struct PersistenceRecoveryView: View {
+    let issue: PersistenceIssue
+    @State private var showingDetails = false
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                TenoraScreenBackground()
+                VStack(spacing: 20) {
+                    Image(systemName: "externaldrive.badge.exclamationmark")
+                        .font(.system(size: 44, weight: .semibold))
+                        .foregroundStyle(Color.tenoraCopper)
+                    Text(issue.title)
+                        .font(.title2.bold())
+                        .multilineTextAlignment(.center)
+                    Text(issue.message)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                    Text("Do not reinstall or delete the app. Restart once, then contact Tenora support if this screen returns.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                    Button("Show technical details") { showingDetails = true }
+                        .buttonStyle(TenoraSecondaryButtonStyle())
+                }
+                .padding(32)
+            }
+            .navigationTitle("Data Recovery")
+            .alert("Technical details", isPresented: $showingDetails) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(issue.technicalDetails)
+            }
         }
     }
 }

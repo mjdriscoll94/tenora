@@ -6,34 +6,58 @@ import SwiftData
 final class AppRuntime {
     static let shared = AppRuntime()
     let container: ModelContainer
+    let persistenceIssue: PersistenceIssue?
     let tasks: TaskStore
     let calendar: CalendarStore
     let transitions: TransitionStore
     let habits: HabitStore
 
     private init() {
+        let uiTesting: Bool
+        #if DEBUG
+        uiTesting = ProcessInfo.processInfo.arguments.contains("-ui-testing")
+        #else
+        uiTesting = false
+        #endif
+
+        let resolvedContainer: ModelContainer
+        let resolvedIssue: PersistenceIssue?
         do {
             #if DEBUG
-            let uiTesting = ProcessInfo.processInfo.arguments.contains("-ui-testing")
             if ProcessInfo.processInfo.arguments.contains("-reset-working-schedule") {
                 UserDefaults.standard.removeObject(forKey: AttentionPreferences.scheduleKey)
             }
             if uiTesting {
-                container = try ModelContainer(
-                    for: StoredTask.self, StoredHabit.self, StoredHabitCompletion.self, StoredPlayerProgress.self, StoredGameUnlock.self,
-                    configurations: ModelConfiguration(isStoredInMemoryOnly: true)
-                )
+                resolvedContainer = try TenoraModelContainerFactory.makeInMemory()
             } else {
-                container = try ModelContainer(for: StoredTask.self, StoredHabit.self, StoredHabitCompletion.self, StoredPlayerProgress.self, StoredGameUnlock.self)
+                resolvedContainer = try TenoraModelContainerFactory.makePersistent()
             }
             #else
-            container = try ModelContainer(for: StoredTask.self, StoredHabit.self, StoredHabitCompletion.self, StoredPlayerProgress.self, StoredGameUnlock.self)
+            resolvedContainer = try TenoraModelContainerFactory.makePersistent()
             #endif
-            tasks = TaskStore(repository: SwiftDataTaskRepository(modelContext: container.mainContext))
-            habits = HabitStore(modelContext: container.mainContext)
-            let calendarRepository = EventKitCalendarRepository()
-            calendar = CalendarStore(repository: calendarRepository)
-            transitions = TransitionStore()
+            resolvedIssue = nil
+        } catch {
+            resolvedIssue = PersistenceIssue(
+                title: "Tenora couldn't open your saved data",
+                message: "Nothing was deleted. Tenora opened a temporary recovery store so the original data remains untouched.",
+                technicalDetails: String(describing: error)
+            )
+            do {
+                resolvedContainer = try TenoraModelContainerFactory.makeInMemory()
+            } catch {
+                fatalError("Unable to initialize Tenora's recovery store: \(error)")
+            }
+        }
+
+        container = resolvedContainer
+        persistenceIssue = resolvedIssue
+        tasks = TaskStore(repository: SwiftDataTaskRepository(modelContext: container.mainContext))
+        habits = HabitStore(modelContext: container.mainContext)
+        let calendarRepository = EventKitCalendarRepository()
+        calendar = CalendarStore(repository: calendarRepository)
+        transitions = TransitionStore()
+
+        do {
             #if DEBUG
             if uiTesting {
                 if ProcessInfo.processInfo.arguments.contains("-continuity-fixture") {
@@ -96,7 +120,9 @@ final class AppRuntime {
             ReminderService.shared.handleHabitAction = { [weak habits] id in
                 await habits?.completeFromWidget(id: id) ?? false
             }
-        } catch { fatalError("Unable to initialize Tenora's local store: \(error)") }
+        } catch {
+            assertionFailure("Unable to prepare Tenora's UI-test fixture: \(error)")
+        }
     }
 
     func publishWidget() {
@@ -104,4 +130,10 @@ final class AppRuntime {
             calendarKnown: calendar.availability != nil, focusedTaskID: tasks.focusedTaskID)
         WidgetPublisher.publishHabits(habits.widgetSnapshot)
     }
+}
+
+struct PersistenceIssue: Equatable, Sendable {
+    let title: String
+    let message: String
+    let technicalDetails: String
 }

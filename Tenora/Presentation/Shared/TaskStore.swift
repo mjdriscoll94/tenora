@@ -183,6 +183,13 @@ final class TaskStore: ObservableObject {
         UserDefaults.standard.set(id?.uuidString, forKey: "focusedTask")
     }
 
+    func restoreFocusedTaskID(_ id: UUID?) {
+        let validID = id.flatMap { candidate in
+            tasks.contains { $0.id == candidate && ![.completed, .archived].contains($0.status) } ? candidate : nil
+        }
+        setFocus(validID)
+    }
+
     private func priorityRank(_ priority: TaskPriority) -> Int {
         switch priority {
         case .normal: 0

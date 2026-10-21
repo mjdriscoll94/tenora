@@ -53,7 +53,7 @@ final class AttentionLoopUITests: XCTestCase {
         }
         app.staticTexts["Calendar"].tap()
         XCTAssertTrue(app.navigationBars["Calendar"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Connection"].exists)
+        XCTAssertTrue(app.staticTexts["calendar-connection-heading"].waitForExistence(timeout: 5))
     }
 
     @MainActor

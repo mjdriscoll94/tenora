@@ -64,4 +64,30 @@ final class HabitStoreTests: XCTestCase {
         XCTAssertTrue(reopened.isCompleted(habit, on: yesterday))
         XCTAssertFalse(reopened.isCompleted(habit))
     }
+
+    func testLoadingPracticalTrackerPreservesRetiredGameProgress() async throws {
+        let (container, store) = try makeStore()
+        let legacy = PlayerProgress(
+            totalXP: 3_200,
+            level: 24,
+            xpIntoLevel: 80,
+            xpForNextLevel: 250,
+            totalCompletions: 99,
+            currentMomentum: 12,
+            longestMomentum: 20,
+            perfectDays: 30
+        )
+        container.mainContext.insert(StoredPlayerProgress(progress: legacy))
+        try container.mainContext.save()
+
+        await store.load()
+
+        XCTAssertEqual(store.progress.totalXP, legacy.totalXP)
+        XCTAssertEqual(store.progress.level, legacy.level)
+        XCTAssertEqual(store.progress.xpIntoLevel, legacy.xpIntoLevel)
+        XCTAssertEqual(store.progress.xpForNextLevel, legacy.xpForNextLevel)
+        let persisted = try XCTUnwrap(container.mainContext.fetch(FetchDescriptor<StoredPlayerProgress>()).first)
+        XCTAssertEqual(persisted.totalXP, legacy.totalXP)
+        XCTAssertEqual(persisted.level, legacy.level)
+    }
 }

@@ -16,6 +16,7 @@ struct CalendarSettingsView: View {
                 connectionAction
             } header: {
                 Text("Connection")
+                    .accessibilityIdentifier("calendar-connection-heading")
             } footer: {
                 Text("Tenora reads calendars already connected to Apple Calendar, including iCloud, Google, and Outlook. Calendar details stay on this device.")
             }
