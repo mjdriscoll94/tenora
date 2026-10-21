@@ -87,6 +87,23 @@ final class WorkingScheduleTests: XCTestCase {
         }
     }
 
+    func testTimeChangesPersistWhenScheduleEditorIsRecreated() throws {
+        let suiteName = "com.tenora.tests.working-schedule.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defaults.removePersistentDomain(forName: suiteName)
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let editor = WorkingScheduleEditor(defaults: defaults)
+        var monday = editor.schedule.day(2)
+        monday.startMinute = 9 * 60 + 15
+        monday.endMinute = 17 * 60 + 45
+
+        XCTAssertTrue(editor.update(monday))
+
+        let reopened = WorkingScheduleEditor(defaults: defaults)
+        XCTAssertEqual(reopened.schedule.day(2).startMinute, 9 * 60 + 15)
+        XCTAssertEqual(reopened.schedule.day(2).endMinute, 17 * 60 + 45)
+    }
+
     func testWidgetUsesSameNightScheduleAfterSnapshotRoundTrip() throws {
         let local = Calendar.current
         let now = local.date(from: DateComponents(year: 2026, month: 9, day: 7, hour: 23))!
