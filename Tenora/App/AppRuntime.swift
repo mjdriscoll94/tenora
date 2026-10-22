@@ -15,6 +15,7 @@ final class AppRuntime {
     let profileID: LocalProfileID
     let settings: SettingsRepository
     let outbox: MutationOutbox?
+    let personalSyncInventoryReport: PersonalSyncInventoryReport?
 
     private init() {
         let uiTesting: Bool
@@ -62,6 +63,8 @@ final class AppRuntime {
 
         container = resolvedContainer
         persistenceIssue = resolvedIssue
+        personalSyncInventoryReport = try? PersonalSyncMetadataStore(modelContext: container.mainContext)
+            .backfill(profileID: profileID)
         tasks = TaskStore(
             repository: SwiftDataTaskRepository(
                 modelContext: container.mainContext,

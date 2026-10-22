@@ -145,10 +145,16 @@ privacy-disclosure updates remain mandatory public-cloud release gates.
 
 **User-visible household features:** Multi-device private backup/sync for opted-in accounts.
 
+**Status (October 22, 2026):** In progress. The first local-only foundation is complete:
+SwiftData V2 adds a private metadata sidecar, existing records are inventoried as personal
+and local-only, local task/habit changes maintain metadata and tombstones, conflict rules
+are explicit, and independent read/write kill switches remain off. No content upload,
+cloud sync table, or source-of-truth change exists yet.
+
 ### Work
 
-1. Add additive sync metadata to SwiftData V2.
-2. Backfill all existing records as personal/private.
+1. [x] Add additive sync metadata to SwiftData V2 without changing V1 content models.
+2. [x] Backfill existing SwiftData records as personal/private and local-only.
 3. Implement local outbox, batch mutations, idempotency, server versions, tombstones, cursor download, and retry/backoff.
 4. Add a pre-upload backup and a visible migration report.
 5. Reconcile counts, IDs, and hashes before changing cloud/local source-of-truth behavior.

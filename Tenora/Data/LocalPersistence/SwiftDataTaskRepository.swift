@@ -6,11 +6,13 @@ final class SwiftDataTaskRepository: TaskRepository {
     private let modelContext: ModelContext
     private let profileID: LocalProfileID
     private let outbox: MutationOutbox?
+    private let syncMetadata: PersonalSyncMetadataStore
 
     init(modelContext: ModelContext, profileID: LocalProfileID = .offline, outbox: MutationOutbox? = nil) {
         self.modelContext = modelContext
         self.profileID = profileID
         self.outbox = outbox
+        syncMetadata = PersonalSyncMetadataStore(modelContext: modelContext)
     }
 
     func fetchTasks() async throws -> [TenoraTask] {
@@ -31,6 +33,11 @@ final class SwiftDataTaskRepository: TaskRepository {
         } else {
             modelContext.insert(StoredTask(task: task))
         }
+        try syncMetadata.recordLocalUpsert(
+            entity: .task,
+            recordID: task.id.uuidString,
+            profileID: profileID
+        )
         try modelContext.save()
         try outbox?.enqueue(LocalMutation(
             profileID: profileID,
@@ -48,6 +55,11 @@ final class SwiftDataTaskRepository: TaskRepository {
         )
         if let storedTask = try modelContext.fetch(descriptor).first {
             modelContext.delete(storedTask)
+            try syncMetadata.recordLocalDeletion(
+                entity: .task,
+                recordID: id.uuidString,
+                profileID: profileID
+            )
             try modelContext.save()
             try outbox?.enqueue(LocalMutation(
                 profileID: profileID,

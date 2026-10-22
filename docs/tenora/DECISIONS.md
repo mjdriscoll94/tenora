@@ -216,3 +216,18 @@ exposure. A two-step local marker supports retry without moving or deleting reco
 **Consequence:** Live in-memory profile replacement is deferred. The protected switch is
 completed through a normal app reopen after widgets are blanked and the active namespace
 is changed.
+
+## D-021 — Add sync metadata as a private sidecar
+
+**Decision:** SwiftData V2 adds one `StoredSyncMetadata` sidecar keyed by entity type and
+stable record ID. The V1 task, habit, completion, player-progress, and unlock models remain
+unchanged. Startup idempotently inventories those records as `personal` and `localOnly`.
+
+**Why:** This keeps the first Phase 4 migration additive and reversible. It also avoids
+putting cloud ownership onto a record merely because a user signed in. Cloud owner IDs,
+household IDs, server versions, and acknowledgements remain empty until a separate,
+explicit sync consent flow succeeds.
+
+**Guardrail:** Sync reads and writes are independently disabled. Local repositories may
+maintain sidecar state and tombstones, but no code may transmit content until the outbox
+and local-record write are transactional, reconciliation is proven, and the user opts in.

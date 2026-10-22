@@ -120,7 +120,11 @@ struct DataPrivacySettingsView: View {
             do {
                 let current = try TenoraDataArchive.make(context: modelContext, transitionPlans: transitionStore.plans)
                 try TenoraDataArchive.savePreRestoreCopy(current)
-                try TenoraDataArchive.restore(payload, context: modelContext)
+                try TenoraDataArchive.restore(
+                    payload,
+                    context: modelContext,
+                    profileID: AppRuntime.shared.profileID
+                )
                 settings.repository.refreshFromLegacyStore()
                 settings.reload()
                 await transitionStore.replaceAll(payload.transitionPlans)
@@ -151,6 +155,7 @@ struct DataPrivacySettingsView: View {
             await transitionStore.removeAll()
             await ReminderService.shared.removeAllTenoraNotifications()
             try? AppRuntime.shared.outbox?.removeAll(profileID: AppRuntime.shared.profileID)
+            try? PersonalSyncMetadataStore(modelContext: modelContext).removeAll()
             settings.reset()
             statusMessage = "All local Tenora data was deleted."
             deleting = false

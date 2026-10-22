@@ -6,11 +6,13 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
     private let modelContext: ModelContext
     private let profileID: LocalProfileID
     private let outbox: MutationOutbox?
+    private let syncMetadata: PersonalSyncMetadataStore
 
     init(modelContext: ModelContext, profileID: LocalProfileID = .offline, outbox: MutationOutbox? = nil) {
         self.modelContext = modelContext
         self.profileID = profileID
         self.outbox = outbox
+        syncMetadata = PersonalSyncMetadataStore(modelContext: modelContext)
     }
 
     func fetchHabits() throws -> [Habit] {
@@ -22,6 +24,7 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
         let descriptor = FetchDescriptor<StoredHabit>(predicate: #Predicate { $0.id == id })
         if let stored = try modelContext.fetch(descriptor).first { stored.update(from: habit) }
         else { modelContext.insert(StoredHabit(habit: habit)) }
+        try syncMetadata.recordLocalUpsert(entity: .habit, recordID: id.uuidString, profileID: profileID)
         try modelContext.save()
         try enqueue(.habit, id: id.uuidString, operation: .upsert, value: habit)
     }
@@ -29,6 +32,7 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
     func deleteHabit(id: UUID) throws {
         let descriptor = FetchDescriptor<StoredHabit>(predicate: #Predicate { $0.id == id })
         for item in try modelContext.fetch(descriptor) { modelContext.delete(item) }
+        try syncMetadata.recordLocalDeletion(entity: .habit, recordID: id.uuidString, profileID: profileID)
         try modelContext.save()
         try enqueue(.habit, id: id.uuidString, operation: .delete, value: Optional<Habit>.none)
     }
@@ -47,6 +51,11 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
         let descriptor = FetchDescriptor<StoredHabitCompletion>(predicate: #Predicate { $0.id == id })
         if try modelContext.fetch(descriptor).isEmpty {
             modelContext.insert(StoredHabitCompletion(completion: completion))
+            try syncMetadata.recordLocalUpsert(
+                entity: .habitCompletion,
+                recordID: id.uuidString,
+                profileID: profileID
+            )
             try modelContext.save()
             try enqueue(.habitCompletion, id: id.uuidString, operation: .upsert, value: completion)
         }
@@ -55,6 +64,11 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
     func deleteHabitCompletion(id: UUID) throws {
         let descriptor = FetchDescriptor<StoredHabitCompletion>(predicate: #Predicate { $0.id == id })
         for item in try modelContext.fetch(descriptor) { modelContext.delete(item) }
+        try syncMetadata.recordLocalDeletion(
+            entity: .habitCompletion,
+            recordID: id.uuidString,
+            profileID: profileID
+        )
         try modelContext.save()
         try enqueue(.habitCompletion, id: id.uuidString, operation: .delete, value: Optional<HabitCompletion>.none)
     }
@@ -65,6 +79,11 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
         for item in matches {
             let id = item.id
             modelContext.delete(item)
+            try syncMetadata.recordLocalDeletion(
+                entity: .habitCompletion,
+                recordID: id.uuidString,
+                profileID: profileID
+            )
             try enqueue(.habitCompletion, id: id.uuidString, operation: .delete, value: Optional<HabitCompletion>.none)
         }
         try modelContext.save()
@@ -95,6 +114,11 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
         } else {
             modelContext.insert(StoredPlayerProgress(progress: progress))
         }
+        try syncMetadata.recordLocalUpsert(
+            entity: .playerProgress,
+            recordID: "local-player",
+            profileID: profileID
+        )
         try modelContext.save()
     }
 

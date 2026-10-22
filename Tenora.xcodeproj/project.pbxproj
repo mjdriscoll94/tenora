@@ -17,6 +17,7 @@
 		0C819A0AA3A325B5809D5AFC /* TenoraTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F72AA20E4FD3F2F0588C1D0 /* TenoraTheme.swift */; };
 		0EFC3B132C806F86DD78386F /* ReturnTriggerAndHorizonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33822CD21A913AB5F111CB4F /* ReturnTriggerAndHorizonTests.swift */; };
 		0F2F1BEC60C274416F49AA3D /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B5DF93911830F780A3C6D2F /* RootTabView.swift */; };
+		1486B0CE8DB92A38AB3E1614 /* StoredSyncMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E4B056ADA144A6C348E221B /* StoredSyncMetadata.swift */; };
 		14980D8B2E14247D8B06B1AB /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4274B603B59539ED701D1BFE /* TodayView.swift */; };
 		16783E6F47FFA852B411F15C /* ReviewEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09D1338468E0A708CBA17ED /* ReviewEngineTests.swift */; };
 		18DB53640FC7C817C425E430 /* ResumeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B038186373CD861DF2FABED /* ResumeView.swift */; };
@@ -91,9 +92,11 @@
 		A7C681922BB2A03C67CF1CBF /* TenoraRouteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5371FB5D531D33CDDCD675F1 /* TenoraRouteTests.swift */; };
 		A8854A3DFFC27EC0654F923D /* StoredTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32C111D0AB90057D68F77C2 /* StoredTask.swift */; };
 		A96312DD6AE260B5E948340D /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEBD863E438A9164DFAFB3B3 /* WidgetSnapshot.swift */; };
+		AA515CCEBB6A683623A152C2 /* PersonalSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D92738E012303B94CE0835 /* PersonalSync.swift */; };
 		AC8099B5AF218BE1F7816EA4 /* AvailabilityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD3A86FF0217FBDF1AC7F96 /* AvailabilityEngine.swift */; };
 		B15604E0CA5032879EAD7576 /* TransitionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C37F3FD4897A41789F7650FC /* TransitionPlanView.swift */; };
 		B2EB490955356B0208858D88 /* Phase2RepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC5E1E8BA9904E7A834A9BCA /* Phase2RepositoryTests.swift */; };
+		B5E79323FD6A8762F9F120E4 /* PersonalSyncMetadataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9E7FDD96CB21BF74E43143 /* PersonalSyncMetadataStore.swift */; };
 		B6B102658B0DF7D9B6300440 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEBD863E438A9164DFAFB3B3 /* WidgetSnapshot.swift */; };
 		B8E9E1BDA57543DA0D3ED6D0 /* AdultAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67E71D38D526A8DFC75BAB /* AdultAccount.swift */; };
 		B9CE76FECDB9863EFFCCD28B /* RecoverySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC6CE93BEA5A32B9663340AE /* RecoverySettingsView.swift */; };
@@ -121,6 +124,7 @@
 		EB61B2A7939D2EA4CF1DB162 /* DataPrivacySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72EBDF80FCA5CB223ECEA993 /* DataPrivacySettingsView.swift */; };
 		ECA88619CA0CB9CBD5ED08B7 /* WorkingScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0F402F160274492F263C08 /* WorkingScheduleView.swift */; };
 		EF4A262204F1B816EC6668F7 /* UserDefaultsSettingsRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0CFEBA3740893550EF6E7A /* UserDefaultsSettingsRepository.swift */; };
+		EF781F3F82625A22005A440A /* PersonalSyncFoundationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7CFD73C4CBE0AB400C5080A /* PersonalSyncFoundationTests.swift */; };
 		F0F2676A336AA0641FDAC392 /* TenoraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675BBBBAD84FAABC4FC78C11 /* TenoraApp.swift */; };
 		F2D618D935E8515463619602 /* AgentBridgeConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = C03CCC010B34D5320027778E /* AgentBridgeConfiguration.swift */; };
 		F5BB42BDCC888B6C857013B1 /* CalendarEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */; };
@@ -248,6 +252,7 @@
 		9B5DF93911830F780A3C6D2F /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
 		9C62C833A4A9B5283A2A3A0C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9C8F837184BFD98E3459E985 /* TaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepository.swift; sourceTree = "<group>"; };
+		9E4B056ADA144A6C348E221B /* StoredSyncMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredSyncMetadata.swift; sourceTree = "<group>"; };
 		A32C111D0AB90057D68F77C2 /* StoredTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredTask.swift; sourceTree = "<group>"; };
 		A8DEC2E47D1ECE34CF3BD9F1 /* AddTenoraTaskIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTenoraTaskIntent.swift; sourceTree = "<group>"; };
 		A9CEAA5BE9430CA188F5E960 /* TenoraDataArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraDataArchive.swift; sourceTree = "<group>"; };
@@ -259,10 +264,12 @@
 		AFEBBB461D5EE714B551CAA2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		B210F4ED5B77A9803B7B134D /* AccountFoundationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFoundationTests.swift; sourceTree = "<group>"; };
 		B228CB8E840A3C104FD52149 /* FileMutationOutbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMutationOutbox.swift; sourceTree = "<group>"; };
+		B7CFD73C4CBE0AB400C5080A /* PersonalSyncFoundationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalSyncFoundationTests.swift; sourceTree = "<group>"; };
 		B9ED8DF54E8B8CB2B4EF0E7E /* AgentBridgeSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeSnapshotTests.swift; sourceTree = "<group>"; };
 		BA6544FC5F9EDC67110D2CC9 /* EventKitCalendarRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventKitCalendarRepository.swift; sourceTree = "<group>"; };
 		BA747D4781160DEC2BF368B9 /* Habit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Habit.swift; sourceTree = "<group>"; };
 		BC2AB20BB875340E79477903 /* AgentBridgeOAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeOAuthClient.swift; sourceTree = "<group>"; };
+		BF9E7FDD96CB21BF74E43143 /* PersonalSyncMetadataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalSyncMetadataStore.swift; sourceTree = "<group>"; };
 		BFB8EC27C0F9348CEC9633BF /* ReturnTriggerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReturnTriggerView.swift; sourceTree = "<group>"; };
 		C03CCC010B34D5320027778E /* AgentBridgeConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeConfiguration.swift; sourceTree = "<group>"; };
 		C126DD5B2154D6CD5A5E23C5 /* TransitionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionPlan.swift; sourceTree = "<group>"; };
@@ -287,6 +294,7 @@
 		ED6F94B8FF23335A2A9EF582 /* HabitStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitStoreTests.swift; sourceTree = "<group>"; };
 		F09D1338468E0A708CBA17ED /* ReviewEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewEngineTests.swift; sourceTree = "<group>"; };
 		F1A59288033B3920E4AA9539 /* AvailabilityEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityEngineTests.swift; sourceTree = "<group>"; };
+		F2D92738E012303B94CE0835 /* PersonalSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalSync.swift; sourceTree = "<group>"; };
 		F397661F77BEED30C63991C5 /* WorkingScheduleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingScheduleTests.swift; sourceTree = "<group>"; };
 		F3A36739B23B71D41557D752 /* WorkingSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingSchedule.swift; sourceTree = "<group>"; };
 		F49EE97554970F1BCAD12AC3 /* TenoraFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraFeatures.swift; sourceTree = "<group>"; };
@@ -350,6 +358,7 @@
 			isa = PBXGroup;
 			children = (
 				B210F4ED5B77A9803B7B134D /* AccountFoundationTests.swift */,
+				B7CFD73C4CBE0AB400C5080A /* PersonalSyncFoundationTests.swift */,
 				AC5E1E8BA9904E7A834A9BCA /* Phase2RepositoryTests.swift */,
 				61958874194B7B375841513D /* SwiftDataTaskRepositoryTests.swift */,
 				AE83E373D11604A04E1FA031 /* TenoraDataArchiveTests.swift */,
@@ -409,7 +418,9 @@
 			children = (
 				B228CB8E840A3C104FD52149 /* FileMutationOutbox.swift */,
 				34D94440950DA4E1CD9F44F5 /* InMemoryHabitRepository.swift */,
+				BF9E7FDD96CB21BF74E43143 /* PersonalSyncMetadataStore.swift */,
 				3AD3825F00CF836F52E03EC4 /* StoredHabitModels.swift */,
+				9E4B056ADA144A6C348E221B /* StoredSyncMetadata.swift */,
 				A32C111D0AB90057D68F77C2 /* StoredTask.swift */,
 				6F6FB498E0C60E2FF35433C3 /* SwiftDataHabitRepositories.swift */,
 				49D4AC1B40D0945D73975D96 /* SwiftDataTaskRepository.swift */,
@@ -452,6 +463,7 @@
 				BA747D4781160DEC2BF368B9 /* Habit.swift */,
 				FD3D5E7FBCDFC63A13D2A0A2 /* LocalMutation.swift */,
 				80E81327A28AB9CC8468B5B4 /* LocalProfile.swift */,
+				F2D92738E012303B94CE0835 /* PersonalSync.swift */,
 				D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */,
 				CFB1939D430BE027D318ECB2 /* TenoraTask.swift */,
 				C126DD5B2154D6CD5A5E23C5 /* TransitionPlan.swift */,
@@ -899,6 +911,7 @@
 				E5C547BC8E8E140AC6966DF8 /* CalendarStoreTests.swift in Sources */,
 				81DC58F12B6DAB31910134F6 /* HabitStoreTests.swift in Sources */,
 				3C5159C284A3EBE3F3AA6936 /* HabitTrackingEngineTests.swift in Sources */,
+				EF781F3F82625A22005A440A /* PersonalSyncFoundationTests.swift in Sources */,
 				B2EB490955356B0208858D88 /* Phase2RepositoryTests.swift in Sources */,
 				4D87E9862A7B5F07302E5C08 /* ReminderPlannerTests.swift in Sources */,
 				FD2795F09FD35262B448FD83 /* ResurfacingEngineTests.swift in Sources */,
@@ -987,6 +1000,8 @@
 				32DF619DF5EAB81834C45425 /* LocalProfile.swift in Sources */,
 				644E2AFB793684717395777A /* LostTrackRecoveryView.swift in Sources */,
 				CC2151A91055066FBD324822 /* MutationOutbox.swift in Sources */,
+				AA515CCEBB6A683623A152C2 /* PersonalSync.swift in Sources */,
+				B5E79323FD6A8762F9F120E4 /* PersonalSyncMetadataStore.swift in Sources */,
 				97A031BE777A3F045A209ED3 /* ProfileRepository.swift in Sources */,
 				B9CE76FECDB9863EFFCCD28B /* RecoverySettingsView.swift in Sources */,
 				661C4A214173857BA3C21967 /* ReminderPlanner.swift in Sources */,
@@ -1002,6 +1017,7 @@
 				C10C155FCC16EE5C4954871B /* SettingsRepository.swift in Sources */,
 				5A5AD50A65F5686658A16919 /* SettingsView.swift in Sources */,
 				2393B8B6054E621075903A5A /* StoredHabitModels.swift in Sources */,
+				1486B0CE8DB92A38AB3E1614 /* StoredSyncMetadata.swift in Sources */,
 				A8854A3DFFC27EC0654F923D /* StoredTask.swift in Sources */,
 				36008BCEE42E99A7EAEE4A3D /* StuckAssistanceView.swift in Sources */,
 				92FE55A77CB5AB795FD68319 /* SupabaseAuthenticationProvider.swift in Sources */,

@@ -242,10 +242,12 @@ enum TenoraDataArchive {
         return payload
     }
 
+    @MainActor
     static func restore(
         _ payload: TenoraBackupPayload,
         context: ModelContext,
-        defaults: UserDefaults = .standard
+        defaults: UserDefaults = .standard,
+        profileID: LocalProfileID = .offline
     ) throws {
         try validate(payload)
         // Exercise every model insertion against an isolated store before touching
@@ -259,9 +261,11 @@ enum TenoraDataArchive {
             for item in try context.fetch(FetchDescriptor<StoredHabitCompletion>()) { context.delete(item) }
             for item in try context.fetch(FetchDescriptor<StoredPlayerProgress>()) { context.delete(item) }
             for item in try context.fetch(FetchDescriptor<StoredGameUnlock>()) { context.delete(item) }
+            for item in try context.fetch(FetchDescriptor<StoredSyncMetadata>()) { context.delete(item) }
 
             try insert(payload, into: context)
         }
+        _ = try PersonalSyncMetadataStore(modelContext: context).backfill(profileID: profileID)
         payload.preferences.apply(to: defaults)
     }
 

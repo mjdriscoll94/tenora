@@ -1,10 +1,26 @@
 # Tenora Family Transition — Progress and Verification
 
 **Last updated:** October 22, 2026
-**Current phase:** Phase 3 development foundation complete; ready for Phase 4 planning
-**Implementation state:** No household or cloud collaboration features implemented. Historical-data gates were waived for the initial pre-release rollout because current development data may be discarded.
+**Current phase:** Phase 4 private personal sync foundation in progress
+**Implementation state:** Local-only Phase 4 metadata is implemented with cloud reads and writes disabled. No household or cloud collaboration feature is enabled. Historical-data gates were waived for the initial pre-release rollout because current development data may be discarded.
 
 ## Work completed
+
+### Phase 4 local-only sync foundation
+
+- Added additive `TenoraSchemaV2` with a generic sync-metadata sidecar; V1 content models remain unchanged.
+- Added idempotent startup inventory for tasks, habits, completions, retained player progress, and retained game unlocks.
+- Backfilled records as personal, local-only, owned by the active local profile, with no cloud owner or household assignment.
+- Local task and habit repositories now maintain metadata for changes and deletion tombstones in SwiftData.
+- Added content-free inventory reporting, explicit optimistic-concurrency/deletion conflict rules, and separate disabled read/write feature gates.
+- Added focused tests for private defaults, idempotent backfill, tombstones, conflict behavior, and legacy-store opening.
+- No Supabase productivity-data schema or upload code was added.
+
+**Verification:** Simulator build passed. The complete unit suite passed with 123 tests,
+including an explicit V1-to-V2 store migration.
+Nine unchanged UI flows passed in the full run; the one stale account-configuration test
+was updated for the now-configured development project and passed separately, covering all
+10 current UI flows. `git diff --check` passed.
 
 ### Phase 3 optional-account foundation
 
@@ -221,7 +237,8 @@ They do **not** exercise a real PostgreSQL instance, database role, forced RLS p
 
 ## Next decision point
 
-Plan Phase 4 private personal sync without enabling uploads yet. First define the SwiftData
-V2 ownership/sync metadata, conflict rules, account-linking choices, reconciliation report,
-and cloud kill switch. Provision staging/production and finish deletion/export, monitoring,
-backup, and disclosure gates before any public cloud beta.
+Continue Phase 4 without enabling uploads: replace the Phase 2 file queue with a versioned
+retry/idempotency envelope and make the local content change plus mutation journal crash-safe.
+Then add a pre-upload backup and content-free reconciliation report before designing the
+server change-feed schema. Provision staging/production and finish deletion/export,
+monitoring, backup, and disclosure gates before any public cloud beta.

@@ -17,14 +17,26 @@ enum TenoraSchemaV1: VersionedSchema {
     }
 }
 
+/// Phase 4 adds private sync bookkeeping as a sidecar. Existing content models are
+/// unchanged, so migration cannot reinterpret or expose their fields.
+enum TenoraSchemaV2: VersionedSchema {
+    static let versionIdentifier = Schema.Version(2, 0, 0)
+
+    static var models: [any PersistentModel.Type] {
+        TenoraSchemaV1.models + [StoredSyncMetadata.self]
+    }
+}
+
 enum TenoraMigrationPlan: SchemaMigrationPlan {
-    static var schemas: [any VersionedSchema.Type] { [TenoraSchemaV1.self] }
-    static var stages: [MigrationStage] { [] }
+    static var schemas: [any VersionedSchema.Type] { [TenoraSchemaV1.self, TenoraSchemaV2.self] }
+    static var stages: [MigrationStage] {
+        [.lightweight(fromVersion: TenoraSchemaV1.self, toVersion: TenoraSchemaV2.self)]
+    }
 }
 
 enum TenoraModelContainerFactory {
     static func makeInMemory() throws -> ModelContainer {
-        let schema = Schema(versionedSchema: TenoraSchemaV1.self)
+        let schema = Schema(versionedSchema: TenoraSchemaV2.self)
         return try ModelContainer(
             for: schema,
             migrationPlan: TenoraMigrationPlan.self,
@@ -33,7 +45,7 @@ enum TenoraModelContainerFactory {
     }
 
     static func makePersistent(profileID: LocalProfileID = .offline) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: TenoraSchemaV1.self)
+        let schema = Schema(versionedSchema: TenoraSchemaV2.self)
         if profileID != .offline {
             let support = try FileManager.default.url(
                 for: .applicationSupportDirectory,
@@ -55,7 +67,7 @@ enum TenoraModelContainerFactory {
     }
 
     static func make(at url: URL) throws -> ModelContainer {
-        let schema = Schema(versionedSchema: TenoraSchemaV1.self)
+        let schema = Schema(versionedSchema: TenoraSchemaV2.self)
         let configuration = ModelConfiguration("Tenora", schema: schema, url: url, allowsSave: true)
         return try ModelContainer(
             for: schema,

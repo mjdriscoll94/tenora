@@ -4,4 +4,8 @@ enum TenoraFeatures {
     #else
     static let agentBridgeEnabled = false
     #endif
+
+    /// Emergency gates remain off until reconciliation and multi-device tests pass.
+    static let personalSyncReadEnabled = false
+    static let personalSyncWriteEnabled = false
 }

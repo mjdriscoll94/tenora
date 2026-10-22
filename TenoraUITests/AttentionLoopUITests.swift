@@ -57,7 +57,7 @@ final class AttentionLoopUITests: XCTestCase {
     }
 
     @MainActor
-    func testUnconfiguredAccountPageClearlyKeepsLocalMode() {
+    func testConfiguredAccountPageClearlyKeepsSignInOptional() {
         let app = XCUIApplication()
         app.launchArguments = ["-ui-testing"]
         app.launch()
@@ -65,9 +65,10 @@ final class AttentionLoopUITests: XCTestCase {
         app.staticTexts["Account"].tap()
 
         XCTAssertTrue(app.navigationBars["Account"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Using Tenora locally"].exists)
-        XCTAssertTrue(app.staticTexts["Account sign-in is not configured in this build. All current features still work without an account."].exists)
-        XCTAssertFalse(app.buttons["Continue with Apple"].exists)
+        XCTAssertTrue(app.staticTexts["Not signed in"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Sign in is optional. You can continue using Tenora without an account."].exists)
+        XCTAssertTrue(app.buttons["Continue with Apple"].exists)
+        XCTAssertTrue(app.staticTexts["Your tasks, habits, calendar choices, working hours, focus state, and settings remain on this device in this release."].exists)
     }
 
     @MainActor
