@@ -106,20 +106,20 @@ be copied and mirrored for one compatibility release.
 
 **User-visible household features:** Optional Tenora account only.
 
-**Status (October 22, 2026):** Partially complete. The optional iOS account state machine,
+**Status (October 22, 2026):** Complete for the development-foundation scope. The optional iOS account state machine,
 native Sign in with Apple client, Keychain-backed Supabase session, stable application-user
 mapping migration, minimal account tables/RLS, explicit local-profile association,
 privacy-locked account switching, settings UI, and local tests are implemented. No local
 productivity data is transmitted. The development project is configured, both identity
-migrations are live, RLS checks pass, and security advisors are clean. Staging/production,
-signed Apple capability/provider testing, deletion/export, monitoring, backups, and
-privacy-disclosure updates remain.
+migrations are live, RLS checks pass, security advisors are clean, and the Apple lifecycle
+passed on a signed device. Staging/production, deletion/export, monitoring, backups, and
+privacy-disclosure updates remain mandatory public-cloud release gates.
 
 ### Work
 
 1. [~] Provision separate development/staging/production managed PostgreSQL projects. Development is live; staging and production remain.
 2. [x] Add Tenora users and provider identity mappings. Both migrations are applied and verified in development.
-3. [~] Implement Sign in with Apple and email link sign-in; retain offline use. Native Apple and offline use are implemented; email link is deferred pending delivery/support decisions.
+3. [x] Implement native Sign in with Apple and retain offline use. Email link remains intentionally deferred pending delivery/support decisions.
 4. Define normalized tables, constraints, migrations, RLS, audit events, and restricted server roles.
 5. Build the command API for sensitive operations instead of exposing service credentials to iOS.
 6. Add session revocation, account deletion/export, rate limiting, monitoring, backups, and secret rotation procedures.

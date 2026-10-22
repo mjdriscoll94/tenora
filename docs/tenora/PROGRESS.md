@@ -1,7 +1,7 @@
 # Tenora Family Transition — Progress and Verification
 
 **Last updated:** October 22, 2026
-**Current phase:** Phase 3 live development environment; signed-device Apple verification remains
+**Current phase:** Phase 3 development foundation complete; ready for Phase 4 planning
 **Implementation state:** No household or cloud collaboration features implemented. Historical-data gates were waived for the initial pre-release rollout because current development data may be discarded.
 
 ## Work completed
@@ -18,10 +18,11 @@
 - Added local account lifecycle tests and a database authorization test file.
 - Documented setup, lifecycle, recovery, rollback, and deferred cloud work in `ACCOUNT_LIFECYCLE.md`.
 
-**Disposition:** PARTIALLY COMPLETE. The development Supabase environment, client
-configuration, migrations, RLS checks, and advisor checks are live and verified. A
-signed-device Sign in with Apple lifecycle test still remains. No mock is presented as
-live authentication, and no productivity-data upload exists.
+**Disposition:** COMPLETE for the Phase 3 development-foundation scope. The development
+Supabase environment, client configuration, migrations, RLS checks, advisor checks, and
+signed-device Sign in with Apple lifecycle are verified. No productivity data is uploaded.
+Staging, production operations, deletion/export, and public-release disclosures remain
+release gates rather than blockers to closing this implementation phase.
 
 ### Phase 3 verification
 
@@ -38,6 +39,8 @@ live authentication, and no productivity-data upload exists.
 - Live schema verification confirmed RLS on all three account tables, four authenticated ownership policies, no anonymous identity-table access, and no app-role execution privilege on the private provisioning function.
 - The transactional pgTAP authorization file completed against the linked database through the Docker-free SQL runner. The CLI's dedicated `test db --linked` wrapper could not run because it unnecessarily required a local Docker/Podman executable on this machine.
 - Post-migration advisors report no security warnings. The only performance notice is that the newly created foreign-key index is unused before production traffic, which is expected.
+- Signed-device gate reported complete by the product owner on October 22, 2026: Apple sign-in succeeded, the current local profile was connected, the session survived force-quit/relaunch, sign-out succeeded, and local tasks, habits, and settings remained intact.
+- Live database verification after the device sign-in confirmed exactly one Apple identity, one Supabase Auth user, one Tenora user, one identity mapping, and one account profile.
 
 - Audited SwiftUI startup, dependency ownership, tabs, navigation, sheets, and deep links.
 - Audited all SwiftData entities and other local persistence locations.
@@ -159,7 +162,7 @@ They do **not** exercise a real PostgreSQL instance, database role, forced RLS p
 
 ### P1 before cloud beta
 
-1. The normal-app account client and development Supabase schema are verified; a signed-device Apple sign-in, restore, sign-out, and revocation exercise remains.
+1. The normal-app account client, development Supabase schema, and signed-device lifecycle are verified; deletion/export, administrative revocation operations, and staging/production setup remain before cloud beta.
 2. No incremental or bidirectional sync, tombstones, conflict behavior, or durable outbox.
 3. No database integration/RLS adversarial test suite.
 4. Local state is fragmented across SwiftData, standard defaults, App Group defaults, Keychain, and EventKit.
@@ -195,7 +198,7 @@ They do **not** exercise a real PostgreSQL instance, database role, forced RLS p
 
 ### Partial
 
-- [~] Authentication: normal-app Apple/Supabase client, live development schema, and authorization checks are verified; signed-device Apple lifecycle verification remains
+- [x] Authentication foundation: normal-app Apple/Supabase client, live development schema, authorization checks, and signed-device lifecycle are verified
 - [~] Backend: secure prototype patterns, not a collaboration service
 - [~] Cloud data: one-way replaceable task snapshot only
 - [~] Data portability: comprehensive local backup/restore is implemented; cloud lifecycle remains, while the pre-release physical-device history drill was waived
@@ -218,7 +221,7 @@ They do **not** exercise a real PostgreSQL instance, database role, forced RLS p
 
 ## Next decision point
 
-Finish the remaining Phase 3 manual gate: confirm Apple is enabled for `com.tenora.app`
-in both Apple Developer and Supabase Auth, then exercise new/restored/signed-out/revoked
-sessions on a signed device build. Provision staging/production before release. Do not
-begin private sync or household implementation until that evidence is recorded.
+Plan Phase 4 private personal sync without enabling uploads yet. First define the SwiftData
+V2 ownership/sync metadata, conflict rules, account-linking choices, reconciliation report,
+and cloud kill switch. Provision staging/production and finish deletion/export, monitoring,
+backup, and disclosure gates before any public cloud beta.

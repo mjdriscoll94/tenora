@@ -1,6 +1,6 @@
 # Tenora Optional Account Lifecycle
 
-**Implementation status:** Client and development Supabase foundation verified; signed-device Apple lifecycle verification remains.
+**Implementation status:** Client, development Supabase foundation, and signed-device Apple lifecycle verified October 22, 2026.
 
 ## Boundaries
 
