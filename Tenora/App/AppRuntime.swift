@@ -30,7 +30,6 @@ final class AppRuntime {
         settings = UserDefaultsSettingsRepository(profileID: profileID)
         appSettings = AppSettingsStore(repository: settings)
         ReminderService.shared.configure(settings: settings)
-        outbox = try? FileMutationOutbox()
 
         let resolvedContainer: ModelContainer
         let resolvedIssue: PersistenceIssue?
@@ -63,6 +62,11 @@ final class AppRuntime {
 
         container = resolvedContainer
         persistenceIssue = resolvedIssue
+        let transactionalOutbox = SwiftDataMutationOutbox(modelContext: container.mainContext)
+        if let legacyOutbox = try? FileMutationOutbox() {
+            _ = try? legacyOutbox.migratePending(profileID: profileID, to: transactionalOutbox)
+        }
+        outbox = transactionalOutbox
         personalSyncInventoryReport = try? PersonalSyncMetadataStore(modelContext: container.mainContext)
             .backfill(profileID: profileID)
         tasks = TaskStore(

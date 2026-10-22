@@ -25,16 +25,16 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
         if let stored = try modelContext.fetch(descriptor).first { stored.update(from: habit) }
         else { modelContext.insert(StoredHabit(habit: habit)) }
         try syncMetadata.recordLocalUpsert(entity: .habit, recordID: id.uuidString, profileID: profileID)
-        try modelContext.save()
         try enqueue(.habit, id: id.uuidString, operation: .upsert, value: habit)
+        try modelContext.save()
     }
 
     func deleteHabit(id: UUID) throws {
         let descriptor = FetchDescriptor<StoredHabit>(predicate: #Predicate { $0.id == id })
         for item in try modelContext.fetch(descriptor) { modelContext.delete(item) }
         try syncMetadata.recordLocalDeletion(entity: .habit, recordID: id.uuidString, profileID: profileID)
-        try modelContext.save()
         try enqueue(.habit, id: id.uuidString, operation: .delete, value: Optional<Habit>.none)
+        try modelContext.save()
     }
 
     func deleteAllHabits() throws {
@@ -56,8 +56,8 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
                 recordID: id.uuidString,
                 profileID: profileID
             )
-            try modelContext.save()
             try enqueue(.habitCompletion, id: id.uuidString, operation: .upsert, value: completion)
+            try modelContext.save()
         }
     }
 
@@ -69,8 +69,8 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
             recordID: id.uuidString,
             profileID: profileID
         )
-        try modelContext.save()
         try enqueue(.habitCompletion, id: id.uuidString, operation: .delete, value: Optional<HabitCompletion>.none)
+        try modelContext.save()
     }
 
     func deleteHabitCompletions(habitID: UUID) throws {
@@ -136,7 +136,7 @@ final class SwiftDataHabitRepository: HabitRepository, HabitCompletionRepository
     ) throws {
         guard let outbox else { return }
         let payload = try value.map { try JSONEncoder().encode($0) }
-        try outbox.enqueue(LocalMutation(
+        try outbox.stage(LocalMutation(
             profileID: profileID,
             entity: entity,
             recordID: id,

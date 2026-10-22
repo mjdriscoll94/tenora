@@ -9,6 +9,11 @@
 - Every inventoried record begins as personal and local-only.
 - Cloud owner, household, server-version, and acknowledgement fields begin empty.
 - Local task/habit changes refresh metadata; local deletes retain a tombstone.
+- Task/habit content, metadata, and mutation envelopes commit in one SwiftData save.
+- Mutation IDs are stable idempotency keys; envelopes retain base server version, attempt
+  count, retry time, blocked state, and a non-content failure code.
+- The prior file queue migrates into the transactional journal idempotently and is only
+  cleared after all inserts succeed.
 - Support-facing inventory contains counts and states, never titles, notes, or habit names.
 - Mutable version mismatches and edits after a remote deletion are explicit conflicts. Habit completions are immutable events deduplicated by UUID.
 
@@ -20,13 +25,12 @@ endpoint, uploads an outbox, or treats Supabase as the source of truth.
 
 ## Required before the write gate can open
 
-1. Replace the current compatibility outbox with versioned mutation envelopes containing an idempotency key, base server version, attempt state, and timestamps.
-2. Make content writes and mutation journaling crash-safe as one local operation.
-3. Create a complete pre-upload backup and show a content-free migration/reconciliation report.
-4. Add an explicit user choice for device-only data versus an existing cloud dataset.
-5. Add and adversarially test personal-record RLS in a non-production Supabase environment.
-6. Prove first upload, retries, interruption, duplicate delivery, conflicts, reinstall restore, account switching, and two-device convergence.
-7. Keep notes and all calendar content outside default consent.
+1. Create a complete pre-upload backup and show a content-free migration/reconciliation report.
+2. Add an explicit user choice for device-only data versus an existing cloud dataset.
+3. Add and adversarially test personal-record RLS in a non-production Supabase environment.
+4. Implement server batches, acknowledgements, version application, and cursor downloads.
+5. Prove first upload, retries, interruption, duplicate delivery, conflicts, reinstall restore, account switching, and two-device convergence.
+6. Keep notes and all calendar content outside default consent.
 
 ## Rollback
 

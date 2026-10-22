@@ -155,7 +155,9 @@ cloud sync table, or source-of-truth change exists yet.
 
 1. [x] Add additive sync metadata to SwiftData V2 without changing V1 content models.
 2. [x] Backfill existing SwiftData records as personal/private and local-only.
-3. Implement local outbox, batch mutations, idempotency, server versions, tombstones, cursor download, and retry/backoff.
+3. [~] Transactional local journal, stable idempotency keys, base-version fields,
+   tombstones, retry/backoff, blocked state, and Phase 2 queue migration are implemented.
+   Server batching, acknowledgements, cursor download, and server-version application remain.
 4. Add a pre-upload backup and a visible migration report.
 5. Reconcile counts, IDs, and hashes before changing cloud/local source-of-truth behavior.
 6. Implement account-linking decisions when a signed-in cloud account and device both contain data.

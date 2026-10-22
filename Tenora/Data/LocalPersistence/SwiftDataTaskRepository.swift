@@ -38,14 +38,14 @@ final class SwiftDataTaskRepository: TaskRepository {
             recordID: task.id.uuidString,
             profileID: profileID
         )
-        try modelContext.save()
-        try outbox?.enqueue(LocalMutation(
+        try outbox?.stage(LocalMutation(
             profileID: profileID,
             entity: .task,
             recordID: task.id.uuidString,
             operation: .upsert,
             payload: try JSONEncoder().encode(task)
         ))
+        try modelContext.save()
     }
 
     func delete(id: UUID) async throws {
@@ -60,13 +60,13 @@ final class SwiftDataTaskRepository: TaskRepository {
                 recordID: id.uuidString,
                 profileID: profileID
             )
-            try modelContext.save()
-            try outbox?.enqueue(LocalMutation(
+            try outbox?.stage(LocalMutation(
                 profileID: profileID,
                 entity: .task,
                 recordID: id.uuidString,
                 operation: .delete
             ))
+            try modelContext.save()
         }
     }
 

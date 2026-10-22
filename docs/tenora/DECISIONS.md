@@ -231,3 +231,18 @@ explicit sync consent flow succeeds.
 **Guardrail:** Sync reads and writes are independently disabled. Local repositories may
 maintain sidecar state and tombstones, but no code may transmit content until the outbox
 and local-record write are transactional, reconciliation is proven, and the user opts in.
+
+## D-022 — Keep sync mutations in the local database transaction
+
+**Decision:** Phase 4 stores mutation envelopes in SwiftData V2. Task and habit repositories
+stage the content edit, metadata update or tombstone, and mutation before one `ModelContext`
+save. The Phase 2 file queue is imported idempotently and cleared only after all destination
+inserts succeed.
+
+**Why:** Saving content and then writing a separate file can lose the intent to sync after a
+crash, while writing the file first can upload a change the local database rejected. One
+transaction eliminates that split-brain window for the initial personal-sync entities.
+
+**Consequence:** Transition plans still use their existing local preference store and are
+not in the initial personal-sync entity set. They need an explicit storage migration before
+they can receive the same transaction guarantee.

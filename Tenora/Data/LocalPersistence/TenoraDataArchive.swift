@@ -262,6 +262,7 @@ enum TenoraDataArchive {
             for item in try context.fetch(FetchDescriptor<StoredPlayerProgress>()) { context.delete(item) }
             for item in try context.fetch(FetchDescriptor<StoredGameUnlock>()) { context.delete(item) }
             for item in try context.fetch(FetchDescriptor<StoredSyncMetadata>()) { context.delete(item) }
+            for item in try context.fetch(FetchDescriptor<StoredLocalMutation>()) { context.delete(item) }
 
             try insert(payload, into: context)
         }

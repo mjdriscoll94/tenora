@@ -26,6 +26,7 @@
 		1DF2C61F7C28443C32F2C205 /* TaskStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8433CE527CC435A423A25CA0 /* TaskStoreTests.swift */; };
 		20AD5872EEADE2F4FB61C54B /* AvailabilityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD3A86FF0217FBDF1AC7F96 /* AvailabilityEngine.swift */; };
 		2393B8B6054E621075903A5A /* StoredHabitModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD3825F00CF836F52E03EC4 /* StoredHabitModels.swift */; };
+		257F9BF379037C7CBD0DB504 /* SwiftDataMutationOutbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9C824A213B73853A502C3D /* SwiftDataMutationOutbox.swift */; };
 		2BEA67D92CE64346ED4DC289 /* TenoraTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1939D430BE027D318ECB2 /* TenoraTask.swift */; };
 		30A3174F03A6B85D55EE2E92 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6933A55158FECF10EF2EEB92 /* ReminderService.swift */; };
 		318600102779880B93DB2676 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98782347AC97A149D3CFE03B /* AccountSettingsView.swift */; };
@@ -65,6 +66,7 @@
 		785471ADFD779481990FF92E /* JustStartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D79121D1E428AB1FF0FDD53 /* JustStartView.swift */; };
 		78A8864B009A338EBF65C54D /* WorkingSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A36739B23B71D41557D752 /* WorkingSchedule.swift */; };
 		79BB50144F12E9D750F3E0B7 /* DayHorizonEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E04727DCD4984B8396189FE /* DayHorizonEngine.swift */; };
+		7B04BDC1B1D8D9F336D44408 /* StoredLocalMutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D93A6D327E4D3D3D743D46C /* StoredLocalMutation.swift */; };
 		7B2D12CDB9E604B6A87BDFF8 /* TenoraClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D308B84A73C48483E0987 /* TenoraClock.swift */; };
 		7F2F1C91A5F8BC9229B6D2A9 /* AccountFoundationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B210F4ED5B77A9803B7B134D /* AccountFoundationTests.swift */; };
 		81DC58F12B6DAB31910134F6 /* HabitStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F94B8FF23335A2A9EF582 /* HabitStoreTests.swift */; };
@@ -198,6 +200,7 @@
 		3AD3825F00CF836F52E03EC4 /* StoredHabitModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredHabitModels.swift; sourceTree = "<group>"; };
 		3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEvent.swift; sourceTree = "<group>"; };
 		3C67E71D38D526A8DFC75BAB /* AdultAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdultAccount.swift; sourceTree = "<group>"; };
+		3D93A6D327E4D3D3D743D46C /* StoredLocalMutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredLocalMutation.swift; sourceTree = "<group>"; };
 		3E2054E85D1C10D8EF85E211 /* CalendarSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSettingsView.swift; sourceTree = "<group>"; };
 		3F72AA20E4FD3F2F0588C1D0 /* TenoraTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraTheme.swift; sourceTree = "<group>"; };
 		3F8853A90211A4B982F760F2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -274,6 +277,7 @@
 		C03CCC010B34D5320027778E /* AgentBridgeConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeConfiguration.swift; sourceTree = "<group>"; };
 		C126DD5B2154D6CD5A5E23C5 /* TransitionPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionPlan.swift; sourceTree = "<group>"; };
 		C37F3FD4897A41789F7650FC /* TransitionPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionPlanView.swift; sourceTree = "<group>"; };
+		CE9C824A213B73853A502C3D /* SwiftDataMutationOutbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataMutationOutbox.swift; sourceTree = "<group>"; };
 		CFB1939D430BE027D318ECB2 /* TenoraTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraTask.swift; sourceTree = "<group>"; };
 		D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraRoute.swift; sourceTree = "<group>"; };
 		D2226ECEA8A388C073F70CA3 /* Tenora.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tenora.entitlements; sourceTree = "<group>"; };
@@ -420,9 +424,11 @@
 				34D94440950DA4E1CD9F44F5 /* InMemoryHabitRepository.swift */,
 				BF9E7FDD96CB21BF74E43143 /* PersonalSyncMetadataStore.swift */,
 				3AD3825F00CF836F52E03EC4 /* StoredHabitModels.swift */,
+				3D93A6D327E4D3D3D743D46C /* StoredLocalMutation.swift */,
 				9E4B056ADA144A6C348E221B /* StoredSyncMetadata.swift */,
 				A32C111D0AB90057D68F77C2 /* StoredTask.swift */,
 				6F6FB498E0C60E2FF35433C3 /* SwiftDataHabitRepositories.swift */,
+				CE9C824A213B73853A502C3D /* SwiftDataMutationOutbox.swift */,
 				49D4AC1B40D0945D73975D96 /* SwiftDataTaskRepository.swift */,
 				A9CEAA5BE9430CA188F5E960 /* TenoraDataArchive.swift */,
 				11A837E1EA66E9BC92F69BF4 /* TenoraDataSchema.swift */,
@@ -1017,11 +1023,13 @@
 				C10C155FCC16EE5C4954871B /* SettingsRepository.swift in Sources */,
 				5A5AD50A65F5686658A16919 /* SettingsView.swift in Sources */,
 				2393B8B6054E621075903A5A /* StoredHabitModels.swift in Sources */,
+				7B04BDC1B1D8D9F336D44408 /* StoredLocalMutation.swift in Sources */,
 				1486B0CE8DB92A38AB3E1614 /* StoredSyncMetadata.swift in Sources */,
 				A8854A3DFFC27EC0654F923D /* StoredTask.swift in Sources */,
 				36008BCEE42E99A7EAEE4A3D /* StuckAssistanceView.swift in Sources */,
 				92FE55A77CB5AB795FD68319 /* SupabaseAuthenticationProvider.swift in Sources */,
 				BDCC9CDE05A1B767978EE8DE /* SwiftDataHabitRepositories.swift in Sources */,
+				257F9BF379037C7CBD0DB504 /* SwiftDataMutationOutbox.swift in Sources */,
 				E2A67032527C1684336B0BBC /* SwiftDataTaskRepository.swift in Sources */,
 				04C66F964F31ADC4F8123C8A /* TaskDetailView.swift in Sources */,
 				C6F2A596E352B76CC0163AE7 /* TaskEditor.swift in Sources */,

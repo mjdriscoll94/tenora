@@ -14,10 +14,15 @@
 - Local task and habit repositories now maintain metadata for changes and deletion tombstones in SwiftData.
 - Added content-free inventory reporting, explicit optimistic-concurrency/deletion conflict rules, and separate disabled read/write feature gates.
 - Added focused tests for private defaults, idempotent backfill, tombstones, conflict behavior, and legacy-store opening.
+- Replaced the production file outbox with a SwiftData mutation journal that commits in the
+  same save as task/habit content and metadata.
+- Added stable idempotency keys, base-version fields, bounded retry scheduling, blocked
+  conflict state, and content-free failure codes.
+- Added retry-safe, idempotent import of pending Phase 2 file mutations into the journal.
 - No Supabase productivity-data schema or upload code was added.
 
-**Verification:** Simulator build passed. The complete unit suite passed with 123 tests,
-including an explicit V1-to-V2 store migration.
+**Verification:** Simulator build passed. The complete unit suite passed with 126 tests,
+including an explicit V1-to-V2 store migration and retry-safe legacy-queue import.
 Nine unchanged UI flows passed in the full run; the one stale account-configuration test
 was updated for the now-configured development project and passed separately, covering all
 10 current UI flows. `git diff --check` passed.

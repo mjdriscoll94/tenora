@@ -61,6 +61,103 @@ final class Phase2RepositoryTests: XCTestCase {
         XCTAssertTrue(try reopened.pending(profileID: first).isEmpty)
     }
 
+    func testLegacyFileOutboxUpgradesToVersionedEnvelope() throws {
+        struct LegacyMutation: Codable {
+            let id: UUID
+            let profileID: LocalProfileID
+            let entity: LocalMutation.Entity
+            let recordID: String
+            let operation: LocalMutation.Operation
+            let createdAt: Date
+            let payload: Data?
+        }
+
+        let directory = FileManager.default.temporaryDirectory
+            .appending(path: "TenoraLegacyOutbox-\(UUID().uuidString)", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let profile = LocalProfileID(rawValue: "legacy")
+        let id = UUID()
+        let legacy = LegacyMutation(
+            id: id,
+            profileID: profile,
+            entity: .task,
+            recordID: "task",
+            operation: .upsert,
+            createdAt: Date(timeIntervalSince1970: 100),
+            payload: nil
+        )
+        let url = directory.appending(path: "\(profile.storageComponent).json")
+        try JSONEncoder().encode([legacy]).write(to: url)
+
+        let outbox = try FileMutationOutbox(directory: directory)
+        let migrated = try XCTUnwrap(outbox.pending(profileID: profile).first)
+
+        XCTAssertEqual(migrated.id, id)
+        XCTAssertEqual(migrated.attemptCount, 0)
+        XCTAssertEqual(migrated.state, .pending)
+        XCTAssertEqual(try XCTUnwrap(String(data: Data(contentsOf: url), encoding: .utf8)).first, "{")
+    }
+
+    func testSwiftDataOutboxPersistsIdempotencyRetryAndBlockingState() throws {
+        let container = try TenoraModelContainerFactory.makeInMemory()
+        let outbox = SwiftDataMutationOutbox(modelContext: container.mainContext)
+        let profile = LocalProfileID(rawValue: "retry-owner")
+        let first = LocalMutation(profileID: profile, entity: .task, recordID: "one", operation: .upsert)
+        let second = LocalMutation(profileID: profile, entity: .habit, recordID: "two", operation: .delete)
+        let attemptedAt = Date(timeIntervalSince1970: 1_000)
+
+        try outbox.enqueue(first)
+        try outbox.enqueue(second)
+        XCTAssertEqual(try outbox.ready(profileID: profile, now: attemptedAt, limit: 10).map(\.id), [first.id, second.id])
+
+        try outbox.recordAttempt(
+            ids: [first.id],
+            profileID: profile,
+            attemptedAt: attemptedAt,
+            outcome: .retryable(failureCode: "network")
+        )
+        try outbox.recordAttempt(
+            ids: [second.id],
+            profileID: profile,
+            attemptedAt: attemptedAt,
+            outcome: .blocked(failureCode: "conflict")
+        )
+
+        let pending = try outbox.pending(profileID: profile)
+        let retried = try XCTUnwrap(pending.first { $0.id == first.id })
+        let blocked = try XCTUnwrap(pending.first { $0.id == second.id })
+        XCTAssertEqual(retried.idempotencyKey, first.id.uuidString.lowercased())
+        XCTAssertEqual(retried.attemptCount, 1)
+        XCTAssertEqual(retried.nextAttemptAt, attemptedAt.addingTimeInterval(30))
+        XCTAssertEqual(blocked.state, .blocked)
+        XCTAssertTrue(try outbox.ready(profileID: profile, now: attemptedAt.addingTimeInterval(29), limit: 10).isEmpty)
+        XCTAssertEqual(
+            try outbox.ready(profileID: profile, now: attemptedAt.addingTimeInterval(30), limit: 10).map(\.id),
+            [first.id]
+        )
+    }
+
+    func testLegacyFileQueueMovesToTransactionalJournalWithoutDuplication() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appending(path: "TenoraOutboxMove-\(UUID().uuidString)", directoryHint: .isDirectory)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let profile = LocalProfileID(rawValue: "move-owner")
+        let mutation = LocalMutation(profileID: profile, entity: .task, recordID: "task", operation: .upsert)
+        let file = try FileMutationOutbox(directory: directory)
+        try file.enqueue(mutation)
+        let container = try TenoraModelContainerFactory.makeInMemory()
+        let journal = SwiftDataMutationOutbox(modelContext: container.mainContext)
+
+        XCTAssertEqual(try file.migratePending(profileID: profile, to: journal), 1)
+        XCTAssertTrue(try file.pending(profileID: profile).isEmpty)
+        XCTAssertEqual(try journal.pending(profileID: profile), [mutation])
+
+        try file.enqueue(mutation)
+        XCTAssertEqual(try file.migratePending(profileID: profile, to: journal), 1)
+        XCTAssertEqual(try journal.pending(profileID: profile), [mutation])
+    }
+
     func testHabitRepositoryContractPersistsRecordsAndQueuesMutations() throws {
         let container = try TenoraModelContainerFactory.makeInMemory()
         let directory = FileManager.default.temporaryDirectory
@@ -97,11 +194,8 @@ final class Phase2RepositoryTests: XCTestCase {
 
     func testTaskRepositoryQueuesProfileScopedUpsertAndDelete() async throws {
         let container = try TenoraModelContainerFactory.makeInMemory()
-        let directory = FileManager.default.temporaryDirectory
-            .appending(path: "TenoraTaskOutbox-\(UUID().uuidString)", directoryHint: .isDirectory)
-        defer { try? FileManager.default.removeItem(at: directory) }
         let profile = LocalProfileID(rawValue: "task-owner")
-        let outbox = try FileMutationOutbox(directory: directory)
+        let outbox = SwiftDataMutationOutbox(modelContext: container.mainContext)
         let repository = SwiftDataTaskRepository(
             modelContext: container.mainContext,
             profileID: profile,
