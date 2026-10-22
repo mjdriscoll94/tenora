@@ -27,6 +27,7 @@
 		2393B8B6054E621075903A5A /* StoredHabitModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD3825F00CF836F52E03EC4 /* StoredHabitModels.swift */; };
 		2BEA67D92CE64346ED4DC289 /* TenoraTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1939D430BE027D318ECB2 /* TenoraTask.swift */; };
 		30A3174F03A6B85D55EE2E92 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6933A55158FECF10EF2EEB92 /* ReminderService.swift */; };
+		318600102779880B93DB2676 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98782347AC97A149D3CFE03B /* AccountSettingsView.swift */; };
 		32376056CC447F33D8629365 /* HabitArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DCF99DE86C1D5F466EA344 /* HabitArtwork.swift */; };
 		324E8FAD36D5D401DA850D3A /* HabitTrackingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E2FBC5F97D8EAD28F6C3C2 /* HabitTrackingEngine.swift */; };
 		32AF791F93D1EF37ADF8E186 /* AttentionPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEA5F503C74A21E3C107415 /* AttentionPreferences.swift */; };
@@ -64,20 +65,25 @@
 		78A8864B009A338EBF65C54D /* WorkingSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A36739B23B71D41557D752 /* WorkingSchedule.swift */; };
 		79BB50144F12E9D750F3E0B7 /* DayHorizonEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E04727DCD4984B8396189FE /* DayHorizonEngine.swift */; };
 		7B2D12CDB9E604B6A87BDFF8 /* TenoraClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4D308B84A73C48483E0987 /* TenoraClock.swift */; };
+		7F2F1C91A5F8BC9229B6D2A9 /* AccountFoundationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B210F4ED5B77A9803B7B134D /* AccountFoundationTests.swift */; };
 		81DC58F12B6DAB31910134F6 /* HabitStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED6F94B8FF23335A2A9EF582 /* HabitStoreTests.swift */; };
 		82EE04DE38E456B14034BED0 /* AgentBridgeSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9ED8DF54E8B8CB2B4EF0E7E /* AgentBridgeSnapshotTests.swift */; };
 		8A514F4D76731275F9B7232E /* TransitionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5477C59CD3DF3082CA1CBD36 /* TransitionRepository.swift */; };
 		8BD6BFD000ACC2DB40FFB148 /* ReturnTriggerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB8EC27C0F9348CEC9633BF /* ReturnTriggerView.swift */; };
 		8D3F3E31B17B93DA3C8586C1 /* TaskPriorityEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C66726052401F713836DD7E /* TaskPriorityEngineTests.swift */; };
 		9215B39CB44625FE0D5F99E6 /* WorkingScheduleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F397661F77BEED30C63991C5 /* WorkingScheduleTests.swift */; };
+		92FE55A77CB5AB795FD68319 /* SupabaseAuthenticationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6750EFA39F0A0051D28B1CE /* SupabaseAuthenticationProvider.swift */; };
+		94DFE12E403A1EE750BF5C4E /* UserDefaultsProfileAssociationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17C2EA7323C5ACA8227891BB /* UserDefaultsProfileAssociationRepository.swift */; };
 		951620D8547676CAFB785D84 /* TenoraFeatures.swift in Sources */ = {isa = PBXBuildFile; fileRef = F49EE97554970F1BCAD12AC3 /* TenoraFeatures.swift */; };
 		95D268E986CA5A605BD4118C /* TaskPriorityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */; };
 		971ADF97835B51BD90696C52 /* TenoraWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6C3E3B4D480D6870CCBE17 /* TenoraWidgets.swift */; };
 		97A031BE777A3F045A209ED3 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED388995C0FC3ABF0FCC6E50 /* ProfileRepository.swift */; };
 		97D1587772CADDAC643B6E37 /* TaskPriorityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */; };
+		98876A48D2EBB6ADBEC56E1C /* AccountStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA885EF5FE778C81B02C7A39 /* AccountStore.swift */; };
 		9E868298E79D04132FA3238A /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEBBB461D5EE714B551CAA2 /* CalendarView.swift */; };
 		9E937895BF5AEC7A161355B5 /* HabitStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324322CB6A9010F94F61F95E /* HabitStore.swift */; };
 		9EA090A1D9CFD5AF6E85D232 /* TenoraDataSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A837E1EA66E9BC92F69BF4 /* TenoraDataSchema.swift */; };
+		9FB4D3DBE2A524C0EDCC5EBB /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 769D7A17212F9D5450132F97 /* Supabase */; };
 		A0DD0C0BCDE140A28965DFD4 /* ReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45DCBACC2B7061F69FDC55FF /* ReviewView.swift */; };
 		A3E4DCCAAF0ADD56AC1AA802 /* HabitWidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 002B729B37A48630DEB6AA47 /* HabitWidgetSnapshot.swift */; };
 		A5D4D262BE97E4E29CE52502 /* AgentBridgeTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3197B14D4577EA491823ED0 /* AgentBridgeTokenStore.swift */; };
@@ -89,6 +95,7 @@
 		B15604E0CA5032879EAD7576 /* TransitionPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C37F3FD4897A41789F7650FC /* TransitionPlanView.swift */; };
 		B2EB490955356B0208858D88 /* Phase2RepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC5E1E8BA9904E7A834A9BCA /* Phase2RepositoryTests.swift */; };
 		B6B102658B0DF7D9B6300440 /* WidgetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEBD863E438A9164DFAFB3B3 /* WidgetSnapshot.swift */; };
+		B8E9E1BDA57543DA0D3ED6D0 /* AdultAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C67E71D38D526A8DFC75BAB /* AdultAccount.swift */; };
 		B9CE76FECDB9863EFFCCD28B /* RecoverySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC6CE93BEA5A32B9663340AE /* RecoverySettingsView.swift */; };
 		BCB410D06BF33C2AFCCAF696 /* AboutSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B86EE5F7D85D17A44DE5EB8 /* AboutSettingsView.swift */; };
 		BDCC9CDE05A1B767978EE8DE /* SwiftDataHabitRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F6FB498E0C60E2FF35433C3 /* SwiftDataHabitRepositories.swift */; };
@@ -104,7 +111,9 @@
 		D73117B6CD73D61EF82BF2A4 /* WorkingSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A36739B23B71D41557D752 /* WorkingSchedule.swift */; };
 		DAB043AB24C2B6404417D082 /* TransitionStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E38104CFAAA9B1F9B1E62ECA /* TransitionStoreTests.swift */; };
 		E01D7AB5987FC05940502018 /* LocalMutation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3D5E7FBCDFC63A13D2A0A2 /* LocalMutation.swift */; };
+		E0EA31CAAA50680632728105 /* AccountRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 566CC3EF2511EC2510EF774D /* AccountRepositories.swift */; };
 		E2A67032527C1684336B0BBC /* SwiftDataTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49D4AC1B40D0945D73975D96 /* SwiftDataTaskRepository.swift */; };
+		E39522E70763BF1EAABC8410 /* AppleSignInNonce.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87CFC2D9B8BF88CE5FDA1E55 /* AppleSignInNonce.swift */; };
 		E3C46AB9F2CEA716A6B93023 /* AddTenoraTaskIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8DEC2E47D1ECE34CF3BD9F1 /* AddTenoraTaskIntent.swift */; };
 		E5C547BC8E8E140AC6966DF8 /* CalendarStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3B79C90A2DD2800B812252 /* CalendarStoreTests.swift */; };
 		E606E5B62BAC378834975315 /* CalendarSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2054E85D1C10D8EF85E211 /* CalendarSettingsView.swift */; };
@@ -170,6 +179,7 @@
 		11A837E1EA66E9BC92F69BF4 /* TenoraDataSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraDataSchema.swift; sourceTree = "<group>"; };
 		1587D811C78444FE2ABA5A6A /* AppSettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsStore.swift; sourceTree = "<group>"; };
 		163306FCA5F71DD4F1C6B8DF /* TenoraWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = TenoraWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		17C2EA7323C5ACA8227891BB /* UserDefaultsProfileAssociationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsProfileAssociationRepository.swift; sourceTree = "<group>"; };
 		204DD08DFB30AB4B6C759764 /* ReminderSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderSettingsView.swift; sourceTree = "<group>"; };
 		2206AB6F9FD70DA8DEEE5E2C /* HoldPlaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoldPlaceView.swift; sourceTree = "<group>"; };
 		25F189E04A9711C2EE5877E4 /* HabitWeeklyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitWeeklyView.swift; sourceTree = "<group>"; };
@@ -183,6 +193,7 @@
 		37321E3F7287D21A2716E2BC /* ResurfacingEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResurfacingEngineTests.swift; sourceTree = "<group>"; };
 		3AD3825F00CF836F52E03EC4 /* StoredHabitModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredHabitModels.swift; sourceTree = "<group>"; };
 		3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarEvent.swift; sourceTree = "<group>"; };
+		3C67E71D38D526A8DFC75BAB /* AdultAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdultAccount.swift; sourceTree = "<group>"; };
 		3E2054E85D1C10D8EF85E211 /* CalendarSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarSettingsView.swift; sourceTree = "<group>"; };
 		3F72AA20E4FD3F2F0588C1D0 /* TenoraTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraTheme.swift; sourceTree = "<group>"; };
 		3F8853A90211A4B982F760F2 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -196,6 +207,7 @@
 		5371FB5D531D33CDDCD675F1 /* TenoraRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraRouteTests.swift; sourceTree = "<group>"; };
 		542383F66EBA91110223583F /* AttentionLoopUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttentionLoopUITests.swift; sourceTree = "<group>"; };
 		5477C59CD3DF3082CA1CBD36 /* TransitionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransitionRepository.swift; sourceTree = "<group>"; };
+		566CC3EF2511EC2510EF774D /* AccountRepositories.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountRepositories.swift; sourceTree = "<group>"; };
 		573A0DBF08C57424EF79BACA /* CalendarRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarRepository.swift; sourceTree = "<group>"; };
 		59FBBC66681C734960039382 /* WidgetSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshotTests.swift; sourceTree = "<group>"; };
 		5BEA5F503C74A21E3C107415 /* AttentionPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttentionPreferences.swift; sourceTree = "<group>"; };
@@ -223,6 +235,7 @@
 		80E81327A28AB9CC8468B5B4 /* LocalProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalProfile.swift; sourceTree = "<group>"; };
 		836E8036D961E35CBBDF538C /* WidgetPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetPublisher.swift; sourceTree = "<group>"; };
 		8433CE527CC435A423A25CA0 /* TaskStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStoreTests.swift; sourceTree = "<group>"; };
+		87CFC2D9B8BF88CE5FDA1E55 /* AppleSignInNonce.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleSignInNonce.swift; sourceTree = "<group>"; };
 		8B038186373CD861DF2FABED /* ResumeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResumeView.swift; sourceTree = "<group>"; };
 		8B3B79C90A2DD2800B812252 /* CalendarStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStoreTests.swift; sourceTree = "<group>"; };
 		8B8E439EC8238F9CEE34E3A0 /* ReturnTriggerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReturnTriggerEngine.swift; sourceTree = "<group>"; };
@@ -231,17 +244,20 @@
 		93713418D0B9463FEE2EF4A7 /* HabitDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitDetailView.swift; sourceTree = "<group>"; };
 		938C13249E28C6E847FC2A47 /* MutationOutbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationOutbox.swift; sourceTree = "<group>"; };
 		9775125D4BE592E5B30197F5 /* TenoraWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TenoraWidgets.entitlements; sourceTree = "<group>"; };
+		98782347AC97A149D3CFE03B /* AccountSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsView.swift; sourceTree = "<group>"; };
 		9B5DF93911830F780A3C6D2F /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
 		9C62C833A4A9B5283A2A3A0C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9C8F837184BFD98E3459E985 /* TaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepository.swift; sourceTree = "<group>"; };
 		A32C111D0AB90057D68F77C2 /* StoredTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredTask.swift; sourceTree = "<group>"; };
 		A8DEC2E47D1ECE34CF3BD9F1 /* AddTenoraTaskIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTenoraTaskIntent.swift; sourceTree = "<group>"; };
 		A9CEAA5BE9430CA188F5E960 /* TenoraDataArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraDataArchive.swift; sourceTree = "<group>"; };
+		AA885EF5FE778C81B02C7A39 /* AccountStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountStore.swift; sourceTree = "<group>"; };
 		AC5E1E8BA9904E7A834A9BCA /* Phase2RepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phase2RepositoryTests.swift; sourceTree = "<group>"; };
 		AC6CE93BEA5A32B9663340AE /* RecoverySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoverySettingsView.swift; sourceTree = "<group>"; };
 		AD0CFEBA3740893550EF6E7A /* UserDefaultsSettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsSettingsRepository.swift; sourceTree = "<group>"; };
 		AE83E373D11604A04E1FA031 /* TenoraDataArchiveTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraDataArchiveTests.swift; sourceTree = "<group>"; };
 		AFEBBB461D5EE714B551CAA2 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		B210F4ED5B77A9803B7B134D /* AccountFoundationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountFoundationTests.swift; sourceTree = "<group>"; };
 		B228CB8E840A3C104FD52149 /* FileMutationOutbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileMutationOutbox.swift; sourceTree = "<group>"; };
 		B9ED8DF54E8B8CB2B4EF0E7E /* AgentBridgeSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeSnapshotTests.swift; sourceTree = "<group>"; };
 		BA6544FC5F9EDC67110D2CC9 /* EventKitCalendarRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventKitCalendarRepository.swift; sourceTree = "<group>"; };
@@ -255,6 +271,7 @@
 		D0A0F9DB53B7840A29FF463F /* TenoraRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraRoute.swift; sourceTree = "<group>"; };
 		D2226ECEA8A388C073F70CA3 /* Tenora.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Tenora.entitlements; sourceTree = "<group>"; };
 		D2E2FBC5F97D8EAD28F6C3C2 /* HabitTrackingEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitTrackingEngine.swift; sourceTree = "<group>"; };
+		D6750EFA39F0A0051D28B1CE /* SupabaseAuthenticationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseAuthenticationProvider.swift; sourceTree = "<group>"; };
 		D764B39990454B15DBC7C90F /* LostTrackRecoveryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LostTrackRecoveryView.swift; sourceTree = "<group>"; };
 		DDF761863C9517ADE63C55A2 /* SettingsRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsRepository.swift; sourceTree = "<group>"; };
 		DEBD863E438A9164DFAFB3B3 /* WidgetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetSnapshot.swift; sourceTree = "<group>"; };
@@ -277,6 +294,17 @@
 		FD3D5E7FBCDFC63A13D2A0A2 /* LocalMutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalMutation.swift; sourceTree = "<group>"; };
 		FE95205C16E1A275CDC9A52D /* AgentBridgeSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeSnapshot.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		96A712ABBC281097E79E2605 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9FB4D3DBE2A524C0EDCC5EBB /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		02132AE1B9CEEDE5FF8E0948 /* Products */ = {
@@ -321,6 +349,7 @@
 		18CDFDBDBCBBB0E530D9E604 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				B210F4ED5B77A9803B7B134D /* AccountFoundationTests.swift */,
 				AC5E1E8BA9904E7A834A9BCA /* Phase2RepositoryTests.swift */,
 				61958874194B7B375841513D /* SwiftDataTaskRepositoryTests.swift */,
 				AE83E373D11604A04E1FA031 /* TenoraDataArchiveTests.swift */,
@@ -386,6 +415,7 @@
 				49D4AC1B40D0945D73975D96 /* SwiftDataTaskRepository.swift */,
 				A9CEAA5BE9430CA188F5E960 /* TenoraDataArchive.swift */,
 				11A837E1EA66E9BC92F69BF4 /* TenoraDataSchema.swift */,
+				17C2EA7323C5ACA8227891BB /* UserDefaultsProfileAssociationRepository.swift */,
 				AD0CFEBA3740893550EF6E7A /* UserDefaultsSettingsRepository.swift */,
 				715585BB4B55B8BD14C3CD28 /* UserDefaultsTransitionRepository.swift */,
 			);
@@ -417,6 +447,7 @@
 		3AADCAF53ACD489028526C5E /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				3C67E71D38D526A8DFC75BAB /* AdultAccount.swift */,
 				3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */,
 				BA747D4781160DEC2BF368B9 /* Habit.swift */,
 				FD3D5E7FBCDFC63A13D2A0A2 /* LocalMutation.swift */,
@@ -448,6 +479,7 @@
 		448E1D8DD34A2C5CFBCB648B /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				FAD6613EC2EF9E3F756843F6 /* Account */,
 				34A50A353BE2496C6679385E /* Calendar */,
 				4371043D5E70E72A22CB1FD8 /* DesignSystem */,
 				1F2356D95C1743F2EB1D859C /* Habits */,
@@ -478,6 +510,7 @@
 		73641F531C097096A47B41ED /* Repositories */ = {
 			isa = PBXGroup;
 			children = (
+				566CC3EF2511EC2510EF774D /* AccountRepositories.swift */,
 				573A0DBF08C57424EF79BACA /* CalendarRepository.swift */,
 				0699C6A8A6DF41F94C2D59AE /* HabitRepositories.swift */,
 				938C13249E28C6E847FC2A47 /* MutationOutbox.swift */,
@@ -597,6 +630,7 @@
 			children = (
 				163A10C801A874EEAEEB24FA /* AgentBridge */,
 				40F43A14C87877A63800F68D /* AppIntents */,
+				CAF617A9356921CB90EF1D37 /* Authentication */,
 				0B2320877134A0E3B2424C15 /* EventKit */,
 				DAC30C38490F49F46F5AA645 /* Notifications */,
 				1FDCC93A5898D58DE26A3B73 /* Widgets */,
@@ -613,6 +647,15 @@
 				7896AE69EBCE9FAF58815FD6 /* TaskDetailView.swift */,
 			);
 			path = TaskDetail;
+			sourceTree = "<group>";
+		};
+		CAF617A9356921CB90EF1D37 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				87CFC2D9B8BF88CE5FDA1E55 /* AppleSignInNonce.swift */,
+				D6750EFA39F0A0051D28B1CE /* SupabaseAuthenticationProvider.swift */,
+			);
+			path = Authentication;
 			sourceTree = "<group>";
 		};
 		CC38C5AD55C55CBB4EA24B31 /* Navigation */ = {
@@ -687,6 +730,15 @@
 			path = Review;
 			sourceTree = "<group>";
 		};
+		FAD6613EC2EF9E3F756843F6 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				98782347AC97A149D3CFE03B /* AccountSettingsView.swift */,
+				AA885EF5FE778C81B02C7A39 /* AccountStore.swift */,
+			);
+			path = Account;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -732,6 +784,7 @@
 			buildPhases = (
 				7E46F36B062E0CC867246945 /* Sources */,
 				DD55B94C9D43AB59C29CE35F /* Resources */,
+				96A712ABBC281097E79E2605 /* Frameworks */,
 				A2E0573453CC1700763F9596 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -741,6 +794,7 @@
 			);
 			name = Tenora;
 			packageProductDependencies = (
+				769D7A17212F9D5450132F97 /* Supabase */,
 			);
 			productName = Tenora;
 			productReference = E60B9C1E87BB4040D684F879 /* Tenora.app */;
@@ -799,6 +853,9 @@
 			);
 			mainGroup = 57C7E37E074E538B72E85204;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6EF9F3400586860EAB87E14B /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -836,6 +893,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F2F1C91A5F8BC9229B6D2A9 /* AccountFoundationTests.swift in Sources */,
 				82EE04DE38E456B14034BED0 /* AgentBridgeSnapshotTests.swift in Sources */,
 				0B0DFADD94148FE03736D015 /* AvailabilityEngineTests.swift in Sources */,
 				E5C547BC8E8E140AC6966DF8 /* CalendarStoreTests.swift in Sources */,
@@ -886,8 +944,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCB410D06BF33C2AFCCAF696 /* AboutSettingsView.swift in Sources */,
+				E0EA31CAAA50680632728105 /* AccountRepositories.swift in Sources */,
+				318600102779880B93DB2676 /* AccountSettingsView.swift in Sources */,
+				98876A48D2EBB6ADBEC56E1C /* AccountStore.swift in Sources */,
 				60FEFCA2E15B9D0201854426 /* AddTaskView.swift in Sources */,
 				E3C46AB9F2CEA716A6B93023 /* AddTenoraTaskIntent.swift in Sources */,
+				B8E9E1BDA57543DA0D3ED6D0 /* AdultAccount.swift in Sources */,
 				F2D618D935E8515463619602 /* AgentBridgeConfiguration.swift in Sources */,
 				407A2E1D409D679C508202E9 /* AgentBridgeOAuthClient.swift in Sources */,
 				55537D5C4CE1A7BFDBCC6A00 /* AgentBridgeSnapshot.swift in Sources */,
@@ -895,6 +957,7 @@
 				A5D4D262BE97E4E29CE52502 /* AgentBridgeTokenStore.swift in Sources */,
 				6F083C1DCD34E705F67D4028 /* AppRuntime.swift in Sources */,
 				F68CB1FAF062DE5A5AEBF916 /* AppSettingsStore.swift in Sources */,
+				E39522E70763BF1EAABC8410 /* AppleSignInNonce.swift in Sources */,
 				32AF791F93D1EF37ADF8E186 /* AttentionPreferences.swift in Sources */,
 				20AD5872EEADE2F4FB61C54B /* AvailabilityEngine.swift in Sources */,
 				FB4E2F41072050CF199FD9BD /* CalendarEvent.swift in Sources */,
@@ -941,6 +1004,7 @@
 				2393B8B6054E621075903A5A /* StoredHabitModels.swift in Sources */,
 				A8854A3DFFC27EC0654F923D /* StoredTask.swift in Sources */,
 				36008BCEE42E99A7EAEE4A3D /* StuckAssistanceView.swift in Sources */,
+				92FE55A77CB5AB795FD68319 /* SupabaseAuthenticationProvider.swift in Sources */,
 				BDCC9CDE05A1B767978EE8DE /* SwiftDataHabitRepositories.swift in Sources */,
 				E2A67032527C1684336B0BBC /* SwiftDataTaskRepository.swift in Sources */,
 				04C66F964F31ADC4F8123C8A /* TaskDetailView.swift in Sources */,
@@ -961,6 +1025,7 @@
 				B15604E0CA5032879EAD7576 /* TransitionPlanView.swift in Sources */,
 				8A514F4D76731275F9B7232E /* TransitionRepository.swift in Sources */,
 				C32467DAE01914D3C2B1C922 /* TransitionStore.swift in Sources */,
+				94DFE12E403A1EE750BF5C4E /* UserDefaultsProfileAssociationRepository.swift in Sources */,
 				EF4A262204F1B816EC6668F7 /* UserDefaultsSettingsRepository.swift in Sources */,
 				415CEE715C820C4549F150B2 /* UserDefaultsTransitionRepository.swift in Sources */,
 				756F3F8C64A3C26AC4854241 /* WidgetPublisher.swift in Sources */,
@@ -1200,6 +1265,8 @@
 				INFOPLIST_KEY_TENORA_BRIDGE_URL = "$(TENORA_BRIDGE_URL)";
 				INFOPLIST_KEY_TENORA_OAUTH_CLIENT_ID = "$(TENORA_OAUTH_CLIENT_ID)";
 				INFOPLIST_KEY_TENORA_OAUTH_ISSUER = "$(TENORA_OAUTH_ISSUER)";
+				INFOPLIST_KEY_TENORA_SUPABASE_PUBLISHABLE_KEY = "$(TENORA_SUPABASE_PUBLISHABLE_KEY)";
+				INFOPLIST_KEY_TENORA_SUPABASE_URL = "$(TENORA_SUPABASE_URL)";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1214,6 +1281,8 @@
 				TENORA_BRIDGE_URL = "";
 				TENORA_OAUTH_CLIENT_ID = "";
 				TENORA_OAUTH_ISSUER = "";
+				TENORA_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hsyeR7Qm8gis1mWpa7poeA_YGiAwSI2";
+				TENORA_SUPABASE_URL = "https://hcwtsntljmpbkgzclnxs.supabase.co";
 			};
 			name = Debug;
 		};
@@ -1233,6 +1302,8 @@
 				INFOPLIST_KEY_TENORA_BRIDGE_URL = "$(TENORA_BRIDGE_URL)";
 				INFOPLIST_KEY_TENORA_OAUTH_CLIENT_ID = "$(TENORA_OAUTH_CLIENT_ID)";
 				INFOPLIST_KEY_TENORA_OAUTH_ISSUER = "$(TENORA_OAUTH_ISSUER)";
+				INFOPLIST_KEY_TENORA_SUPABASE_PUBLISHABLE_KEY = "$(TENORA_SUPABASE_PUBLISHABLE_KEY)";
+				INFOPLIST_KEY_TENORA_SUPABASE_URL = "$(TENORA_SUPABASE_URL)";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -1247,6 +1318,8 @@
 				TENORA_BRIDGE_URL = "";
 				TENORA_OAUTH_CLIENT_ID = "";
 				TENORA_OAUTH_ISSUER = "";
+				TENORA_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hsyeR7Qm8gis1mWpa7poeA_YGiAwSI2";
+				TENORA_SUPABASE_URL = "https://hcwtsntljmpbkgzclnxs.supabase.co";
 			};
 			name = Release;
 		};
@@ -1333,6 +1406,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6EF9F3400586860EAB87E14B /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = exactVersion;
+				version = 2.55.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		769D7A17212F9D5450132F97 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6EF9F3400586860EAB87E14B /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1DEB33B7E57D9DEB94FFE18E /* Project object */;
 }

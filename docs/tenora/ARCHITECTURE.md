@@ -1,7 +1,7 @@
 # Tenora Family Transition — Architecture Audit and Recommendation
 
 **Audit date:** October 21, 2026
-**Scope:** Repository as checked out on `main`; no household implementation performed.
+**Scope:** Repository after the Phase 3 optional-account client foundation; no household implementation performed.
 
 ## Executive recommendation
 
@@ -73,7 +73,22 @@ Implemented routes include:
 - settings detail pages for weekly schedule, calendar, reminders, recovery, data/privacy, and about;
 - URL routes for `tenora://add`, `tenora://today`, `tenora://task/<uuid>`, `tenora://habits`, and `tenora://habit/<uuid>`.
 
-There is no account, household, membership, invite, people, shared-list, or household activity navigation in the default app.
+Settings now contains a concise Account destination. A privacy gate replaces personal
+content during an incomplete or cross-profile account transition. There is still no
+household, membership, invite, people, shared-list, or household activity navigation.
+
+### Phase 3 identity boundary
+
+- `AccountStore` owns optional adult session state independently from the disabled Agent Bridge.
+- `AdultAuthenticationProvider` and `ProfileAssociationRepository` keep domain and presentation code independent of Supabase types.
+- The production adapter uses Supabase Swift 2.55.4, native Sign in with Apple, and the SDK's supported Keychain session storage.
+- A private `auth.users` trigger maps each Supabase Auth UUID to a stable Tenora UUID; the provider UUID is never used as the local profile or future record owner ID.
+- Local account/profile associations are explicit, durable, and recoverable. They do not copy or upload local records.
+- Cross-profile restores lock the productivity UI and clear destination widget snapshots before activating another local namespace.
+- The outbox remains profile-scoped and has no network consumer.
+
+The implementation and operational lifecycle are detailed in
+[ACCOUNT_LIFECYCLE.md](ACCOUNT_LIFECYCLE.md).
 
 ## Current persistence inventory
 
@@ -105,7 +120,7 @@ live account switching belongs to Phase 3.
 | Standard `UserDefaults` | `UserDefaultsSettingsRepository` stores Tenora preferences under `profile.<profile>.settings.v1.*`. The offline profile copies and mirrors legacy keys for compatibility. Agent Bridge preferences remain isolated in its disabled subsystem. |
 | App Group `UserDefaults` | Active-profile marker plus profile-keyed task/calendar widget snapshot, habit widget snapshot, and queued interactive habit-completion IDs |
 | Application Support JSON | `FileMutationOutbox` stores durable mutation envelopes in one atomic file per local profile. Nothing reads these files for upload yet. |
-| Keychain | Agent Bridge OAuth token bundle, using `AfterFirstUnlockThisDeviceOnly` |
+| Keychain | Supabase account session through the supported SDK default; disabled Agent Bridge tokens remain in their separate Keychain entry |
 | EventKit | Calendar events are read live and are not persisted in SwiftData |
 
 The profile namespace now prevents ordinary cross-profile reads, but deletion and export
@@ -174,14 +189,15 @@ Remaining gaps:
 
 - App and widget privacy manifests declare UserDefaults access and no tracking.
 - App icon, logo, theme colors, and habit assets are bundled.
-- 96 unit tests and 9 UI tests are defined and passing.
+- 117 unit tests and 10 UI tests are defined and passing.
 - Agent Bridge has a lockfile, six Node tests, a TypeScript build, Dockerfile, Render blueprint, and GitHub Actions workflow.
 
 ### Partially implemented
 
 | Feature | What exists | Missing or unsafe for production |
 |---|---|---|
-| Account onboarding | Sign-up/sign-in/offline UI, Auth0/OIDC PKCE, refresh token handling, Keychain storage | Compiled out by default; tied to Agent Bridge configuration; no normal-app session, profile, account deletion, recovery, linking, or multi-device personal sync |
+| Optional adult account | Normal-app state machine, native Apple client, Supabase Keychain session, stable Tenora UUID mapping, explicit local-profile association, and privacy gate | External provider/migration not verified; no cloud deletion/export, email link, or multi-device personal sync |
+| Agent Bridge account onboarding | Auth0/OIDC PKCE and separate Keychain token flow | Compiled out by default and deliberately isolated from the Tenora account identity |
 | Cloud sharing | Opt-in task snapshot with separate note/calendar toggles | One-way full replacement; no client download, edits, conflicts, tombstones, retry queue, or household scope |
 | Agent access | Read-only MCP tools scoped to authenticated `sub` | Feature disabled; no production rate limiting/monitoring demonstrated; no household-aware authorization; no write tools |
 | Backend authorization | JWT issuer/audience/scope validation and forced Postgres RLS by `app.user_id` | Only one row per user; no household memberships/roles/invites; Postgres integration is not exercised by the current test suite |
@@ -192,8 +208,7 @@ Remaining gaps:
 
 ### Missing
 
-- Production authentication and account lifecycle in the normal app.
-- User profile and identity-provider mapping.
+- Verified production provider configuration and complete cloud account deletion/export lifecycle.
 - Households, memberships, roles, invitations, revocation, and ownership transfer.
 - Record scope/visibility, creator, assignee, participants, comments, and activity history.
 - Collaborative task/list/routine mutation APIs.

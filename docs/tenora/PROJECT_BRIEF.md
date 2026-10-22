@@ -1,6 +1,6 @@
 # Tenora Family Transition — Project Brief
 
-**Status:** Planning only
+**Status:** Phase 3 optional-account foundation is partially implemented; household work has not begun.
 **Audit date:** October 21, 2026
 **Current release baseline:** iOS 17+, app version 1.0.0 (build 1)
 
@@ -12,7 +12,7 @@ This brief defines the desired outcome and guardrails. It does not authorize imp
 
 ## Current product
 
-The shipped code is a local-first iPhone app with four tabs: Today, Inbox, Calendar, and Habits. It uses SwiftUI, SwiftData, EventKit, UserNotifications, WidgetKit, and App Intents. It has no required sign-in and remains fully usable offline.
+The app is a local-first iPhone app with four tabs: Today, Inbox, Calendar, and Habits. It uses SwiftUI, SwiftData, EventKit, UserNotifications, WidgetKit, and App Intents. It has no required sign-in and remains fully usable offline. The current development branch adds an optional adult-account foundation, but no productivity data is uploaded or synchronized.
 
 The product's strongest differentiator is not generic task storage. It is continuity support for executive-function failure points:
 
@@ -80,7 +80,7 @@ Can manage membership and household-level configuration. Administrative status d
 
 | Area | Current state | Household readiness |
 |---|---|---|
-| SwiftUI app and navigation | Implemented | Good presentation foundation; no account/household navigation |
+| SwiftUI app and navigation | Implemented | Optional Account settings exist; no household navigation |
 | Tasks and ADHD workflows | Implemented | Preserve; add ownership/scope without changing behavior |
 | Habits | Implemented | Personal-only data model; legacy game columns remain |
 | Gamification | Retired from the current UI; legacy persistence remains | Preserve stored progress/unlocks during all migrations |
@@ -89,7 +89,7 @@ Can manage membership and household-level configuration. Administrative status d
 | Calendar | Implemented as on-device EventKit read access | Add privacy-safe availability sharing; do not upload event detail by default |
 | Notifications | Implemented locally | Shared assignment notifications and server push are missing |
 | Widgets and App Intents | Implemented | Need account/scope-safe snapshots and shared-record deep links later |
-| Authentication | Implemented only inside a disabled Agent Bridge build path | No production account lifecycle for the normal app |
+| Authentication | Optional Apple/Supabase client foundation in the normal app; Agent Bridge auth remains separate and disabled | Requires external configuration and live verification; no account deletion/export or sync |
 | Backend | Read-only Agent Bridge prototype with one snapshot per Auth0 subject | Not a collaboration backend |
 | Household model and sync | Missing | Core new platform work |
 | Financial integrations | Missing | Deliberately defer behind a hardened server boundary |

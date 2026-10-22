@@ -48,12 +48,26 @@ final class AttentionLoopUITests: XCTestCase {
         app.launch()
         app.buttons["Settings"].tap()
 
-        for label in ["Weekly schedule", "Calendar", "Reminders", "Recovery", "Data & Privacy", "About Tenora"] {
+        for label in ["Account", "Weekly schedule", "Calendar", "Reminders", "Recovery", "Data & Privacy", "About Tenora"] {
             XCTAssertTrue(app.staticTexts[label].waitForExistence(timeout: 5), label)
         }
         app.staticTexts["Calendar"].tap()
         XCTAssertTrue(app.navigationBars["Calendar"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["calendar-connection-heading"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
+    func testUnconfiguredAccountPageClearlyKeepsLocalMode() {
+        let app = XCUIApplication()
+        app.launchArguments = ["-ui-testing"]
+        app.launch()
+        app.buttons["Settings"].tap()
+        app.staticTexts["Account"].tap()
+
+        XCTAssertTrue(app.navigationBars["Account"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Using Tenora locally"].exists)
+        XCTAssertTrue(app.staticTexts["Account sign-in is not configured in this build. All current features still work without an account."].exists)
+        XCTAssertFalse(app.buttons["Continue with Apple"].exists)
     }
 
     @MainActor

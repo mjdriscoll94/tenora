@@ -1,10 +1,43 @@
 # Tenora Family Transition — Progress and Verification
 
-**Last updated:** October 21, 2026
-**Current phase:** Phase 2 complete; ready for Phase 3 planning/provisioning
+**Last updated:** October 22, 2026
+**Current phase:** Phase 3 live development environment; signed-device Apple verification remains
 **Implementation state:** No household or cloud collaboration features implemented. Historical-data gates were waived for the initial pre-release rollout because current development data may be discarded.
 
 ## Work completed
+
+### Phase 3 optional-account foundation
+
+- Added a normal-app adult account state machine independent from the disabled Agent Bridge.
+- Added native Sign in with Apple with a cryptographic nonce and pinned Supabase Swift 2.55.4.
+- Uses the supported Supabase Apple default Keychain session store; no service credential is embedded.
+- Added explicit, two-step local-profile association with interruption recovery and reverse uniqueness.
+- Added a privacy gate for incomplete and cross-profile account transitions, with widget blanking before profile activation.
+- Added concise Account settings and clear local-only/no-upload language.
+- Added and applied additive Supabase identity migrations with stable Tenora UUIDs, provider mappings, minimal account profiles, RLS, grants, and private trigger-based provisioning.
+- Added local account lifecycle tests and a database authorization test file.
+- Documented setup, lifecycle, recovery, rollback, and deferred cloud work in `ACCOUNT_LIFECYCLE.md`.
+
+**Disposition:** PARTIALLY COMPLETE. The development Supabase environment, client
+configuration, migrations, RLS checks, and advisor checks are live and verified. A
+signed-device Sign in with Apple lifecycle test still remains. No mock is presented as
+live authentication, and no productivity-data upload exists.
+
+### Phase 3 verification
+
+- Unsigned generic-device Debug build with Supabase Swift 2.55.4: passed.
+- Unit suite on iPhone 16 Pro / iOS 18.3.1: 117 executed, 117 passed, 0 failed or skipped.
+- UI regression suite on iPhone 16 Pro / iOS 18.3.1: 10 executed, 10 passed, 0 failed or skipped.
+- Combined current iOS coverage: 127 tests.
+- Post-live-migration full suite on iPhone 16 Pro / iOS 18.3.1: 127 executed, 127 passed, 0 failed or skipped.
+- Post-live-migration result bundle: `/tmp/TenoraPhase3LiveGateDerivedData/Logs/Test/Test-Tenora-2026.10.22_13-45-06--0500.xcresult`.
+- Unit result bundle: `/tmp/TenoraAuthTestsVerified/Logs/Test/Test-Tenora-2026.10.21_14-48-43--0500.xcresult`.
+- UI result bundle: `/tmp/TenoraAuthUITestsFinal/Logs/Test/Test-Tenora-2026.10.21_14-43-24--0500.xcresult`.
+- `git diff --check`: passed.
+- Supabase development project `hcwtsntljmpbkgzclnxs` is linked and both identity migrations are recorded remotely.
+- Live schema verification confirmed RLS on all three account tables, four authenticated ownership policies, no anonymous identity-table access, and no app-role execution privilege on the private provisioning function.
+- The transactional pgTAP authorization file completed against the linked database through the Docker-free SQL runner. The CLI's dedicated `test db --linked` wrapper could not run because it unnecessarily required a local Docker/Podman executable on this machine.
+- Post-migration advisors report no security warnings. The only performance notice is that the newly created foreign-key index is unused before production traffic, which is expected.
 
 - Audited SwiftUI startup, dependency ownership, tabs, navigation, sheets, and deep links.
 - Audited all SwiftData entities and other local persistence locations.
@@ -126,11 +159,11 @@ They do **not** exercise a real PostgreSQL instance, database role, forced RLS p
 
 ### P1 before cloud beta
 
-1. No normal-app production account lifecycle; existing auth is compiled behind the Agent Bridge flag.
+1. The normal-app account client and development Supabase schema are verified; a signed-device Apple sign-in, restore, sign-out, and revocation exercise remains.
 2. No incremental or bidirectional sync, tombstones, conflict behavior, or durable outbox.
 3. No database integration/RLS adversarial test suite.
 4. Local state is fragmented across SwiftData, standard defaults, App Group defaults, Keychain, and EventKit.
-5. Widget snapshots are not account/household namespaced.
+5. Widget snapshots are local-profile namespaced and blanked before a profile switch; household-scoped widget behavior does not exist yet.
 6. Privacy manifests and App Store disclosures describe the current local-only default and must be reassessed before cloud data collection.
 7. iOS build/test does not currently run in repository CI.
 
@@ -162,7 +195,7 @@ They do **not** exercise a real PostgreSQL instance, database role, forced RLS p
 
 ### Partial
 
-- [~] Authentication: implemented only for disabled Agent Bridge path
+- [~] Authentication: normal-app Apple/Supabase client, live development schema, and authorization checks are verified; signed-device Apple lifecycle verification remains
 - [~] Backend: secure prototype patterns, not a collaboration service
 - [~] Cloud data: one-way replaceable task snapshot only
 - [~] Data portability: comprehensive local backup/restore is implemented; cloud lifecycle remains, while the pre-release physical-device history drill was waived
@@ -172,7 +205,7 @@ They do **not** exercise a real PostgreSQL instance, database role, forced RLS p
 
 ### Missing
 
-- [ ] Production Tenora accounts in the normal app
+- [ ] Production verification, deletion/export, and operations for Tenora accounts
 - [ ] Household/membership/invitation/role model
 - [ ] Personal versus household record scope
 - [ ] Shared assignments/activity/comments/routines
@@ -185,8 +218,7 @@ They do **not** exercise a real PostgreSQL instance, database role, forced RLS p
 
 ## Next decision point
 
-Phase 2 may begin after one clean-install device smoke test. The smoke test should cover
-task capture/completion, a habit check-in, calendar permission behavior, notification
-permission behavior, working-hours settings, force-quit/relaunch persistence, and widgets.
-The proposed backend/privacy decisions in [DECISIONS.md](DECISIONS.md) should still be
-accepted or amended before cloud implementation begins.
+Finish the remaining Phase 3 manual gate: confirm Apple is enabled for `com.tenora.app`
+in both Apple Developer and Supabase Auth, then exercise new/restored/signed-out/revoked
+sessions on a signed device build. Provision staging/production before release. Do not
+begin private sync or household implementation until that evidence is recorded.

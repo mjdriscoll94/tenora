@@ -188,3 +188,31 @@ for at least one stable release and must be removed through an explicit later mi
 **Consequence:** Phase 2 creates local profiles and an outbox but does not create accounts,
 send mutations, or change the source of truth. Phase 3 owns identity/session lifecycle;
 Phase 4 must make local-record and outbox writes transactionally consistent before sync is enabled.
+
+## D-019 — Optional adult identity does not imply cloud storage
+
+**Decision:** Phase 3 uses native Sign in with Apple through Supabase Auth, but creates only
+a stable Tenora adult identity and an explicit local-profile association. Signing in does
+not upload productivity data, enable the mutation outbox, create a household, or change
+the local source of truth.
+
+**Why:** Identity and synchronization fail differently and require different consent.
+Separating them keeps local Tenora useful during outages and prevents a sign-in button
+from making a misleading privacy promise.
+
+**Consequence:** The account UI states that data remains on-device. Supabase configuration
+may be omitted to ship a local-only build. Production account status remains blocked until
+the external project, Apple capability, migration, and RLS tests are verified.
+
+## D-020 — Local profile association is explicit and interruption-safe
+
+**Decision:** A signed-in adult must choose which local profile to associate. The mapping
+is persisted as `pending` then `complete`, one completed profile may belong to only one
+account, and a cross-profile session privacy-locks content until restart completes.
+
+**Why:** Silently binding the active store risks data duplication and cross-account
+exposure. A two-step local marker supports retry without moving or deleting records.
+
+**Consequence:** Live in-memory profile replacement is deferred. The protected switch is
+completed through a normal app reopen after widgets are blanked and the active namespace
+is changed.

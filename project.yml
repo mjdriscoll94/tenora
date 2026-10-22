@@ -10,6 +10,10 @@ settings:
     DEVELOPMENT_TEAM: "W4TS7E96Q9"
     CURRENT_PROJECT_VERSION: "1"
     MARKETING_VERSION: "1.0.0"
+packages:
+  Supabase:
+    url: https://github.com/supabase/supabase-swift.git
+    exactVersion: 2.55.4
 targets:
   Tenora:
     type: application
@@ -27,6 +31,8 @@ targets:
       - path: Shared
     dependencies:
       - target: TenoraWidgets
+      - package: Supabase
+        product: Supabase
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.tenora.app
@@ -43,9 +49,13 @@ targets:
         INFOPLIST_KEY_TENORA_BRIDGE_URL: $(TENORA_BRIDGE_URL)
         INFOPLIST_KEY_TENORA_OAUTH_ISSUER: $(TENORA_OAUTH_ISSUER)
         INFOPLIST_KEY_TENORA_OAUTH_CLIENT_ID: $(TENORA_OAUTH_CLIENT_ID)
+        INFOPLIST_KEY_TENORA_SUPABASE_URL: $(TENORA_SUPABASE_URL)
+        INFOPLIST_KEY_TENORA_SUPABASE_PUBLISHABLE_KEY: $(TENORA_SUPABASE_PUBLISHABLE_KEY)
         TENORA_BRIDGE_URL: ""
         TENORA_OAUTH_ISSUER: ""
         TENORA_OAUTH_CLIENT_ID: ""
+        TENORA_SUPABASE_URL: "https://hcwtsntljmpbkgzclnxs.supabase.co"
+        TENORA_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_hsyeR7Qm8gis1mWpa7poeA_YGiAwSI2"
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         TARGETED_DEVICE_FAMILY: "1"
         CODE_SIGN_STYLE: Automatic

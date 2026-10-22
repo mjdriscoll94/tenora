@@ -11,6 +11,7 @@ struct TenoraApp: App {
     @StateObject private var transitionStore: TransitionStore
     @StateObject private var habitStore: HabitStore
     @StateObject private var appSettings: AppSettingsStore
+    @StateObject private var accountStore: AccountStore
 
     init() {
         let runtime = AppRuntime.shared
@@ -21,6 +22,7 @@ struct TenoraApp: App {
         _transitionStore = StateObject(wrappedValue: runtime.transitions)
         _habitStore = StateObject(wrappedValue: runtime.habits)
         _appSettings = StateObject(wrappedValue: runtime.appSettings)
+        _accountStore = StateObject(wrappedValue: AccountStore(provider: AccountProviderFactory.make()))
     }
 
     var body: some Scene {
@@ -31,6 +33,8 @@ struct TenoraApp: App {
                 .environmentObject(transitionStore)
                 .environmentObject(habitStore)
                 .environmentObject(appSettings)
+                .environmentObject(accountStore)
+                .task { await accountStore.restore() }
         }
         .modelContainer(modelContainer)
     }
@@ -38,11 +42,14 @@ struct TenoraApp: App {
 
 private struct TenoraRootView: View {
     let persistenceIssue: PersistenceIssue?
+    @EnvironmentObject private var accountStore: AccountStore
 
     @ViewBuilder
     var body: some View {
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-habit-tracker-test") {
+        if requiresAccountPrivacyGate {
+            AccountProfileGateView()
+        } else if ProcessInfo.processInfo.arguments.contains("-habit-tracker-test") {
             NavigationStack { HabitDashboardView() }
                 .environmentObject(HabitStore.preview(.partial))
         } else if let persistenceIssue {
@@ -51,12 +58,23 @@ private struct TenoraRootView: View {
             standardRoot
         }
         #else
-        if let persistenceIssue {
+        if requiresAccountPrivacyGate {
+            AccountProfileGateView()
+        } else if let persistenceIssue {
             PersistenceRecoveryView(issue: persistenceIssue)
         } else {
             standardRoot
         }
         #endif
+    }
+
+    private var requiresAccountPrivacyGate: Bool {
+        switch accountStore.state {
+        case .needsAssociation, .profileSwitchRequired:
+            return true
+        default:
+            return false
+        }
     }
 
     @ViewBuilder
