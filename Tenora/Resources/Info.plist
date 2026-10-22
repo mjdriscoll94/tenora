@@ -29,5 +29,9 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>TENORA_SUPABASE_PUBLISHABLE_KEY</key>
+	<string>$(TENORA_SUPABASE_PUBLISHABLE_KEY)</string>
+	<key>TENORA_SUPABASE_URL</key>
+	<string>$(TENORA_SUPABASE_URL)</string>
 </dict>
 </plist>

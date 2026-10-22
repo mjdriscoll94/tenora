@@ -26,6 +26,8 @@ targets:
         CFBundleURLTypes:
           - CFBundleURLName: com.tenora.app
             CFBundleURLSchemes: [tenora]
+        TENORA_SUPABASE_URL: $(TENORA_SUPABASE_URL)
+        TENORA_SUPABASE_PUBLISHABLE_KEY: $(TENORA_SUPABASE_PUBLISHABLE_KEY)
     sources:
       - path: Tenora
       - path: Shared

@@ -1281,7 +1281,7 @@
 				TENORA_BRIDGE_URL = "";
 				TENORA_OAUTH_CLIENT_ID = "";
 				TENORA_OAUTH_ISSUER = "";
-				TENORA_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hsyeR7Qm8gis1mWpa7poeA_YGiAwSI2";
+				TENORA_SUPABASE_PUBLISHABLE_KEY = sb_publishable_hsyeR7Qm8gis1mWpa7poeA_YGiAwSI2;
 				TENORA_SUPABASE_URL = "https://hcwtsntljmpbkgzclnxs.supabase.co";
 			};
 			name = Debug;
@@ -1318,7 +1318,7 @@
 				TENORA_BRIDGE_URL = "";
 				TENORA_OAUTH_CLIENT_ID = "";
 				TENORA_OAUTH_ISSUER = "";
-				TENORA_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_hsyeR7Qm8gis1mWpa7poeA_YGiAwSI2";
+				TENORA_SUPABASE_PUBLISHABLE_KEY = sb_publishable_hsyeR7Qm8gis1mWpa7poeA_YGiAwSI2;
 				TENORA_SUPABASE_URL = "https://hcwtsntljmpbkgzclnxs.supabase.co";
 			};
 			name = Release;

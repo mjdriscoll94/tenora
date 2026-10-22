@@ -10,6 +10,13 @@ final class AccountFoundationTests: XCTestCase {
         email: "a@example.com"
     )
 
+    func testShippedAppBundleContainsSupabaseAccountConfiguration() {
+        let configuration = SupabaseAccountConfiguration(bundle: .main)
+
+        XCTAssertEqual(configuration?.url.absoluteString, "https://hcwtsntljmpbkgzclnxs.supabase.co")
+        XCTAssertTrue(configuration?.publishableKey.hasPrefix("sb_publishable_") == true)
+    }
+
     func testNoSessionRestoresToSignedOutWithoutChangingProfile() async {
         let provider = FakeAuthenticationProvider(session: nil, adult: adultA)
         let profiles = TestProfileRepository()
