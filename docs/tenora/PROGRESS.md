@@ -1,10 +1,49 @@
 # Tenora Family Transition — Progress and Verification
 
-**Last updated:** October 22, 2026
-**Current phase:** Phase 4 private personal sync foundation in progress
-**Implementation state:** Local-only Phase 4 metadata is implemented with cloud reads and writes disabled. No household or cloud collaboration feature is enabled. Historical-data gates were waived for the initial pre-release rollout because current development data may be discarded.
+**Last updated:** October 23, 2026
+**Current product step:** Step 03 — Household creation and invitations
+**Implementation state:** Steps 01 and 02 are complete. Step 03 has begun with a
+household identity and authorization foundation. Private sync infrastructure remains
+local-only with cloud reads and writes disabled. No household collaboration UI or shared
+productivity data is enabled. Historical-data gates were waived for the initial
+pre-release rollout because current development data may be discarded.
 
 ## Work completed
+
+### Step 03 household identity foundation
+
+- Reconciled the repository roadmap to the approved five product steps.
+- Designed shared household identity as a separate boundary from all personal tasks,
+  habits, schedules, settings, calendar information, and attention state.
+- Added a migration for households, adult memberships, server-managed invitation state,
+  and immutable security audit events.
+- Household creation derives the creator from the authenticated Tenora identity and
+  atomically provisions an owner membership.
+- Added indexed ownership and membership constraints, including one active household per
+  adult for this release.
+- Added RLS boundaries so members can read only their household, managers can read only
+  their household's invitation state, and unrelated adults cannot observe any of it.
+- Direct client writes to memberships, invitations, and audit events are denied; those
+  lifecycle changes are reserved for controlled command functions in the next slice.
+- Added a transactional pgTAP authorization test covering household provisioning,
+  isolation, grants, RLS, and audit behavior.
+
+**Verification:** All three Step 03 foundation migrations are recorded in the linked
+development project. Transactional live checks proved owner provisioning and rename
+auditing, zero-row visibility for an unrelated authenticated adult, no anonymous household
+read access, no client INSERT privilege for memberships/invitations/audit events, and no
+client access to the private helper schema. RLS is enabled on all four new tables. The
+performance advisor's missing foreign-key index was corrected; only expected unused-index
+notices remain before real traffic. The security advisor still reports leaked-password
+protection disabled; the current Apple-only authentication path does not accept passwords,
+but the setting must be enabled before any password-based provider is offered.
+
+The checked-in pgTAP file covers the same boundary. The remote SQL transport parses an
+entire batch before executing its in-transaction `create extension`, so it could not run
+that file as a single request without permanently enabling pgTAP. Equivalent transactional
+checks ran successfully instead; the pgTAP file remains the repeatable CLI/CI gate. No iOS
+source changed in this database-only slice, so the previously passing 126-unit/10-UI app
+baseline remains the current client verification.
 
 ### Phase 4 local-only sync foundation
 

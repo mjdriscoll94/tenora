@@ -1,7 +1,7 @@
 # Tenora Family Transition — Architecture Audit and Recommendation
 
-**Audit date:** October 21, 2026
-**Scope:** Repository after the Phase 3 optional-account client foundation; no household implementation performed.
+**Audit date:** October 23, 2026
+**Scope:** Repository after product Step 02 and the first Step 03 household identity migration.
 
 ## Executive recommendation
 
@@ -311,15 +311,25 @@ flowchart LR
 | Household membership and roles | Household | Server-authoritative |
 | Financial connection/token | Server-restricted | Never exposed to general household client tables |
 
-### Suggested relational core
+### Relational core
 
-This is a planning model, not migration SQL.
+Implemented identity and Step 03 foundation:
 
-- `users(id, display_name, created_at, deleted_at)`
-- `user_identities(id, user_id, provider, provider_subject, created_at)` with a unique provider/subject pair
-- `households(id, name, created_by, created_at, version, deleted_at)`
-- `household_memberships(household_id, user_id, role, status, joined_at, revoked_at)`
-- `household_invites(id, household_id, invited_email_hash, role, token_hash, expires_at, accepted_by, revoked_at)`
+- `tenora_users(id, created_at)`
+- `user_identities(id, user_id, auth_user_id, provider, provider_subject, created_at)`
+- `account_profiles(user_id, display_name, created_at, updated_at)`
+- `households(id, name, created_by, created_at, updated_at)`
+- `household_memberships(id, household_id, user_id, role, status, invited_by, joined_at, ended_at, created_at)`
+- `household_invitations(id, household_id, created_by, recipient_email, token_hash, role, status, expires_at, accepted_by, accepted_at, created_at)`
+- `household_audit_events(id, household_id, actor_user_id, event_type, subject_user_id, invitation_id, occurred_at)`
+
+The database enforces one active household per adult for this release. Household creation
+atomically creates an owner membership. Clients receive no direct mutation privilege for
+memberships, invitations, or audit events; invitation and membership lifecycle operations
+will use controlled command functions.
+
+Planned shared-record core after the membership and permission gates:
+
 - `tasks(id, scope, owner_user_id, household_id, created_by, assigned_to, fields…, version, created_at, updated_at, deleted_at)`
 - `task_participants(task_id, user_id, permission)` only when selected-member sharing is introduced
 - `task_events(id, task_id, actor_user_id, kind, payload, client_mutation_id, occurred_at)`

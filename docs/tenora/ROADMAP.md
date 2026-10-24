@@ -1,7 +1,49 @@
 # Tenora Family Transition — Roadmap
 
-**Planning baseline:** October 21, 2026
-**Rule:** Do not start household feature UI until Phase 1 data-safety exit criteria pass.
+**Planning baseline:** October 23, 2026
+**Source of truth:** The five numbered product steps below define delivery order.
+
+## Product roadmap
+
+### Step 01 — Architecture and local data isolation
+
+**Status:** Complete. The local schema, backup/restore, profile isolation, repository
+boundaries, widget isolation, and regression gates are in place. The current unit suite
+contains 126 passing tests.
+
+### Step 02 — Adult authentication
+
+**Status:** Complete for development. Optional Sign in with Apple, Supabase session
+storage, stable Tenora identities, local-profile association, and sign-out/relaunch
+behavior have passed automated and signed-device verification. Personal data remains
+local and usable without an account.
+
+### Step 03 — Household creation and invitations
+
+**Status:** In progress. The first database slice defines households, adult membership
+roles, server-managed invitation records, an immutable audit trail, and private-by-default
+RLS boundaries. Household creation will be followed by expiring, single-use invitation
+commands and then the iOS create/join experience.
+
+### Step 04 — Household permissions
+
+**Status:** Not started. This step will enforce and verify secure access to shared records
+without granting owners or administrators access to another adult's private information.
+
+### Step 05 — Parent-managed child profiles
+
+**Status:** Not started. Children will be represented as parent-managed household
+profiles, not independent authenticated adult accounts. The model and consent rules will
+be designed only after adult permissions pass their security gate.
+
+## Supporting technical workstreams
+
+The detailed phases below are engineering workstreams that support the five product
+steps; they are not additional user-facing roadmap stages. Private sync work remains
+behind disabled feature flags and must not delay the Step 03 household identity work.
+
+**Rule:** Do not start shared household task UI until the Step 03 membership lifecycle
+and Step 04 authorization gates pass.
 
 ## Delivery principles
 
@@ -180,6 +222,9 @@ cloud sync table, or source-of-truth change exists yet.
 ## Phase 5 — Household identity and membership
 
 **User-visible household features:** Create/join a household and manage adult members.
+
+**Product-roadmap mapping:** Step 03. The relational foundation and creation boundary are
+implemented in development; invitation commands and iOS flows remain.
 
 ### Work
 

@@ -1,14 +1,15 @@
 # Tenora Family Transition — Project Brief
 
-**Status:** Phase 3 optional-account foundation is partially implemented; household work has not begun.
-**Audit date:** October 21, 2026
+**Status:** Product Steps 01 and 02 are complete; Step 03 household creation and invitations is in progress.
+**Audit date:** October 23, 2026
 **Current release baseline:** iOS 17+, app version 1.0.0 (build 1)
 
 ## Purpose
 
 Tenora is evolving from a single-person, ADHD-friendly productivity app into a family-first household management app. The transition must add collaboration without weakening the features that make Tenora useful to an individual or exposing one adult's private attention, health-adjacent, calendar, or financial information to another household member.
 
-This brief defines the desired outcome and guardrails. It does not authorize implementation of household features.
+This brief defines the desired outcome and guardrails. Household implementation proceeds
+in the numbered order defined in [ROADMAP.md](ROADMAP.md).
 
 ## Current product
 
@@ -89,9 +90,9 @@ Can manage membership and household-level configuration. Administrative status d
 | Calendar | Implemented as on-device EventKit read access | Add privacy-safe availability sharing; do not upload event detail by default |
 | Notifications | Implemented locally | Shared assignment notifications and server push are missing |
 | Widgets and App Intents | Implemented | Need account/scope-safe snapshots and shared-record deep links later |
-| Authentication | Optional Apple/Supabase client foundation in the normal app; Agent Bridge auth remains separate and disabled | Requires external configuration and live verification; no account deletion/export or sync |
+| Authentication | Optional Apple/Supabase client foundation is implemented and device-verified; Agent Bridge auth remains separate and disabled | Development gate complete; production operations and disclosures remain release gates |
 | Backend | Read-only Agent Bridge prototype with one snapshot per Auth0 subject | Not a collaboration backend |
-| Household model and sync | Missing | Core new platform work |
+| Household model and sync | Step 03 household identity foundation in progress; personal sync remains disabled | Complete invitation lifecycle and permission gates before shared records |
 | Financial integrations | Missing | Deliberately defer behind a hardened server boundary |
 
 The detailed evidence is in [ARCHITECTURE.md](ARCHITECTURE.md). Decisions are in [DECISIONS.md](DECISIONS.md), sequencing is in [ROADMAP.md](ROADMAP.md), and verified results are in [PROGRESS.md](PROGRESS.md).
