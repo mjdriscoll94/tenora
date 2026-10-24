@@ -246,3 +246,25 @@ transaction eliminates that split-brain window for the initial personal-sync ent
 **Consequence:** Transition plans still use their existing local preference store and are
 not in the initial personal-sync entity set. They need an explicit storage migration before
 they can receive the same transaction guarantee.
+
+## D-023 — Use narrowly exposed transactional RPCs for household invitations
+
+**Decision:** Invitation creation, preview, acceptance, and revocation are authenticated
+Postgres RPCs rather than direct table writes. They use `SECURITY DEFINER` intentionally so
+each command can lock and mutate invitation, membership, and audit rows atomically while
+clients retain no table mutation privileges.
+
+**Why:** RLS alone cannot safely return a one-time raw token, consume it once, update a
+membership, and append an audit event as one indivisible operation without granting broad
+direct-write access. The RPCs derive the actor from `auth.uid()`, reject anonymous-auth
+sessions, re-read current membership state, use an empty `search_path`, and are executable
+only by the authenticated role.
+
+**Advisor exception:** Supabase intentionally reports these commands under
+`authenticated_security_definer_function_executable`. This warning is accepted only for
+the four named invitation RPCs and must be re-reviewed whenever their bodies, grants, or
+parameters change. All other privileged helpers remain in the unexposed `private` schema.
+
+**Token handling:** Creation returns 32 random bytes encoded as hexadecimal. Only a SHA-256
+hash is stored. Tokens expire within 30 days, are single-use, and never grant access without
+a separately authenticated adult account.

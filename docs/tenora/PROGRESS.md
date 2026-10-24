@@ -27,6 +27,15 @@ pre-release rollout because current development data may be discarded.
   lifecycle changes are reserved for controlled command functions in the next slice.
 - Added a transactional pgTAP authorization test covering household provisioning,
   isolation, grants, RLS, and audit behavior.
+- Added guarded invitation commands for create, privacy-safe preview, atomic acceptance,
+  and revocation. Raw 256-bit invitation tokens are returned only once and only hashes are
+  stored.
+- Enforced a maximum 30-day invitation lifetime, a 20-pending-invitation household limit,
+  owner-only admin invitations, one active household per adult, single-use acceptance,
+  and idempotent revocation.
+- Added a 27-assertion pgTAP invitation suite covering execution grants, hashing,
+  normalization, preview, acceptance, isolation, replay rejection, revocation, and audit
+  behavior.
 
 **Verification:** All three Step 03 foundation migrations are recorded in the linked
 development project. Transactional live checks proved owner provisioning and rename
@@ -44,6 +53,19 @@ that file as a single request without permanently enabling pgTAP. Equivalent tra
 checks ran successfully instead; the pgTAP file remains the repeatable CLI/CI gate. No iOS
 source changed in this database-only slice, so the previously passing 126-unit/10-UI app
 baseline remains the current client verification.
+
+Invitation verification used three temporary authenticated adults in a rolled-back live
+transaction. The owner created a 64-character token; the invitee previewed and accepted it,
+received an `adult` membership, and saw both household members; the unrelated adult saw
+zero household, membership, invitation, and audit rows. A second acceptance failed with
+SQLSTATE `55000`, and revocation produced a visible `revoked` state while a repeated revoke
+returned false. Supabase's security advisor intentionally reports four
+`authenticated_security_definer_function_executable` warnings for these four public RPCs.
+This is a reviewed exception: each RPC is deliberately callable only by `authenticated`,
+rejects anonymous-auth sessions, derives the actor from `auth.uid()`, performs its own
+current database membership check, uses an empty `search_path`, exposes no service secret,
+and is the controlled transaction boundary. The pre-existing Apple-only password-protection
+warning also remains; performance findings are expected unused indexes before traffic.
 
 ### Phase 4 local-only sync foundation
 

@@ -20,10 +20,10 @@ local and usable without an account.
 
 ### Step 03 — Household creation and invitations
 
-**Status:** In progress. The first database slice defines households, adult membership
-roles, server-managed invitation records, an immutable audit trail, and private-by-default
-RLS boundaries. Household creation will be followed by expiring, single-use invitation
-commands and then the iOS create/join experience.
+**Status:** In progress. The development database now supports household creation plus
+expiring, single-use adult invitations with create, preview, accept, and revoke commands.
+Adult membership roles, an immutable audit trail, and private-by-default RLS boundaries
+are enforced. The iOS create/join experience remains next.
 
 ### Step 04 — Household permissions
 
@@ -223,8 +223,8 @@ cloud sync table, or source-of-truth change exists yet.
 
 **User-visible household features:** Create/join a household and manage adult members.
 
-**Product-roadmap mapping:** Step 03. The relational foundation and creation boundary are
-implemented in development; invitation commands and iOS flows remain.
+**Product-roadmap mapping:** Step 03. The relational foundation, creation boundary, and
+invitation lifecycle are implemented in development; iOS create/join flows remain.
 
 ### Work
 

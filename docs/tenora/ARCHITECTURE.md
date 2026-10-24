@@ -326,7 +326,10 @@ Implemented identity and Step 03 foundation:
 The database enforces one active household per adult for this release. Household creation
 atomically creates an owner membership. Clients receive no direct mutation privilege for
 memberships, invitations, or audit events; invitation and membership lifecycle operations
-will use controlled command functions.
+use authenticated command functions. Invitation tokens contain 256 random bits, are
+returned only at creation, and are stored only as SHA-256 hashes. Acceptance locks the
+invitation row and changes the membership and invitation state in one transaction, making
+the token single-use. Anonymous and anonymous-auth accounts cannot call these commands.
 
 Planned shared-record core after the membership and permission gates:
 
