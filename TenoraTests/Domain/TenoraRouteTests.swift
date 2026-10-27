@@ -17,4 +17,14 @@ final class TenoraRouteTests: XCTestCase {
         XCTAssertEqual(TenoraRoute(url: URL(string: "tenora://habits")!), .habits)
         XCTAssertEqual(TenoraRoute(url: URL(string: "tenora://habit/\(id)")!), .habit(id))
     }
+
+    func testHouseholdInvitationRouteRequiresAFullHexToken() {
+        let token = String(repeating: "ab", count: 32)
+
+        XCTAssertEqual(
+            TenoraRoute(url: URL(string: "tenora://household/invite/\(token)")!),
+            .householdInvitation(token)
+        )
+        XCTAssertNil(TenoraRoute(url: URL(string: "tenora://household/invite/not-valid")!))
+    }
 }

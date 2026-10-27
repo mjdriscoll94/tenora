@@ -2,10 +2,15 @@ import Foundation
 
 protocol AdultAuthenticationProvider {
     var isConfigured: Bool { get }
+    var householdService: any HouseholdService { get }
     func restoreSession() async throws -> ProviderSession?
     func signInWithApple(_ credential: AppleIdentityCredential) async throws -> ProviderSession
     func resolveApplicationUser(for session: ProviderSession) async throws -> AuthenticatedAdult
     func signOut() async throws
+}
+
+extension AdultAuthenticationProvider {
+    var householdService: any HouseholdService { UnconfiguredHouseholdService() }
 }
 
 @MainActor

@@ -18,6 +18,11 @@ final class AccountStore: ObservableObject {
     @Published var message: String?
 
     let isConfigured: Bool
+
+    var authenticatedAdult: AuthenticatedAdult? {
+        guard case .authenticated(let adult, _) = state else { return nil }
+        return adult
+    }
     private let provider: AdultAuthenticationProvider
     private let associations: ProfileAssociationRepository
     private let profiles: ProfileRepository

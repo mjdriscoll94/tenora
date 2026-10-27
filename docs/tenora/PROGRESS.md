@@ -1,12 +1,13 @@
 # Tenora Family Transition — Progress and Verification
 
-**Last updated:** October 23, 2026
+**Last updated:** October 27, 2026
 **Current product step:** Step 03 — Household creation and invitations
-**Implementation state:** Steps 01 and 02 are complete. Step 03 has begun with a
-household identity and authorization foundation. Private sync infrastructure remains
-local-only with cloud reads and writes disabled. No household collaboration UI or shared
-productivity data is enabled. Historical-data gates were waived for the initial
-pre-release rollout because current development data may be discarded.
+**Implementation state:** Steps 01 and 02 are complete. Step 03 now has its database
+foundation and iOS create, invite, preview, join, and revoke experience. Private sync
+infrastructure remains local-only with cloud reads and writes disabled. No shared
+productivity data is enabled. Step 03 still requires a signed-device, two-adult lifecycle
+check before it is closed. Historical-data gates were waived for the initial pre-release
+rollout because current development data may be discarded.
 
 ## Work completed
 
@@ -36,6 +37,17 @@ pre-release rollout because current development data may be discarded.
 - Added a 27-assertion pgTAP invitation suite covering execution grants, hashing,
   normalization, preview, acceptance, isolation, replay rejection, revocation, and audit
   behavior.
+- Added the iOS Household settings experience for creating a household, showing adult
+  members, creating and sharing one-time invitations, joining by pasted code or link, and
+  revoking pending invitations.
+- Added `tenora://household/invite/<token>` deep-link routing. A link opened while signed
+  out is retained until the adult signs in, then previewed without exposing household
+  details to an anonymous session.
+- Kept the main Settings menu concise while moving privacy guidance and invitation details
+  into the Household screen.
+- Reused the authenticated Supabase session for household requests; the iOS app contains
+  only the publishable client key and calls the guarded server commands already covered by
+  the database authorization tests.
 
 **Verification:** All three Step 03 foundation migrations are recorded in the linked
 development project. Transactional live checks proved owner provisioning and rename
@@ -66,6 +78,19 @@ rejects anonymous-auth sessions, derives the actor from `auth.uid()`, performs i
 current database membership check, uses an empty `search_path`, exposes no service secret,
 and is the controlled transaction boundary. The pre-existing Apple-only password-protection
 warning also remains; performance findings are expected unused indexes before traffic.
+
+The iOS household build passes with the pinned Supabase client. All 133 unit tests pass on
+iPhone 16 Pro / iOS 18.3.1, including six household-store tests and household deep-link
+coverage. The focused Settings UI test also passes and confirms the Household destination
+is present without adding explanatory paragraphs to the root menu. Result bundles:
+`/tmp/TenoraHouseholdBuild/Logs/Test/Test-Tenora-2026.10.27_12-58-16--0500.xcresult`
+and `/tmp/TenoraHouseholdBuild/Logs/Test/Test-Tenora-2026.10.27_12-58-43--0500.xcresult`.
+
+**Remaining Step 03 gate:** On two signed devices or two separate Apple test accounts,
+create a household as the first adult, share the generated invitation, open it as the
+second adult, join, confirm both adults appear, revoke a second unused invitation, and
+confirm both adults' personal tasks, habits, schedules, calendar details, focus state, and
+settings remain absent from the other account. Only after this passes should Step 04 begin.
 
 ### Phase 4 local-only sync foundation
 

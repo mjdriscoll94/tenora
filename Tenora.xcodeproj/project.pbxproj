@@ -26,9 +26,11 @@
 		1DF2C61F7C28443C32F2C205 /* TaskStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8433CE527CC435A423A25CA0 /* TaskStoreTests.swift */; };
 		20AD5872EEADE2F4FB61C54B /* AvailabilityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECD3A86FF0217FBDF1AC7F96 /* AvailabilityEngine.swift */; };
 		2393B8B6054E621075903A5A /* StoredHabitModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AD3825F00CF836F52E03EC4 /* StoredHabitModels.swift */; };
+		2544EA63E8675230ED3411CE /* HouseholdStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7181C043E2471F68FA7129 /* HouseholdStore.swift */; };
 		257F9BF379037C7CBD0DB504 /* SwiftDataMutationOutbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9C824A213B73853A502C3D /* SwiftDataMutationOutbox.swift */; };
 		2BEA67D92CE64346ED4DC289 /* TenoraTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB1939D430BE027D318ECB2 /* TenoraTask.swift */; };
 		30A3174F03A6B85D55EE2E92 /* ReminderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6933A55158FECF10EF2EEB92 /* ReminderService.swift */; };
+		30C84A905068E5484DF9BEA8 /* HouseholdSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72206694980401C1EDA62F1B /* HouseholdSettingsView.swift */; };
 		318600102779880B93DB2676 /* AccountSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98782347AC97A149D3CFE03B /* AccountSettingsView.swift */; };
 		32376056CC447F33D8629365 /* HabitArtwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DCF99DE86C1D5F466EA344 /* HabitArtwork.swift */; };
 		324E8FAD36D5D401DA850D3A /* HabitTrackingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E2FBC5F97D8EAD28F6C3C2 /* HabitTrackingEngine.swift */; };
@@ -38,6 +40,7 @@
 		35635E90A53B0319DD9D47B9 /* HabitDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E231AAF29CA61CF2D8D869B1 /* HabitDashboardView.swift */; };
 		36008BCEE42E99A7EAEE4A3D /* StuckAssistanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 360259A7CA3F430445B2D742 /* StuckAssistanceView.swift */; };
 		372A8421BFC36C8C8CF0B8B2 /* TaskStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7103B4F45D830AB456714BEE /* TaskStore.swift */; };
+		395E34161DCBF8CAB11E21A5 /* HouseholdStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4E373C9AFD75D3900FB1BC8 /* HouseholdStoreTests.swift */; };
 		399D164F3E4F22C855C53116 /* HabitRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0699C6A8A6DF41F94C2D59AE /* HabitRepositories.swift */; };
 		3C5159C284A3EBE3F3AA6936 /* HabitTrackingEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8EC718BD556CB8E2D352731 /* HabitTrackingEngineTests.swift */; };
 		3DFA95E7E87EACD8FB4AE016 /* InboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A53CB65C882B6D7CF17EFEB /* InboxView.swift */; };
@@ -62,6 +65,7 @@
 		6D48EF0408EBBA662E06234D /* ResurfacingEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFA17589D90E3E4B1ED1CCD /* ResurfacingEngine.swift */; };
 		6F083C1DCD34E705F67D4028 /* AppRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F19E6E8CD40C49962E57D3 /* AppRuntime.swift */; };
 		737713C44F26DF32D2F20C34 /* Habit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA747D4781160DEC2BF368B9 /* Habit.swift */; };
+		74E06DBB75178BDA260B2880 /* Household.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93AC18201240C9B6A9BE9093 /* Household.swift */; };
 		756F3F8C64A3C26AC4854241 /* WidgetPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836E8036D961E35CBBDF538C /* WidgetPublisher.swift */; };
 		785471ADFD779481990FF92E /* JustStartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D79121D1E428AB1FF0FDD53 /* JustStartView.swift */; };
 		78A8864B009A338EBF65C54D /* WorkingSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A36739B23B71D41557D752 /* WorkingSchedule.swift */; };
@@ -83,6 +87,7 @@
 		97A031BE777A3F045A209ED3 /* ProfileRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED388995C0FC3ABF0FCC6E50 /* ProfileRepository.swift */; };
 		97D1587772CADDAC643B6E37 /* TaskPriorityEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E87296818AA1E88F045EB17 /* TaskPriorityEngine.swift */; };
 		98876A48D2EBB6ADBEC56E1C /* AccountStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA885EF5FE778C81B02C7A39 /* AccountStore.swift */; };
+		9D9FF3E5DC77F47B5A0CB120 /* HouseholdRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9977639B66B8D97B6231DAF /* HouseholdRepository.swift */; };
 		9E868298E79D04132FA3238A /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEBBB461D5EE714B551CAA2 /* CalendarView.swift */; };
 		9E937895BF5AEC7A161355B5 /* HabitStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 324322CB6A9010F94F61F95E /* HabitStore.swift */; };
 		9EA090A1D9CFD5AF6E85D232 /* TenoraDataSchema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A837E1EA66E9BC92F69BF4 /* TenoraDataSchema.swift */; };
@@ -232,6 +237,7 @@
 		6FEADB9C842341BBFE93BAC7 /* TaskEditorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskEditorTests.swift; sourceTree = "<group>"; };
 		7103B4F45D830AB456714BEE /* TaskStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStore.swift; sourceTree = "<group>"; };
 		715585BB4B55B8BD14C3CD28 /* UserDefaultsTransitionRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsTransitionRepository.swift; sourceTree = "<group>"; };
+		72206694980401C1EDA62F1B /* HouseholdSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdSettingsView.swift; sourceTree = "<group>"; };
 		72EBDF80FCA5CB223ECEA993 /* DataPrivacySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPrivacySettingsView.swift; sourceTree = "<group>"; };
 		7896AE69EBCE9FAF58815FD6 /* TaskDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailView.swift; sourceTree = "<group>"; };
 		7A53CB65C882B6D7CF17EFEB /* InboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxView.swift; sourceTree = "<group>"; };
@@ -250,6 +256,7 @@
 		925B32348C57BAF1E50224E4 /* ReviewEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReviewEngine.swift; sourceTree = "<group>"; };
 		93713418D0B9463FEE2EF4A7 /* HabitDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HabitDetailView.swift; sourceTree = "<group>"; };
 		938C13249E28C6E847FC2A47 /* MutationOutbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutationOutbox.swift; sourceTree = "<group>"; };
+		93AC18201240C9B6A9BE9093 /* Household.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Household.swift; sourceTree = "<group>"; };
 		9775125D4BE592E5B30197F5 /* TenoraWidgets.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TenoraWidgets.entitlements; sourceTree = "<group>"; };
 		98782347AC97A149D3CFE03B /* AccountSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSettingsView.swift; sourceTree = "<group>"; };
 		9B5DF93911830F780A3C6D2F /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
@@ -257,7 +264,9 @@
 		9C8F837184BFD98E3459E985 /* TaskRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRepository.swift; sourceTree = "<group>"; };
 		9E4B056ADA144A6C348E221B /* StoredSyncMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredSyncMetadata.swift; sourceTree = "<group>"; };
 		A32C111D0AB90057D68F77C2 /* StoredTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoredTask.swift; sourceTree = "<group>"; };
+		A4E373C9AFD75D3900FB1BC8 /* HouseholdStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdStoreTests.swift; sourceTree = "<group>"; };
 		A8DEC2E47D1ECE34CF3BD9F1 /* AddTenoraTaskIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTenoraTaskIntent.swift; sourceTree = "<group>"; };
+		A9977639B66B8D97B6231DAF /* HouseholdRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdRepository.swift; sourceTree = "<group>"; };
 		A9CEAA5BE9430CA188F5E960 /* TenoraDataArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraDataArchive.swift; sourceTree = "<group>"; };
 		AA885EF5FE778C81B02C7A39 /* AccountStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountStore.swift; sourceTree = "<group>"; };
 		AC5E1E8BA9904E7A834A9BCA /* Phase2RepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Phase2RepositoryTests.swift; sourceTree = "<group>"; };
@@ -303,6 +312,7 @@
 		F3A36739B23B71D41557D752 /* WorkingSchedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkingSchedule.swift; sourceTree = "<group>"; };
 		F49EE97554970F1BCAD12AC3 /* TenoraFeatures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TenoraFeatures.swift; sourceTree = "<group>"; };
 		F7FF88060CCA737FB8B089CB /* ReminderPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderPlanner.swift; sourceTree = "<group>"; };
+		FB7181C043E2471F68FA7129 /* HouseholdStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdStore.swift; sourceTree = "<group>"; };
 		FD3D5E7FBCDFC63A13D2A0A2 /* LocalMutation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalMutation.swift; sourceTree = "<group>"; };
 		FE95205C16E1A275CDC9A52D /* AgentBridgeSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentBridgeSnapshot.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -362,12 +372,22 @@
 			isa = PBXGroup;
 			children = (
 				B210F4ED5B77A9803B7B134D /* AccountFoundationTests.swift */,
+				A4E373C9AFD75D3900FB1BC8 /* HouseholdStoreTests.swift */,
 				B7CFD73C4CBE0AB400C5080A /* PersonalSyncFoundationTests.swift */,
 				AC5E1E8BA9904E7A834A9BCA /* Phase2RepositoryTests.swift */,
 				61958874194B7B375841513D /* SwiftDataTaskRepositoryTests.swift */,
 				AE83E373D11604A04E1FA031 /* TenoraDataArchiveTests.swift */,
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		18D46FEBA0ABE5F2B9F989A1 /* Household */ = {
+			isa = PBXGroup;
+			children = (
+				72206694980401C1EDA62F1B /* HouseholdSettingsView.swift */,
+				FB7181C043E2471F68FA7129 /* HouseholdStore.swift */,
+			);
+			path = Household;
 			sourceTree = "<group>";
 		};
 		1A0B1F9FC9F88AA8C0FBF569 /* Shared */ = {
@@ -467,6 +487,7 @@
 				3C67E71D38D526A8DFC75BAB /* AdultAccount.swift */,
 				3C48283DFF888C7FF92625D6 /* CalendarEvent.swift */,
 				BA747D4781160DEC2BF368B9 /* Habit.swift */,
+				93AC18201240C9B6A9BE9093 /* Household.swift */,
 				FD3D5E7FBCDFC63A13D2A0A2 /* LocalMutation.swift */,
 				80E81327A28AB9CC8468B5B4 /* LocalProfile.swift */,
 				F2D92738E012303B94CE0835 /* PersonalSync.swift */,
@@ -501,6 +522,7 @@
 				34A50A353BE2496C6679385E /* Calendar */,
 				4371043D5E70E72A22CB1FD8 /* DesignSystem */,
 				1F2356D95C1743F2EB1D859C /* Habits */,
+				18D46FEBA0ABE5F2B9F989A1 /* Household */,
 				AE82A1A676FE5268092FA505 /* Inbox */,
 				CC38C5AD55C55CBB4EA24B31 /* Navigation */,
 				E7DB000E76CCF79A4E7FA1DF /* Review */,
@@ -531,6 +553,7 @@
 				566CC3EF2511EC2510EF774D /* AccountRepositories.swift */,
 				573A0DBF08C57424EF79BACA /* CalendarRepository.swift */,
 				0699C6A8A6DF41F94C2D59AE /* HabitRepositories.swift */,
+				A9977639B66B8D97B6231DAF /* HouseholdRepository.swift */,
 				938C13249E28C6E847FC2A47 /* MutationOutbox.swift */,
 				ED388995C0FC3ABF0FCC6E50 /* ProfileRepository.swift */,
 				DDF761863C9517ADE63C55A2 /* SettingsRepository.swift */,
@@ -917,6 +940,7 @@
 				E5C547BC8E8E140AC6966DF8 /* CalendarStoreTests.swift in Sources */,
 				81DC58F12B6DAB31910134F6 /* HabitStoreTests.swift in Sources */,
 				3C5159C284A3EBE3F3AA6936 /* HabitTrackingEngineTests.swift in Sources */,
+				395E34161DCBF8CAB11E21A5 /* HouseholdStoreTests.swift in Sources */,
 				EF781F3F82625A22005A440A /* PersonalSyncFoundationTests.swift in Sources */,
 				B2EB490955356B0208858D88 /* Phase2RepositoryTests.swift in Sources */,
 				4D87E9862A7B5F07302E5C08 /* ReminderPlannerTests.swift in Sources */,
@@ -999,6 +1023,10 @@
 				0189AB457FC9055C28CFBA69 /* HabitWeeklyView.swift in Sources */,
 				D6FAAE697F128211EB98C7DF /* HabitWidgetSnapshot.swift in Sources */,
 				340EB1CECF90DBD1E01E6AEB /* HoldPlaceView.swift in Sources */,
+				74E06DBB75178BDA260B2880 /* Household.swift in Sources */,
+				9D9FF3E5DC77F47B5A0CB120 /* HouseholdRepository.swift in Sources */,
+				30C84A905068E5484DF9BEA8 /* HouseholdSettingsView.swift in Sources */,
+				2544EA63E8675230ED3411CE /* HouseholdStore.swift in Sources */,
 				520BA38140A0311ADFB5809B /* InMemoryHabitRepository.swift in Sources */,
 				3DFA95E7E87EACD8FB4AE016 /* InboxView.swift in Sources */,
 				785471ADFD779481990FF92E /* JustStartView.swift in Sources */,

@@ -16,6 +16,7 @@ struct RootTabView: View {
     @State private var missingTask = false
     @State private var showingResume = false
     @State private var returnSince: Date?
+    @State private var householdInvitation: HouseholdInvitationRoute?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -81,12 +82,17 @@ struct RootTabView: View {
                     await habitStore.load()
                     selectedTab = 3
                     openedHabit = habitStore.habits.first { $0.id == id }
+                case .householdInvitation(let token):
+                    householdInvitation = HouseholdInvitationRoute(token: token)
                 }
             }
         }
         .alert("This task is no longer available", isPresented: $missingTask) { Button("OK", role: .cancel) {} }
         .sheet(item: $openedTask) { task in NavigationStack { TaskDetailView(task: task) } }
         .sheet(item: $openedHabit) { habit in NavigationStack { HabitDetailView(habit: habit) } }
+        .sheet(item: $householdInvitation) { invitation in
+            NavigationStack { HouseholdSettingsView(initialInvitationToken: invitation.token) }
+        }
         .onChange(of: reminders.openedTaskID) { _, id in
             guard let id else { return }
             showingResume = false
@@ -176,4 +182,9 @@ struct RootTabView: View {
             NavigationLink { SettingsView() } label: { Label("Settings", systemImage: "gearshape") }
         }
     }
+}
+
+private struct HouseholdInvitationRoute: Identifiable {
+    let token: String
+    var id: String { token }
 }

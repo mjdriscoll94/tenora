@@ -1,6 +1,6 @@
 # Tenora Family Transition — Roadmap
 
-**Planning baseline:** October 23, 2026
+**Planning baseline:** October 27, 2026
 **Source of truth:** The five numbered product steps below define delivery order.
 
 ## Product roadmap
@@ -20,10 +20,14 @@ local and usable without an account.
 
 ### Step 03 — Household creation and invitations
 
-**Status:** In progress. The development database now supports household creation plus
-expiring, single-use adult invitations with create, preview, accept, and revoke commands.
-Adult membership roles, an immutable audit trail, and private-by-default RLS boundaries
-are enforced. The iOS create/join experience remains next.
+**Status:** Implementation complete; signed-device gate pending. The development database
+supports household creation plus expiring, single-use adult invitations with create,
+preview, accept, and revoke commands. Adult membership roles, an immutable audit trail,
+and private-by-default RLS boundaries are enforced. The iOS app now supports creating a
+household, viewing adult members, sharing and revoking invitations, joining by code, and
+opening `tenora://household/invite/<token>` links. All 133 unit tests and the focused
+Settings UI test pass. Before Step 04 begins, two authenticated adults must complete the
+end-to-end invitation lifecycle on signed builds and confirm personal data remains private.
 
 ### Step 04 — Household permissions
 

@@ -48,7 +48,7 @@ final class AttentionLoopUITests: XCTestCase {
         app.launch()
         app.buttons["Settings"].tap()
 
-        for label in ["Account", "Weekly schedule", "Calendar", "Reminders", "Recovery", "Data & Privacy", "About Tenora"] {
+        for label in ["Account", "Household", "Weekly schedule", "Calendar", "Reminders", "Recovery", "Data & Privacy", "About Tenora"] {
             XCTAssertTrue(app.staticTexts[label].waitForExistence(timeout: 5), label)
         }
         app.staticTexts["Calendar"].tap()

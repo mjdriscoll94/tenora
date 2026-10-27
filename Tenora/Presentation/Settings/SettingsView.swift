@@ -7,6 +7,7 @@ struct SettingsView: View {
         Form {
             Section {
                 destination("Account", icon: "person.crop.circle") { AccountSettingsView() }
+                destination("Household", icon: "person.2.fill") { HouseholdSettingsView() }
                 destination("Weekly schedule", icon: "calendar.badge.clock") {
                     WorkingScheduleView(settings: settings.repository) { settings.workingScheduleJSON = $0 }
                 }

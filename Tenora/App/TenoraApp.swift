@@ -12,6 +12,7 @@ struct TenoraApp: App {
     @StateObject private var habitStore: HabitStore
     @StateObject private var appSettings: AppSettingsStore
     @StateObject private var accountStore: AccountStore
+    @StateObject private var householdStore: HouseholdStore
 
     init() {
         let runtime = AppRuntime.shared
@@ -22,7 +23,9 @@ struct TenoraApp: App {
         _transitionStore = StateObject(wrappedValue: runtime.transitions)
         _habitStore = StateObject(wrappedValue: runtime.habits)
         _appSettings = StateObject(wrappedValue: runtime.appSettings)
-        _accountStore = StateObject(wrappedValue: AccountStore(provider: AccountProviderFactory.make()))
+        let accountProvider = AccountProviderFactory.make()
+        _accountStore = StateObject(wrappedValue: AccountStore(provider: accountProvider))
+        _householdStore = StateObject(wrappedValue: HouseholdStore(service: accountProvider.householdService))
     }
 
     var body: some Scene {
@@ -34,6 +37,7 @@ struct TenoraApp: App {
                 .environmentObject(habitStore)
                 .environmentObject(appSettings)
                 .environmentObject(accountStore)
+                .environmentObject(householdStore)
                 .task { await accountStore.restore() }
         }
         .modelContainer(modelContainer)
