@@ -92,7 +92,7 @@ Can manage membership and household-level configuration. Administrative status d
 | Widgets and App Intents | Implemented | Need account/scope-safe snapshots and shared-record deep links later |
 | Authentication | Optional Apple/Supabase client foundation is implemented and device-verified; Agent Bridge auth remains separate and disabled | Development gate complete; production operations and disclosures remain release gates |
 | Backend | Read-only Agent Bridge prototype with one snapshot per Auth0 subject | Not a collaboration backend |
-| Household model and sync | Step 03 household identity foundation in progress; personal sync remains disabled | Complete invitation lifecycle and permission gates before shared records |
+| Household model and sync | Step 03 identity lifecycle and the first Step 04 shared-task authorization boundary are implemented; personal sync remains disabled | Complete signed-device membership verification, then add explicit shared-task client UI and reconciliation |
 | Financial integrations | Missing | Deliberately defer behind a hardened server boundary |
 
 The detailed evidence is in [ARCHITECTURE.md](ARCHITECTURE.md). Decisions are in [DECISIONS.md](DECISIONS.md), sequencing is in [ROADMAP.md](ROADMAP.md), and verified results are in [PROGRESS.md](PROGRESS.md).

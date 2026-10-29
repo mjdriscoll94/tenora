@@ -168,6 +168,35 @@ current adult sign-in uses Apple.
 Server-driven APNs delivery for transfer requests remains deferred until Tenora has remote
 push infrastructure; the request is surfaced whenever either participant opens Household.
 
+### Step 04 household permissions — shared-task authorization foundation
+
+- Added a dedicated `household_tasks` record type. Existing personal SwiftData tasks are
+  unchanged, remain local-only, and are never inferred to be household-visible.
+- Added immutable `household_task_events` history with database-recorded creator, updater,
+  completion actor, timestamps, and monotonically increasing task versions.
+- Added active-membership RLS for task and history reads and writes, with explicit Data API
+  grants. Anonymous callers, unrelated households, and former members receive no access.
+- Prevented clients from changing a task's household, hard-deleting records, forging
+  history, assigning a task to a non-member, or writing trusted actor/version fields.
+- Added covering indexes for the household, assignment, actor, retention, and timeline
+  access paths identified by the database advisor.
+- Added a 30-assertion adversarial suite covering member collaboration, cross-household
+  isolation, revocation, assignment validation, audit retention, actor attribution, and
+  rejected-write atomicity.
+
+**Verification:** Migrations `20261029211713_household_task_authorization_foundation` and
+`20261029211916_index_household_task_relations` are applied to the linked development
+project. All six household database suites pass in rolled-back live transactions: 142
+assertions total, including all 30 shared-task authorization checks. The post-migration
+security review reports no missing RLS or newly exposed privileged functions. The
+performance review reports no unindexed foreign keys; remaining unused-index notices are
+expected for new development tables without production traffic.
+
+**Release boundary:** This slice intentionally adds no shared-task screen and no upload
+path for personal tasks. The next implementation piece can build the client repository and
+explicit household-task UI on top of this verified boundary after the signed-device
+membership gate is completed.
+
 ### Step 04 household permissions — closing a household
 
 - Added a protected owner-only closure workflow. Closure is allowed only when the owner

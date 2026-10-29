@@ -286,3 +286,21 @@ understandable but are never used as authority.
 Every request, acceptance, cancellation, decline, and expiry is retained in immutable
 household audit history. Account names are visible only to active members of the same
 household and must be distinguishable there.
+
+## D-025 — Keep personal tasks separate from household tasks
+
+**Decision:** The first shared-record authorization boundary uses dedicated
+`household_tasks` and immutable `household_task_events` tables. Existing SwiftData tasks
+remain personal and local-only; signing in or joining a household never uploads, converts,
+or exposes them.
+
+**Why:** A single mixed table would make an accidental scope change capable of exposing a
+private title, note, or attention state. Separate storage makes household visibility an
+explicit creation or future move/copy action and keeps the safest default structurally
+enforced.
+
+**Authorization:** Active membership is required for every shared-task read and write.
+The database sets creator, updater, completion actor, timestamps, and monotonically
+increasing version values. Clients cannot change household identity, hard-delete tasks,
+forge history, assign work to an outsider, or retain access after leaving. Owners and
+admins receive no access to an adult's existing personal task store.

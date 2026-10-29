@@ -323,6 +323,8 @@ Implemented identity and Step 03 foundation:
 - `household_invitations(id, household_id, created_by, recipient_email, token_hash, role, status, expires_at, accepted_by, accepted_at, created_at)`
 - `household_ownership_transfers(id, household_id, requested_by, recipient_user_id, status, expires_at, created_at, resolved_at)`
 - `household_audit_events(id, household_id, actor_user_id, event_type, subject_user_id, invitation_id, ownership_transfer_id, occurred_at)`
+- `household_tasks(id, household_id, title, notes, status, priority, due_at, scheduled_at, estimated_duration_minutes, assigned_to, created_by, updated_by, completed_by, completed_at, version, created_at, updated_at, deleted_at)`
+- `household_task_events(id, task_id, household_id, actor_user_id, event_type, task_version, occurred_at)`
 
 The database enforces one active household per adult for this release. Household creation
 atomically creates an owner membership. Clients receive no direct mutation privilege for
@@ -336,12 +338,15 @@ household. Direct profile-name updates are replaced by a guarded command that no
 names and prevents case-insensitive duplicates within the household. Ownership transitions
 are server-authoritative commands that lock the request and household, enforce one active
 owner, require recipient consent, and append every terminal transition to audit history.
+Household tasks are a distinct shared record type rather than a scope flag added to the
+local personal model. Active-membership RLS governs all reads and writes, immutable column
+grants prevent household reassignment, database triggers assign actors and versions, and
+task events retain the accepted change history. Hard deletion and direct history writes
+are not exposed to clients.
 
-Planned shared-record core after the membership and permission gates:
+Planned shared-record and synchronization work after the permission gate:
 
-- `tasks(id, scope, owner_user_id, household_id, created_by, assigned_to, fields…, version, created_at, updated_at, deleted_at)`
 - `task_participants(task_id, user_id, permission)` only when selected-member sharing is introduced
-- `task_events(id, task_id, actor_user_id, kind, payload, client_mutation_id, occurred_at)`
 - `habits` and `habit_completions` with the same scope rules; keep personal by default
 - `member_task_preferences(user_id, task_id, keep_in_front_until, local_attention_fields…)`
 - `availability_blocks(id, user_id, household_id, starts_at, ends_at, expires_at)` with no event content

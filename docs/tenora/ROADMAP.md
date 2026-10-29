@@ -41,8 +41,10 @@ adult remains active. Consensual ownership transfer is implemented: one owner ma
 transfer to one named active adult or admin, the recipient must accept within seven days,
 and the former owner becomes an adult member. The owner can cancel and the recipient can
 decline; only those two adults can see the pending request.
-This step will continue by enforcing and verifying secure access to shared records without
-granting owners or administrators access to another adult's private information.
+The first shared-record authorization boundary is also implemented: household tasks and
+immutable task history are visible and mutable only to active members, while existing
+personal tasks remain local-only and structurally separate. Shared-task UI and sync remain
+gated until the signed-device household lifecycle check is complete.
 
 ### Step 05 — Parent-managed child profiles
 
@@ -238,15 +240,16 @@ cloud sync table, or source-of-truth change exists yet.
 **User-visible household features:** Create/join a household and manage adult members.
 
 **Product-roadmap mapping:** Step 03. The relational foundation, creation boundary, and
-invitation lifecycle are implemented in development; iOS create/join flows remain.
+invitation lifecycle and iOS create/join flows are implemented in development; the
+two-adult signed-device verification remains.
 
 ### Work
 
 1. Household creation.
 2. Expiring, single-use adult invitations.
 3. Owner/admin/adult roles.
-4. Membership acceptance, revocation, leaving, and ownership transfer. *(Leaving is
-   implemented for adults and administrators; owner transfer remains required.)*
+4. Membership acceptance, revocation, leaving, and ownership transfer. *(Leaving and
+   consensual ownership transfer are implemented.)*
 5. Safe household closure. *(Implemented for a sole remaining owner; closure retains
    history and revokes unused invitations.)*
 6. Clear household/privacy onboarding.
@@ -262,6 +265,10 @@ invitation lifecycle are implemented in development; iOS create/join flows remai
 ## Phase 6 — Shared household tasks and routines
 
 **User-visible household features:** First collaborative value release.
+
+**Foundation status:** The shared-task schema, actor/version history, explicit Data API
+grants, membership RLS, assignment validation, and revocation tests are implemented. No
+shared-task screen or personal-to-household upload path is enabled yet.
 
 ### Work
 
