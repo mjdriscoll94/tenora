@@ -9,6 +9,8 @@ struct HouseholdSettingsView: View {
     @State private var invitationRole: HouseholdRole = .adult
     @State private var hasHandledInitialInvitation = false
     @State private var isConfirmingLeave = false
+    @State private var isConfirmingClosure = false
+    @State private var closureConfirmationName = ""
 
     init(initialInvitationToken: String = "") {
         _invitationInput = State(initialValue: initialInvitationToken)
@@ -57,6 +59,17 @@ struct HouseholdSettingsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("You will lose access to household information. Your personal tasks, habits, schedule, and settings will stay in Tenora.")
+        }
+        .alert("Close household?", isPresented: $isConfirmingClosure) {
+            TextField("Type household name", text: $closureConfirmationName)
+                .textInputAutocapitalization(.words)
+            Button("Close Household", role: .destructive) {
+                Task { await store.closeHousehold() }
+            }
+            .disabled(closureConfirmationName != store.household?.name)
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This ends household collaboration and revokes unused invitations. Type the household name to confirm. Personal Tenora data is not deleted.")
         }
         .overlay {
             if store.isWorking {
@@ -170,8 +183,24 @@ struct HouseholdSettingsView: View {
     private func membershipManagementSection(_ household: HouseholdSnapshot) -> some View {
         Section("Membership") {
             if household.currentRole == .owner {
-                Label("Owners must transfer ownership before leaving.", systemImage: "crown.fill")
-                    .foregroundStyle(.secondary)
+                Button(role: .destructive) {
+                    closureConfirmationName = ""
+                    isConfirmingClosure = true
+                } label: {
+                    Label("Close Household", systemImage: "lock.rectangle.stack")
+                }
+                .disabled(store.isWorking || household.activeMembers.count > 1)
+                .accessibilityIdentifier("close-household")
+
+                if household.activeMembers.count > 1 {
+                    Text("Every other adult must leave before this household can be closed. This prevents one person from removing everyone else's access.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("Closing ends this household and revokes unused invitations. Its history is retained, and personal data is not deleted.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             } else {
                 Button(role: .destructive) {
                     isConfirmingLeave = true

@@ -206,6 +206,22 @@ final class HouseholdStore: ObservableObject {
         }
     }
 
+    func closeHousehold() async {
+        guard adult != nil else {
+            message = HouseholdServiceError.signInRequired.localizedDescription
+            return
+        }
+        await perform {
+            try await service.closeHousehold()
+            invitationLinks.keys.forEach { linkStorage.remove(id: $0) }
+            household = nil
+            invitationPreview = nil
+            latestInvitation = nil
+            invitationLinks = [:]
+            message = "Household closed. Everyone's personal Tenora data is unchanged."
+        }
+    }
+
     func shareableInvitation(for invitation: HouseholdInvitation) -> CreatedHouseholdInvitation? {
         invitationLinks[invitation.id]
     }

@@ -134,6 +134,38 @@ authenticated-only, rejects anonymous sessions, derives the actor from `auth.uid
 checks current membership in the database, accepts no identity parameters, and uses an
 empty `search_path`.
 
+### Step 04 household permissions — closing a household
+
+- Added a protected owner-only closure workflow. Closure is allowed only when the owner
+  is the household's sole remaining active adult, preventing one person from removing
+  another adult's access to future shared household information.
+- The iOS confirmation requires the owner to type the exact household name. When other
+  adults remain, the close action is disabled and explains that they must leave first.
+- Closure revokes every unused invitation, ends the owner's active membership, and marks
+  the household closed with its actor and timestamp. It never deletes the household,
+  membership records, invitation history, audit events, or anyone's private Tenora data.
+- Ended memberships no longer count toward the one-active-household limit, so former
+  members can create or join a new household.
+- Added a database trigger that prevents any command or concurrent invitation acceptance
+  from activating a membership after closure.
+- Added a 20-assertion transactional pgTAP suite covering execution grants, owner-only
+  authorization, active-member protection, invitation revocation, immediate access
+  removal, idempotency, retained history, and unrelated-adult behavior.
+
+**Verification:** Migrations `20261029201936_close_household_command` and
+`20261029202057_prevent_closed_household_reactivation` are applied to the linked
+development project. All 20 database assertions passed in a rolled-back live
+transaction. The complete iOS unit suite passed on iPhone 16 Pro / iOS 18.3.1 with 136
+tests and zero failures; the focused household store suite passed all nine tests. Result
+bundle: `/tmp/TenoraCloseHouseholdDerivedData/Logs/Test/Test-Tenora-2026.10.29_15-20-05--0500.xcresult`.
+
+The security advisor reports the expected reviewed authenticated security-definer warning
+for `close_household()`. The command is intentionally authenticated-only, accepts no user
+or household IDs, derives the actor from `auth.uid()`, locks the current membership and
+household, verifies the caller is the sole active owner, and uses an empty `search_path`.
+The advisor's other warnings are unchanged. Performance findings remain expected unused
+indexes before production traffic.
+
 ### Phase 4 local-only sync foundation
 
 - Added additive `TenoraSchemaV2` with a generic sync-metadata sidecar; V1 content models remain unchanged.

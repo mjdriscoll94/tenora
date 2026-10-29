@@ -114,6 +114,18 @@ final class HouseholdStoreTests: XCTestCase {
         XCTAssertEqual(store.message, "You left the household. Your personal Tenora data is unchanged.")
     }
 
+    func testOwnerCanCloseHouseholdWithoutChangingPersonalData() async {
+        let service = FakeHouseholdService(snapshot: snapshot)
+        let store = makeStore(service: service)
+        await store.refresh(for: adult)
+
+        await store.closeHousehold()
+
+        XCTAssertTrue(service.didClose)
+        XCTAssertNil(store.household)
+        XCTAssertEqual(store.message, "Household closed. Everyone's personal Tenora data is unchanged.")
+    }
+
     private func makeStore(service: FakeHouseholdService) -> HouseholdStore {
         HouseholdStore(service: service, linkStorage: FakeInvitationLinkStorage())
     }
@@ -162,6 +174,7 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
     var acceptedToken: String?
     var previewCallCount = 0
     var didLeave = false
+    var didClose = false
 
     init(snapshot: HouseholdSnapshot?) { self.snapshot = snapshot }
 
@@ -239,6 +252,11 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
 
     func leaveHousehold() async throws {
         didLeave = true
+        snapshot = nil
+    }
+
+    func closeHousehold() async throws {
+        didClose = true
         snapshot = nil
     }
 

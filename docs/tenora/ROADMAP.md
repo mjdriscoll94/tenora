@@ -25,7 +25,7 @@ supports household creation plus expiring, single-use adult invitations with cre
 preview, accept, and revoke commands. Adult membership roles, an immutable audit trail,
 and private-by-default RLS boundaries are enforced. The iOS app now supports creating a
 household, viewing adult members, sharing and revoking invitations, joining by code, and
-opening `tenora://household/invite/<token>` links. All 135 unit tests and the focused
+opening `tenora://household/invite/<token>` links. All 136 unit tests and the focused
 Settings UI test pass. Before shared-record permission work begins, two authenticated
 adults must complete the end-to-end invitation lifecycle on signed builds and confirm
 personal data remains private.
@@ -34,7 +34,10 @@ personal data remains private.
 
 **Status:** In progress, with shared productivity data still gated. The first isolated
 membership-permissions slice allows an adult or administrator to leave while preserving
-the household and its history. Owners are blocked until ownership transfer is available.
+the household and its history. A sole remaining owner can close the household without
+deleting its membership, invitation, or audit history; closure is blocked while another
+adult remains active. Owners with other active members remain blocked until those adults
+leave or ownership transfer is available.
 This step will continue by enforcing and verifying secure access to shared records without
 granting owners or administrators access to another adult's private information.
 
@@ -241,9 +244,11 @@ invitation lifecycle are implemented in development; iOS create/join flows remai
 3. Owner/admin/adult roles.
 4. Membership acceptance, revocation, leaving, and ownership transfer. *(Leaving is
    implemented for adults and administrators; owner transfer remains required.)*
-5. Clear household/privacy onboarding.
-6. Audit trail for membership and role changes.
-7. Recovery paths for expired/revoked invites and last-owner departure.
+5. Safe household closure. *(Implemented for a sole remaining owner; closure retains
+   history and revokes unused invitations.)*
+6. Clear household/privacy onboarding.
+7. Audit trail for membership and role changes.
+8. Recovery paths for expired/revoked invites and last-owner departure.
 
 ### Exit criteria
 

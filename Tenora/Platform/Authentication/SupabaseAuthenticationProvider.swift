@@ -244,6 +244,22 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         }
     }
 
+    func closeHousehold() async throws {
+        do {
+            let didClose: Bool = try await client
+                .rpc("close_household")
+                .execute()
+                .value
+            guard didClose else {
+                throw HouseholdServiceError.service("This household is no longer active.")
+            }
+        } catch let error as HouseholdServiceError {
+            throw error
+        } catch {
+            throw householdError(error, fallback: "Tenora couldn't close the household. Please try again.")
+        }
+    }
+
     private func providerSession(_ session: Session) -> ProviderSession {
         ProviderSession(providerSubject: session.user.id.uuidString, email: session.user.email)
     }
@@ -285,6 +301,12 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         }
         if detail.contains("owners must transfer ownership") {
             return .service("Transfer household ownership before leaving.")
+        }
+        if detail.contains("other active members must leave") {
+            return .service("Every other adult must leave before the household can be closed.")
+        }
+        if detail.contains("household owner permission required") {
+            return .service("Only the household owner can close the household.")
         }
         if detail.contains("row-level security") || detail.contains("42501") {
             return .service("Tenora couldn't verify your household access. Sign out, sign back in, and try again.")
