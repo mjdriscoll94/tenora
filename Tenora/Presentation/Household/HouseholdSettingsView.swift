@@ -8,6 +8,7 @@ struct HouseholdSettingsView: View {
     @State private var invitationEmail = ""
     @State private var invitationRole: HouseholdRole = .adult
     @State private var hasHandledInitialInvitation = false
+    @State private var isConfirmingLeave = false
 
     init(initialInvitationToken: String = "") {
         _invitationInput = State(initialValue: initialInvitationToken)
@@ -45,6 +46,18 @@ struct HouseholdSettingsView: View {
         .background(TenoraScreenBackground())
         .tint(.tenoraForest)
         .navigationTitle("Household")
+        .confirmationDialog(
+            "Leave this household?",
+            isPresented: $isConfirmingLeave,
+            titleVisibility: .visible
+        ) {
+            Button("Leave Household", role: .destructive) {
+                Task { await store.leaveHousehold() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("You will lose access to household information. Your personal tasks, habits, schedule, and settings will stay in Tenora.")
+        }
         .overlay {
             if store.isWorking {
                 ProgressView()
@@ -149,6 +162,30 @@ struct HouseholdSettingsView: View {
         if household.currentRole?.canManageInvitations == true {
             invitationManagementSection(household)
         }
+
+        membershipManagementSection(household)
+    }
+
+    @ViewBuilder
+    private func membershipManagementSection(_ household: HouseholdSnapshot) -> some View {
+        Section("Membership") {
+            if household.currentRole == .owner {
+                Label("Owners must transfer ownership before leaving.", systemImage: "crown.fill")
+                    .foregroundStyle(.secondary)
+            } else {
+                Button(role: .destructive) {
+                    isConfirmingLeave = true
+                } label: {
+                    Label("Leave Household", systemImage: "rectangle.portrait.and.arrow.right")
+                }
+                .disabled(store.isWorking)
+                .accessibilityIdentifier("leave-household")
+
+                Text("Leaving removes your access to household information. It does not delete your personal Tenora data or affect other members.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+        }
     }
 
     @ViewBuilder
@@ -192,17 +229,35 @@ struct HouseholdSettingsView: View {
                                 .foregroundStyle(.secondary)
                                 .textSelection(.enabled)
                                 .accessibilityIdentifier("generated-invitation-link")
-                            ShareLink(
-                                item: url,
-                                subject: Text("Join my Tenora household"),
-                                message: Text("Join \(household.name) in Tenora. This private link can be used once.")
-                            ) {
-                                Label("Share Invitation", systemImage: "square.and.arrow.up")
+                        }
+
+                        HStack(spacing: 12) {
+                            if let createdInvitation = store.shareableInvitation(for: invitation),
+                               let url = createdInvitation.shareURL {
+                                ShareLink(
+                                    item: url,
+                                    subject: Text("Join my Tenora household"),
+                                    message: Text("Join \(household.name) in Tenora. This private link can be used once.")
+                                ) {
+                                    Label("Share Invitation", systemImage: "square.and.arrow.up")
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .tint(.tenoraForest)
+                                .accessibilityIdentifier("share-household-invitation")
                             }
+
+                            Button(role: .destructive) {
+                                Task { await store.revokeInvitation(invitation) }
+                            } label: {
+                                Label("Revoke", systemImage: "xmark.circle")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.red)
+                            .accessibilityIdentifier("revoke-household-invitation")
                         }
-                        Button("Revoke", role: .destructive) {
-                            Task { await store.revokeInvitation(invitation) }
-                        }
+                        .controlSize(.large)
                     }
                     .padding(.vertical, 3)
                 }

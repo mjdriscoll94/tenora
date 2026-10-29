@@ -1,13 +1,14 @@
 # Tenora Family Transition — Progress and Verification
 
 **Last updated:** October 29, 2026
-**Current product step:** Step 03 — Household creation and invitations
+**Current product step:** Step 04 — Household permissions, with the Step 03 signed-device gate pending
 **Implementation state:** Steps 01 and 02 are complete. Step 03 now has its database
 foundation and iOS create, invite, preview, join, and revoke experience. Private sync
 infrastructure remains local-only with cloud reads and writes disabled. No shared
 productivity data is enabled. Step 03 still requires a signed-device, two-adult lifecycle
-check before it is closed. Historical-data gates were waived for the initial pre-release
-rollout because current development data may be discarded.
+check before it is closed. The first isolated Step 04 slice now supports leaving a
+household without exposing or deleting personal data. Historical-data gates were waived
+for the initial pre-release rollout because current development data may be discarded.
 
 ## Work completed
 
@@ -100,7 +101,38 @@ and `/tmp/TenoraHouseholdBuild/Logs/Test/Test-Tenora-2026.10.27_12-58-43--0500.x
 create a household as the first adult, share the generated invitation, open it as the
 second adult, join, confirm both adults appear, revoke a second unused invitation, and
 confirm both adults' personal tasks, habits, schedules, calendar details, focus state, and
-settings remain absent from the other account. Only after this passes should Step 04 begin.
+settings remain absent from the other account. Only after this passes should Step 04 begin
+granting or testing access to shared productivity records.
+
+### Step 04 household permissions — leaving a household
+
+- Added an authenticated `leave_household()` command that derives the adult from the
+  active session, locks the current membership, and accepts no user or household ID from
+  the client.
+- Adults and administrators can leave. Their membership is retained as `left`, its end
+  time is recorded, and an immutable `member_left` audit event preserves household
+  history.
+- Leaving immediately removes access to household records while preserving the household,
+  remaining memberships, and all private local tasks, habits, schedules, calendar details,
+  attention state, and settings.
+- Owners cannot leave yet. The database and app require ownership transfer first so one
+  adult cannot erase or strand the shared household for everyone else.
+- Added a destructive confirmation flow in Household settings and clear owner guidance.
+  The app clears the departed household and invitation state after the command succeeds.
+- Added a 13-assertion transactional pgTAP suite covering grants, owner protection,
+  immediate access removal, idempotency, retained history, and unrelated-adult behavior.
+
+**Verification:** Migration `20261029200942_leave_household_command` is applied to the
+linked development project. All 13 database assertions passed in a rolled-back live
+transaction. The complete iOS unit suite passed on iPhone 16 Pro / iOS 18.3.1 with 135
+tests and zero failures; the focused household store suite passed all eight tests. Result
+bundle: `/tmp/TenoraLeaveHouseholdDerivedData/Logs/Test/Test-Tenora-2026.10.29_15-11-38--0500.xcresult`.
+
+Supabase's security advisor now reports the expected reviewed warning for this public
+security-definer command, alongside the four invitation commands. It is intentionally
+authenticated-only, rejects anonymous sessions, derives the actor from `auth.uid()`,
+checks current membership in the database, accepts no identity parameters, and uses an
+empty `search_path`.
 
 ### Phase 4 local-only sync foundation
 

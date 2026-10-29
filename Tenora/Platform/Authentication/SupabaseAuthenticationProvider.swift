@@ -228,6 +228,22 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         }
     }
 
+    func leaveHousehold() async throws {
+        do {
+            let didLeave: Bool = try await client
+                .rpc("leave_household")
+                .execute()
+                .value
+            guard didLeave else {
+                throw HouseholdServiceError.service("You are not an active member of a household.")
+            }
+        } catch let error as HouseholdServiceError {
+            throw error
+        } catch {
+            throw householdError(error, fallback: "Tenora couldn't leave the household. Please try again.")
+        }
+    }
+
     private func providerSession(_ session: Session) -> ProviderSession {
         ProviderSession(providerSubject: session.user.id.uuidString, email: session.user.email)
     }
@@ -266,6 +282,9 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         }
         if detail.contains("current household") {
             return .service("Leave your current household before joining another one.")
+        }
+        if detail.contains("owners must transfer ownership") {
+            return .service("Transfer household ownership before leaving.")
         }
         if detail.contains("row-level security") || detail.contains("42501") {
             return .service("Tenora couldn't verify your household access. Sign out, sign back in, and try again.")

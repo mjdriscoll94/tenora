@@ -8,6 +8,7 @@ protocol HouseholdService: Sendable {
     func previewInvitation(token: String) async throws -> HouseholdInvitationPreview?
     func acceptInvitation(token: String, for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot
     func revokeInvitation(id: UUID) async throws
+    func leaveHousehold() async throws
 }
 
 struct UnconfiguredHouseholdService: HouseholdService {
@@ -27,4 +28,5 @@ struct UnconfiguredHouseholdService: HouseholdService {
         throw HouseholdServiceError.notConfigured
     }
     func revokeInvitation(id: UUID) async throws { throw HouseholdServiceError.notConfigured }
+    func leaveHousehold() async throws { throw HouseholdServiceError.notConfigured }
 }

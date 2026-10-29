@@ -102,6 +102,18 @@ final class HouseholdStoreTests: XCTestCase {
         XCTAssertTrue(links.load().isEmpty)
     }
 
+    func testAdultCanLeaveHouseholdWithoutChangingPersonalData() async {
+        let service = FakeHouseholdService(snapshot: memberSnapshot)
+        let store = makeStore(service: service)
+        await store.refresh(for: adult)
+
+        await store.leaveHousehold()
+
+        XCTAssertTrue(service.didLeave)
+        XCTAssertNil(store.household)
+        XCTAssertEqual(store.message, "You left the household. Your personal Tenora data is unchanged.")
+    }
+
     private func makeStore(service: FakeHouseholdService) -> HouseholdStore {
         HouseholdStore(service: service, linkStorage: FakeInvitationLinkStorage())
     }
@@ -123,6 +135,24 @@ final class HouseholdStoreTests: XCTestCase {
             invitations: []
         )
     }
+
+    private var memberSnapshot: HouseholdSnapshot {
+        HouseholdSnapshot(
+            id: UUID(uuidString: "BBBBBBBB-BBBB-BBBB-BBBB-BBBBBBBBBBBB")!,
+            name: "Driscoll Home",
+            currentUserID: adult.userID,
+            memberships: [
+                HouseholdMembership(
+                    id: UUID(uuidString: "CCCCCCCC-CCCC-CCCC-CCCC-CCCCCCCCCCCC")!,
+                    userID: adult.userID,
+                    role: .adult,
+                    status: .active,
+                    joinedAt: Date(timeIntervalSince1970: 100)
+                )
+            ],
+            invitations: []
+        )
+    }
 }
 
 private final class FakeHouseholdService: HouseholdService, @unchecked Sendable {
@@ -131,6 +161,7 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
     var createdName: String?
     var acceptedToken: String?
     var previewCallCount = 0
+    var didLeave = false
 
     init(snapshot: HouseholdSnapshot?) { self.snapshot = snapshot }
 
@@ -204,6 +235,11 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
                 )
             }
         )
+    }
+
+    func leaveHousehold() async throws {
+        didLeave = true
+        snapshot = nil
     }
 
     private func makeSnapshot(adult: AuthenticatedAdult, name: String) -> HouseholdSnapshot {

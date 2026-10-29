@@ -25,14 +25,18 @@ supports household creation plus expiring, single-use adult invitations with cre
 preview, accept, and revoke commands. Adult membership roles, an immutable audit trail,
 and private-by-default RLS boundaries are enforced. The iOS app now supports creating a
 household, viewing adult members, sharing and revoking invitations, joining by code, and
-opening `tenora://household/invite/<token>` links. All 133 unit tests and the focused
-Settings UI test pass. Before Step 04 begins, two authenticated adults must complete the
-end-to-end invitation lifecycle on signed builds and confirm personal data remains private.
+opening `tenora://household/invite/<token>` links. All 135 unit tests and the focused
+Settings UI test pass. Before shared-record permission work begins, two authenticated
+adults must complete the end-to-end invitation lifecycle on signed builds and confirm
+personal data remains private.
 
 ### Step 04 — Household permissions
 
-**Status:** Not started. This step will enforce and verify secure access to shared records
-without granting owners or administrators access to another adult's private information.
+**Status:** In progress, with shared productivity data still gated. The first isolated
+membership-permissions slice allows an adult or administrator to leave while preserving
+the household and its history. Owners are blocked until ownership transfer is available.
+This step will continue by enforcing and verifying secure access to shared records without
+granting owners or administrators access to another adult's private information.
 
 ### Step 05 — Parent-managed child profiles
 
@@ -235,7 +239,8 @@ invitation lifecycle are implemented in development; iOS create/join flows remai
 1. Household creation.
 2. Expiring, single-use adult invitations.
 3. Owner/admin/adult roles.
-4. Membership acceptance, revocation, leaving, and ownership transfer.
+4. Membership acceptance, revocation, leaving, and ownership transfer. *(Leaving is
+   implemented for adults and administrators; owner transfer remains required.)*
 5. Clear household/privacy onboarding.
 6. Audit trail for membership and role changes.
 7. Recovery paths for expired/revoked invites and last-owner departure.
