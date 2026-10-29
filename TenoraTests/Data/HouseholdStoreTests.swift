@@ -20,7 +20,7 @@ final class HouseholdStoreTests: XCTestCase {
 
     func testRefreshLoadsHouseholdForAuthenticatedAdult() async {
         let service = FakeHouseholdService(snapshot: snapshot)
-        let store = HouseholdStore(service: service)
+        let store = makeStore(service: service)
 
         await store.refresh(for: adult)
 
@@ -30,7 +30,7 @@ final class HouseholdStoreTests: XCTestCase {
 
     func testSignedOutRefreshClearsHouseholdAndSensitiveInvitationState() async {
         let service = FakeHouseholdService(snapshot: snapshot)
-        let store = HouseholdStore(service: service)
+        let store = makeStore(service: service)
         await store.refresh(for: adult)
         await store.createInvitation(email: nil, role: .adult)
 
@@ -43,7 +43,7 @@ final class HouseholdStoreTests: XCTestCase {
 
     func testCreateHouseholdTrimsNameAndPreservesReturnedSnapshot() async {
         let service = FakeHouseholdService(snapshot: nil)
-        let store = HouseholdStore(service: service)
+        let store = makeStore(service: service)
         await store.refresh(for: adult)
 
         await store.createHousehold(name: "  Driscoll Home  ")
@@ -54,7 +54,7 @@ final class HouseholdStoreTests: XCTestCase {
 
     func testPreviewAndAcceptInvitation() async {
         let service = FakeHouseholdService(snapshot: nil)
-        let store = HouseholdStore(service: service)
+        let store = makeStore(service: service)
         let token = String(repeating: "ab", count: 32)
         await store.refresh(for: adult)
 
@@ -69,13 +69,41 @@ final class HouseholdStoreTests: XCTestCase {
 
     func testInvalidInvitationNeverCallsService() async {
         let service = FakeHouseholdService(snapshot: nil)
-        let store = HouseholdStore(service: service)
+        let store = makeStore(service: service)
         await store.refresh(for: adult)
 
         await store.previewInvitation("bad")
 
         XCTAssertEqual(service.previewCallCount, 0)
         XCTAssertEqual(store.message, HouseholdServiceError.invalidInvitation.localizedDescription)
+    }
+
+    func testInvitationLinkSurvivesRefreshUntilInvitationIsRevoked() async {
+        let service = FakeHouseholdService(snapshot: snapshot)
+        let links = FakeInvitationLinkStorage()
+        let store = HouseholdStore(service: service, linkStorage: links)
+        await store.refresh(for: adult)
+
+        await store.createInvitation(email: nil, role: .adult)
+
+        guard let pending = store.household?.pendingInvitations.first else {
+            return XCTFail("Expected a pending invitation")
+        }
+        XCTAssertEqual(
+            store.shareableInvitation(for: pending)?.shareURL?.absoluteString,
+            "tenora://household/invite/\(String(repeating: "cd", count: 32))"
+        )
+
+        await store.refresh(for: adult)
+        XCTAssertNotNil(store.shareableInvitation(for: pending))
+
+        await store.revokeInvitation(pending)
+        XCTAssertNil(store.shareableInvitation(for: pending))
+        XCTAssertTrue(links.load().isEmpty)
+    }
+
+    private func makeStore(service: FakeHouseholdService) -> HouseholdStore {
+        HouseholdStore(service: service, linkStorage: FakeInvitationLinkStorage())
     }
 
     private var snapshot: HouseholdSnapshot {
@@ -116,11 +144,29 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
     }
 
     func createInvitation(email: String?, role: HouseholdRole) async throws -> CreatedHouseholdInvitation {
-        CreatedHouseholdInvitation(
+        let created = CreatedHouseholdInvitation(
             id: UUID(uuidString: "DDDDDDDD-DDDD-DDDD-DDDD-DDDDDDDDDDDD")!,
             token: String(repeating: "cd", count: 32),
-            expiresAt: Date(timeIntervalSince1970: 10_000)
+            expiresAt: Date(timeIntervalSinceNow: 10_000)
         )
+        if let current = snapshot {
+            snapshot = HouseholdSnapshot(
+                id: current.id,
+                name: current.name,
+                currentUserID: current.currentUserID,
+                memberships: current.memberships,
+                invitations: current.invitations + [
+                    HouseholdInvitation(
+                        id: created.id,
+                        recipientEmail: email,
+                        role: role,
+                        status: .pending,
+                        expiresAt: created.expiresAt
+                    )
+                ]
+            )
+        }
+        return created
     }
 
     func previewInvitation(token: String) async throws -> HouseholdInvitationPreview? {
@@ -140,7 +186,25 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
         return household
     }
 
-    func revokeInvitation(id: UUID) async throws {}
+    func revokeInvitation(id: UUID) async throws {
+        guard let current = snapshot else { return }
+        snapshot = HouseholdSnapshot(
+            id: current.id,
+            name: current.name,
+            currentUserID: current.currentUserID,
+            memberships: current.memberships,
+            invitations: current.invitations.map { invitation in
+                guard invitation.id == id else { return invitation }
+                return HouseholdInvitation(
+                    id: invitation.id,
+                    recipientEmail: invitation.recipientEmail,
+                    role: invitation.role,
+                    status: .revoked,
+                    expiresAt: invitation.expiresAt
+                )
+            }
+        )
+    }
 
     private func makeSnapshot(adult: AuthenticatedAdult, name: String) -> HouseholdSnapshot {
         HouseholdSnapshot(
@@ -158,5 +222,20 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
             ],
             invitations: []
         )
+    }
+}
+
+private final class FakeInvitationLinkStorage: HouseholdInvitationLinkStorage {
+    private var invitations: [CreatedHouseholdInvitation] = []
+
+    func load() -> [CreatedHouseholdInvitation] { invitations }
+
+    func save(_ invitation: CreatedHouseholdInvitation) throws {
+        invitations.removeAll { $0.id == invitation.id }
+        invitations.append(invitation)
+    }
+
+    func remove(id: UUID) {
+        invitations.removeAll { $0.id == id }
     }
 }

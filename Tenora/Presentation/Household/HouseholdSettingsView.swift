@@ -175,29 +175,6 @@ struct HouseholdSettingsView: View {
                 .font(.footnote)
                 .foregroundStyle(.secondary)
 
-            if let invitation = store.latestInvitation {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Invitation ready").font(.headline)
-                    Text(invitation.token)
-                        .font(.system(.caption, design: .monospaced))
-                        .textSelection(.enabled)
-                        .accessibilityIdentifier("generated-invitation-code")
-                    Text("Expires \(invitation.expiresAt.formatted(date: .abbreviated, time: .shortened))")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                    if let url = invitation.shareURL {
-                        ShareLink(
-                            item: url,
-                            subject: Text("Join my Tenora household"),
-                            message: Text("Join \(household.name) in Tenora. This private link can be used once.")
-                        ) {
-                            Label("Share Invitation", systemImage: "square.and.arrow.up")
-                        }
-                    }
-                    Button("Done") { store.dismissGeneratedInvitation() }
-                }
-                .padding(.vertical, 4)
-            }
         }
 
         if !household.pendingInvitations.isEmpty {
@@ -208,6 +185,21 @@ struct HouseholdSettingsView: View {
                         Text("\(invitation.role.displayName) · Expires \(invitation.expiresAt.formatted(date: .abbreviated, time: .shortened))")
                             .font(.caption)
                             .foregroundStyle(.secondary)
+                        if let createdInvitation = store.shareableInvitation(for: invitation),
+                           let url = createdInvitation.shareURL {
+                            Text(url.absoluteString)
+                                .font(.system(.caption2, design: .monospaced))
+                                .foregroundStyle(.secondary)
+                                .textSelection(.enabled)
+                                .accessibilityIdentifier("generated-invitation-link")
+                            ShareLink(
+                                item: url,
+                                subject: Text("Join my Tenora household"),
+                                message: Text("Join \(household.name) in Tenora. This private link can be used once.")
+                            ) {
+                                Label("Share Invitation", systemImage: "square.and.arrow.up")
+                            }
+                        }
                         Button("Revoke", role: .destructive) {
                             Task { await store.revokeInvitation(invitation) }
                         }

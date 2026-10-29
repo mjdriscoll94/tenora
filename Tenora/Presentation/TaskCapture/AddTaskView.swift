@@ -73,7 +73,15 @@ struct AddTaskView: View {
                     }
                 }
             }
-            .onAppear { isTitleFocused = true }
+            .task {
+                // Let the sheet finish presenting before asking UIKit to bring up the
+                // keyboard. Focusing during the presentation animation can make the
+                // simulator's remote text-input session stall for several seconds.
+                do { try await Task.sleep(for: .milliseconds(250)) }
+                catch { return }
+                guard !captured else { return }
+                isTitleFocused = true
+            }
             .interactiveDismissDisabled(saving)
         }
     }
