@@ -10,6 +10,7 @@ struct HouseholdSettingsView: View {
     @State private var hasHandledInitialInvitation = false
     @State private var isConfirmingLeave = false
     @State private var isConfirmingClosure = false
+    @State private var isShowingClosureBlocked = false
     @State private var closureConfirmationName = ""
 
     init(initialInvitationToken: String = "") {
@@ -66,10 +67,17 @@ struct HouseholdSettingsView: View {
             Button("Close Household", role: .destructive) {
                 Task { await store.closeHousehold() }
             }
-            .disabled(closureConfirmationName != store.household?.name)
+            .disabled(!closureNameMatches)
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("This ends household collaboration and revokes unused invitations. Type the household name to confirm. Personal Tenora data is not deleted.")
+            if let name = store.household?.name {
+                Text("Type “\(name)” below to confirm. This ends household collaboration and revokes unused invitations. Personal Tenora data is not deleted.")
+            }
+        }
+        .alert("Household can’t be closed yet", isPresented: $isShowingClosureBlocked) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Every other adult must leave this household first. This protects them from losing household access without their consent.")
         }
         .overlay {
             if store.isWorking {
@@ -184,12 +192,16 @@ struct HouseholdSettingsView: View {
         Section("Membership") {
             if household.currentRole == .owner {
                 Button(role: .destructive) {
-                    closureConfirmationName = ""
-                    isConfirmingClosure = true
+                    if household.activeMembers.count > 1 {
+                        isShowingClosureBlocked = true
+                    } else {
+                        closureConfirmationName = ""
+                        isConfirmingClosure = true
+                    }
                 } label: {
                     Label("Close Household", systemImage: "lock.rectangle.stack")
                 }
-                .disabled(store.isWorking || household.activeMembers.count > 1)
+                .disabled(store.isWorking)
                 .accessibilityIdentifier("close-household")
 
                 if household.activeMembers.count > 1 {
@@ -215,6 +227,13 @@ struct HouseholdSettingsView: View {
                     .foregroundStyle(.secondary)
             }
         }
+    }
+
+    private var closureNameMatches: Bool {
+        guard let name = store.household?.name else { return false }
+        return closureConfirmationName
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .localizedCaseInsensitiveCompare(name) == .orderedSame
     }
 
     @ViewBuilder
