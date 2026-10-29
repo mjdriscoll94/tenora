@@ -324,6 +324,64 @@ invitation lifecycle are implemented in development; iOS create/join flows remai
 - Step-up authentication for sensitive actions.
 - No raw credentials or service secrets on device.
 
+## Product backlog — Unscheduled follow-on capabilities
+
+These ideas are approved for future product discovery but are not inserted into the
+current Step 03–05 delivery order. They must not delay household permissions or weaken
+the personal-versus-household privacy boundary.
+
+### Low-friction text capture
+
+**Goal:** Let a user send Tenora a text message whenever opening the app would add too
+much friction. The message lands in that adult's private Inbox by default, where Tenora
+can later help turn it into a task, reminder, note, or intentionally shared household
+item.
+
+**Backlog requirements:**
+
+- Assign or securely route an inbound number only after the signed-in adult verifies
+  ownership of their phone number.
+- Treat every incoming message as personal/private unless the sender deliberately moves
+  it into the household.
+- Accept short text, links, and optionally images without requiring tags or folders.
+- Acknowledge successful capture quickly and provide a safe recovery path for delivery
+  failures, unknown senders, duplicates, and delayed carrier delivery.
+- Keep automated classification reversible; preserve the original capture and never
+  silently schedule, share, or delete it.
+- Add rate limits, abuse prevention, retention/deletion controls, provider webhook
+  verification, idempotency, audit events, and required SMS consent/opt-out handling.
+- Evaluate cost and reliability before choosing a messaging provider or promising the
+  feature in a release.
+
+**Dependencies:** Stable authenticated identity, private cloud sync, secure inbound
+command processing, and production-ready account deletion/export. Household permissions
+must already prevent a text capture from becoming visible to another adult by accident.
+
+### Companion web interface
+
+**Goal:** Give users a responsive browser experience for capture, review, planning, and
+household coordination when a keyboard or larger screen is more convenient.
+
+**Backlog requirements:**
+
+- Use the same Tenora account, record identifiers, authorization rules, and audit trail as
+  the iOS app; the browser must never become a second source of permission logic.
+- Start with capture and review, then add personal tasks/habits and household features
+  only as their corresponding sync and permission phases are production-ready.
+- Make personal versus household visibility explicit on every create, edit, and detail
+  surface.
+- Use publishable browser credentials only. Keep server secrets outside the client and
+  enforce ownership and household membership at the database/API boundary.
+- Protect sessions against common browser threats, support sign-out and session
+  revocation, and avoid caching private content on shared computers.
+- Meet the same accessibility, export/deletion, privacy disclosure, telemetry, conflict,
+  and offline-failure standards as the iOS experience.
+- Preserve useful offline iOS behavior when the web service or account system is
+  unavailable.
+
+**Dependencies:** Private sync and conflict handling, Step 04 household authorization,
+production authentication operations, and a security review of the selected web stack.
+
 ## Cross-phase quality gates
 
 Every implementation phase must include:

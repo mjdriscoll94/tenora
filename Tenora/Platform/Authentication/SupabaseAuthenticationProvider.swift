@@ -31,7 +31,10 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         // must never be provided here.
         client = SupabaseClient(
             supabaseURL: configuration.url,
-            supabaseKey: configuration.publishableKey
+            supabaseKey: configuration.publishableKey,
+            options: SupabaseClientOptions(
+                auth: .init(emitLocalSessionAsInitialSession: true)
+            )
         )
     }
 
@@ -141,13 +144,15 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         let normalizedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard (1...100).contains(normalizedName.count) else { throw HouseholdServiceError.invalidName }
         do {
-            let _: HouseholdRow = try await client
+            // Do not request the inserted row here. The owner's membership is created
+            // by an AFTER INSERT trigger, and the household SELECT policy depends on
+            // that membership. Asking PostgREST for a representation evaluates the
+            // SELECT policy before the trigger-created membership is visible and rolls
+            // the otherwise-valid insert back under RLS.
+            try await client
                 .from("households")
                 .insert(CreateHouseholdPayload(name: normalizedName, createdBy: adult.userID))
-                .select("id,name")
-                .single()
                 .execute()
-                .value
             guard let household = try await fetchHousehold(for: adult) else {
                 throw HouseholdServiceError.service("The household was created, but Tenora couldn't reload it.")
             }
@@ -261,6 +266,9 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         }
         if detail.contains("current household") {
             return .service("Leave your current household before joining another one.")
+        }
+        if detail.contains("row-level security") || detail.contains("42501") {
+            return .service("Tenora couldn't verify your household access. Sign out, sign back in, and try again.")
         }
         if detail.contains("pending_email") || detail.contains("duplicate key") {
             return .service("There is already an active invitation for that email address.")

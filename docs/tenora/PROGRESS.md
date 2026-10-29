@@ -1,6 +1,6 @@
 # Tenora Family Transition — Progress and Verification
 
-**Last updated:** October 27, 2026
+**Last updated:** October 29, 2026
 **Current product step:** Step 03 — Household creation and invitations
 **Implementation state:** Steps 01 and 02 are complete. Step 03 now has its database
 foundation and iOS create, invite, preview, join, and revoke experience. Private sync
@@ -10,6 +10,16 @@ check before it is closed. Historical-data gates were waived for the initial pre
 rollout because current development data may be discarded.
 
 ## Work completed
+
+### Product backlog additions
+
+- Added an unscheduled low-friction text-capture concept: users can eventually text
+  Tenora and receive the capture in their private Inbox without opening the app.
+- Added an unscheduled companion web interface for capture, review, planning, and
+  household coordination.
+- Both concepts are explicitly gated behind private sync, production authentication, and
+  household authorization. Neither changes the current Step 03–05 delivery order, and
+  neither permits personal content to become household-visible by default.
 
 ### Step 03 household identity foundation
 
