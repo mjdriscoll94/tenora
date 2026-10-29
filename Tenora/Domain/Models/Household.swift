@@ -22,12 +22,33 @@ enum HouseholdInvitationStatus: String, Codable, Sendable {
     case expired
 }
 
+enum HouseholdOwnershipTransferStatus: String, Codable, Sendable {
+    case pending
+    case accepted
+    case cancelled
+    case declined
+    case expired
+}
+
 struct HouseholdMembership: Identifiable, Codable, Equatable, Sendable {
     let id: UUID
     let userID: UUID
     let role: HouseholdRole
     let status: HouseholdMembershipStatus
     let joinedAt: Date
+    let displayName: String?
+}
+
+struct HouseholdOwnershipTransfer: Identifiable, Codable, Equatable, Sendable {
+    let id: UUID
+    let householdID: UUID
+    let requestedBy: UUID
+    let recipientUserID: UUID
+    let status: HouseholdOwnershipTransferStatus
+    let expiresAt: Date
+    let createdAt: Date
+
+    var isPending: Bool { status == .pending && expiresAt > Date() }
 }
 
 struct HouseholdInvitation: Identifiable, Codable, Equatable, Sendable {
@@ -44,6 +65,7 @@ struct HouseholdSnapshot: Identifiable, Codable, Equatable, Sendable {
     let currentUserID: UUID
     let memberships: [HouseholdMembership]
     let invitations: [HouseholdInvitation]
+    let ownershipTransfer: HouseholdOwnershipTransfer?
 
     var currentMembership: HouseholdMembership? {
         memberships.first { $0.userID == currentUserID && $0.status == .active }
@@ -52,6 +74,10 @@ struct HouseholdSnapshot: Identifiable, Codable, Equatable, Sendable {
     var currentRole: HouseholdRole? { currentMembership?.role }
     var activeMembers: [HouseholdMembership] { memberships.filter { $0.status == .active } }
     var pendingInvitations: [HouseholdInvitation] { invitations.filter { $0.status == .pending } }
+
+    func memberName(for userID: UUID) -> String {
+        memberships.first { $0.userID == userID }?.displayName ?? "Name needed"
+    }
 }
 
 struct CreatedHouseholdInvitation: Equatable, Sendable {
@@ -77,6 +103,7 @@ enum HouseholdServiceError: LocalizedError, Equatable, Sendable {
     case notConfigured
     case signInRequired
     case invalidName
+    case invalidMemberName
     case invalidInvitation
     case service(String)
 
@@ -88,6 +115,8 @@ enum HouseholdServiceError: LocalizedError, Equatable, Sendable {
             return "Sign in with your adult Tenora account to use a household."
         case .invalidName:
             return "Enter a household name between 1 and 100 characters."
+        case .invalidMemberName:
+            return "Add your name using 1 to 100 characters."
         case .invalidInvitation:
             return "That invitation code or link is not valid."
         case .service(let message):

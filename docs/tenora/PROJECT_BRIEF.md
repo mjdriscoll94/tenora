@@ -1,6 +1,6 @@
 # Tenora Family Transition — Project Brief
 
-**Status:** Product Steps 01 and 02 are complete; Step 03 household creation and invitations is in progress.
+**Status:** Product Steps 01 and 02 are complete; Step 03 is implemented with its signed-device gate pending; Step 04 household permissions is in progress.
 **Audit date:** October 23, 2026
 **Current release baseline:** iOS 17+, app version 1.0.0 (build 1)
 

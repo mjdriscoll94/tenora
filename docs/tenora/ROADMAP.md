@@ -25,8 +25,9 @@ supports household creation plus expiring, single-use adult invitations with cre
 preview, accept, and revoke commands. Adult membership roles, an immutable audit trail,
 and private-by-default RLS boundaries are enforced. The iOS app now supports creating a
 household, viewing adult members, sharing and revoking invitations, joining by code, and
-opening `tenora://household/invite/<token>` links. All 136 unit tests and the focused
-Settings UI test pass. Before shared-record permission work begins, two authenticated
+opening `tenora://household/invite/<token>` links. All 140 unit tests and the focused
+Settings UI test pass. Invitation acceptance now requires a household-visible preferred
+name so members are identifiable. Before shared-record permission work begins, two authenticated
 adults must complete the end-to-end invitation lifecycle on signed builds and confirm
 personal data remains private.
 
@@ -36,8 +37,10 @@ personal data remains private.
 membership-permissions slice allows an adult or administrator to leave while preserving
 the household and its history. A sole remaining owner can close the household without
 deleting its membership, invitation, or audit history; closure is blocked while another
-adult remains active. Owners with other active members remain blocked until those adults
-leave or ownership transfer is available.
+adult remains active. Consensual ownership transfer is implemented: one owner may request
+transfer to one named active adult or admin, the recipient must accept within seven days,
+and the former owner becomes an adult member. The owner can cancel and the recipient can
+decline; only those two adults can see the pending request.
 This step will continue by enforcing and verifying secure access to shared records without
 granting owners or administrators access to another adult's private information.
 

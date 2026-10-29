@@ -46,9 +46,10 @@ final class HouseholdStoreTests: XCTestCase {
         let store = makeStore(service: service)
         await store.refresh(for: adult)
 
-        await store.createHousehold(name: "  Driscoll Home  ")
+        await store.createHousehold(name: "  Driscoll Home  ", memberName: " Mackenzie ")
 
         XCTAssertEqual(service.createdName, "Driscoll Home")
+        XCTAssertEqual(service.memberName, "Mackenzie")
         XCTAssertEqual(store.household?.name, "Driscoll Home")
     }
 
@@ -61,8 +62,9 @@ final class HouseholdStoreTests: XCTestCase {
         await store.previewInvitation(token)
         XCTAssertEqual(store.invitationPreview?.householdName, "Driscoll Home")
 
-        await store.acceptInvitation(token)
+        await store.acceptInvitation(token, memberName: "Mackenzie")
         XCTAssertEqual(service.acceptedToken, token)
+        XCTAssertEqual(service.memberName, "Mackenzie")
         XCTAssertEqual(store.household?.name, "Driscoll Home")
         XCTAssertNil(store.invitationPreview)
     }
@@ -126,6 +128,54 @@ final class HouseholdStoreTests: XCTestCase {
         XCTAssertEqual(store.message, "Household closed. Everyone's personal Tenora data is unchanged.")
     }
 
+    func testOwnerCanRequestOwnershipTransfer() async {
+        let service = FakeHouseholdService(snapshot: snapshot)
+        let store = makeStore(service: service)
+        await store.refresh(for: adult)
+        let recipientID = UUID(uuidString: "EEEEEEEE-EEEE-EEEE-EEEE-EEEEEEEEEEEE")!
+
+        await store.requestOwnershipTransfer(to: recipientID)
+
+        XCTAssertEqual(service.requestedRecipientID, recipientID)
+        XCTAssertEqual(store.message, "Ownership transfer requested. It expires in 7 days.")
+    }
+
+    func testOwnerCanCancelOwnershipTransfer() async {
+        let service = FakeHouseholdService(snapshot: snapshot)
+        let store = makeStore(service: service)
+        await store.refresh(for: adult)
+        let transferID = UUID(uuidString: "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")!
+
+        await store.cancelOwnershipTransfer(id: transferID)
+
+        XCTAssertEqual(service.cancelledTransferID, transferID)
+        XCTAssertEqual(store.message, "Ownership transfer cancelled.")
+    }
+
+    func testRecipientCanDeclineOwnershipTransfer() async {
+        let service = FakeHouseholdService(snapshot: memberSnapshot)
+        let store = makeStore(service: service)
+        await store.refresh(for: adult)
+        let transferID = UUID(uuidString: "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")!
+
+        await store.declineOwnershipTransfer(id: transferID)
+
+        XCTAssertEqual(service.declinedTransferID, transferID)
+        XCTAssertEqual(store.message, "Ownership transfer declined.")
+    }
+
+    func testRecipientCanAcceptOwnershipTransfer() async {
+        let service = FakeHouseholdService(snapshot: memberSnapshot)
+        let store = makeStore(service: service)
+        await store.refresh(for: adult)
+        let transferID = UUID(uuidString: "FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")!
+
+        await store.acceptOwnershipTransfer(id: transferID)
+
+        XCTAssertEqual(service.acceptedTransferID, transferID)
+        XCTAssertEqual(store.message, "You are now the household owner.")
+    }
+
     private func makeStore(service: FakeHouseholdService) -> HouseholdStore {
         HouseholdStore(service: service, linkStorage: FakeInvitationLinkStorage())
     }
@@ -141,10 +191,12 @@ final class HouseholdStoreTests: XCTestCase {
                     userID: adult.userID,
                     role: .owner,
                     status: .active,
-                    joinedAt: Date(timeIntervalSince1970: 100)
+                    joinedAt: Date(timeIntervalSince1970: 100),
+                    displayName: "Mackenzie"
                 )
             ],
-            invitations: []
+            invitations: [],
+            ownershipTransfer: nil
         )
     }
 
@@ -159,10 +211,12 @@ final class HouseholdStoreTests: XCTestCase {
                     userID: adult.userID,
                     role: .adult,
                     status: .active,
-                    joinedAt: Date(timeIntervalSince1970: 100)
+                    joinedAt: Date(timeIntervalSince1970: 100),
+                    displayName: "Mackenzie"
                 )
             ],
-            invitations: []
+            invitations: [],
+            ownershipTransfer: nil
         )
     }
 }
@@ -171,17 +225,23 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
     let isConfigured = true
     var snapshot: HouseholdSnapshot?
     var createdName: String?
+    var memberName: String?
     var acceptedToken: String?
     var previewCallCount = 0
     var didLeave = false
     var didClose = false
+    var requestedRecipientID: UUID?
+    var cancelledTransferID: UUID?
+    var declinedTransferID: UUID?
+    var acceptedTransferID: UUID?
 
     init(snapshot: HouseholdSnapshot?) { self.snapshot = snapshot }
 
     func fetchHousehold(for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot? { snapshot }
 
-    func createHousehold(named name: String, for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot {
+    func createHousehold(named name: String, memberName: String, for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot {
         createdName = name
+        self.memberName = memberName
         let household = makeSnapshot(adult: adult, name: name)
         snapshot = household
         return household
@@ -207,7 +267,8 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
                         status: .pending,
                         expiresAt: created.expiresAt
                     )
-                ]
+                ],
+                ownershipTransfer: current.ownershipTransfer
             )
         }
         return created
@@ -223,11 +284,29 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
         )
     }
 
-    func acceptInvitation(token: String, for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot {
+    func acceptInvitation(token: String, memberName: String, for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot {
         acceptedToken = token
+        self.memberName = memberName
         let household = makeSnapshot(adult: adult, name: "Driscoll Home")
         snapshot = household
         return household
+    }
+
+    func setMemberName(_ name: String) async throws {
+        memberName = name
+    }
+
+    func requestOwnershipTransfer(to recipientUserID: UUID) async throws {
+        requestedRecipientID = recipientUserID
+    }
+    func cancelOwnershipTransfer(id: UUID) async throws {
+        cancelledTransferID = id
+    }
+    func declineOwnershipTransfer(id: UUID) async throws {
+        declinedTransferID = id
+    }
+    func acceptOwnershipTransfer(id: UUID) async throws {
+        acceptedTransferID = id
     }
 
     func revokeInvitation(id: UUID) async throws {
@@ -246,7 +325,8 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
                     status: .revoked,
                     expiresAt: invitation.expiresAt
                 )
-            }
+            },
+            ownershipTransfer: current.ownershipTransfer
         )
     }
 
@@ -271,10 +351,12 @@ private final class FakeHouseholdService: HouseholdService, @unchecked Sendable 
                     userID: adult.userID,
                     role: .owner,
                     status: .active,
-                    joinedAt: Date(timeIntervalSince1970: 100)
+                    joinedAt: Date(timeIntervalSince1970: 100),
+                    displayName: memberName ?? "Mackenzie"
                 )
             ],
-            invitations: []
+            invitations: [],
+            ownershipTransfer: nil
         )
     }
 }

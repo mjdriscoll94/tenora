@@ -125,15 +125,24 @@ final class HouseholdStore: ObservableObject {
         }
     }
 
-    func createHousehold(name: String) async {
+    func createHousehold(name: String, memberName: String) async {
         guard let adult else { message = HouseholdServiceError.signInRequired.localizedDescription; return }
         let normalized = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard (1...100).contains(normalized.count) else {
             message = HouseholdServiceError.invalidName.localizedDescription
             return
         }
+        let normalizedMemberName = memberName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard (1...100).contains(normalizedMemberName.count) else {
+            message = HouseholdServiceError.invalidMemberName.localizedDescription
+            return
+        }
         await perform {
-            household = try await service.createHousehold(named: normalized, for: adult)
+            household = try await service.createHousehold(
+                named: normalized,
+                memberName: normalizedMemberName,
+                for: adult
+            )
             message = "Household created. Your existing tasks, habits, schedule, and settings are still private."
         }
     }
@@ -166,16 +175,62 @@ final class HouseholdStore: ObservableObject {
         }
     }
 
-    func acceptInvitation(_ input: String) async {
+    func acceptInvitation(_ input: String, memberName: String) async {
         guard let adult else { message = HouseholdServiceError.signInRequired.localizedDescription; return }
         guard let token = Self.invitationToken(from: input) else {
             message = HouseholdServiceError.invalidInvitation.localizedDescription
             return
         }
+        let normalizedMemberName = memberName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard (1...100).contains(normalizedMemberName.count) else {
+            message = HouseholdServiceError.invalidMemberName.localizedDescription
+            return
+        }
         await perform {
-            household = try await service.acceptInvitation(token: token, for: adult)
+            household = try await service.acceptInvitation(
+                token: token,
+                memberName: normalizedMemberName,
+                for: adult
+            )
             invitationPreview = nil
             message = "You joined the household. Your personal Tenora data remains private."
+        }
+    }
+
+    func setMemberName(_ name: String) async {
+        let normalized = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard (1...100).contains(normalized.count) else {
+            message = HouseholdServiceError.invalidMemberName.localizedDescription
+            return
+        }
+        await perform {
+            try await service.setMemberName(normalized)
+            if let adult { household = try await service.fetchHousehold(for: adult) }
+            message = "Your household name is now (normalized)."
+        }
+    }
+
+    func requestOwnershipTransfer(to recipientUserID: UUID) async {
+        await performOwnershipChange(successMessage: "Ownership transfer requested. It expires in 7 days.") {
+            try await service.requestOwnershipTransfer(to: recipientUserID)
+        }
+    }
+
+    func cancelOwnershipTransfer(id: UUID) async {
+        await performOwnershipChange(successMessage: "Ownership transfer cancelled.") {
+            try await service.cancelOwnershipTransfer(id: id)
+        }
+    }
+
+    func declineOwnershipTransfer(id: UUID) async {
+        await performOwnershipChange(successMessage: "Ownership transfer declined.") {
+            try await service.declineOwnershipTransfer(id: id)
+        }
+    }
+
+    func acceptOwnershipTransfer(id: UUID) async {
+        await performOwnershipChange(successMessage: "You are now the household owner.") {
+            try await service.acceptOwnershipTransfer(id: id)
         }
     }
 
@@ -273,6 +328,22 @@ final class HouseholdStore: ObservableObject {
             try await operation()
         } catch {
             message = error.localizedDescription
+        }
+    }
+
+    private func performOwnershipChange(
+        successMessage: String,
+        operation: () async throws -> Void
+    ) async {
+        await perform {
+            try await operation()
+            if let adult { household = try await service.fetchHousehold(for: adult) }
+            message = successMessage
+        }
+        if message?.contains("no longer pending") == true, let adult {
+            let preservedMessage = message
+            household = try? await service.fetchHousehold(for: adult)
+            message = preservedMessage
         }
     }
 }

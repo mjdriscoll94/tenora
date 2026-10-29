@@ -103,12 +103,25 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
 
     func fetchHousehold(for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot? {
         do {
+            let _: Bool = try await client
+                .rpc("expire_household_ownership_transfer")
+                .execute()
+                .value
             let households: [HouseholdRow] = try await client
                 .from("households")
                 .select("id,name")
                 .limit(1)
                 .execute()
                 .value
+
+            let profiles: [AccountProfileRow] = try await client
+                .from("account_profiles")
+                .select("user_id,display_name")
+                .execute()
+                .value
+            let names = Dictionary(uniqueKeysWithValues: profiles.compactMap { profile in
+                profile.displayName.map { (profile.userID, $0) }
+            })
             guard let household = households.first else { return nil }
 
             let memberships: [MembershipRow] = try await client
@@ -116,6 +129,15 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
                 .select("id,user_id,role,status,joined_at")
                 .eq("household_id", value: household.id)
                 .order("joined_at", ascending: true)
+                .execute()
+                .value
+
+            let transfers: [OwnershipTransferRow] = try await client
+                .from("household_ownership_transfers")
+                .select("id,household_id,requested_by,recipient_user_id,status,expires_at,created_at")
+                .eq("household_id", value: household.id)
+                .eq("status", value: HouseholdOwnershipTransferStatus.pending.rawValue)
+                .limit(1)
                 .execute()
                 .value
 
@@ -132,17 +154,19 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
                 id: household.id,
                 name: household.name,
                 currentUserID: adult.userID,
-                memberships: memberships.map(\.model),
-                invitations: invitations.map(\.model)
+                memberships: memberships.map { $0.model(displayName: names[$0.userID]) },
+                invitations: invitations.map(\.model),
+                ownershipTransfer: transfers.first?.model
             )
         } catch {
             throw householdError(error, fallback: "Tenora couldn't load your household. Please try again.")
         }
     }
 
-    func createHousehold(named name: String, for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot {
+    func createHousehold(named name: String, memberName: String, for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot {
         let normalizedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard (1...100).contains(normalizedName.count) else { throw HouseholdServiceError.invalidName }
+        try await setMemberName(memberName)
         do {
             // Do not request the inserted row here. The owner's membership is created
             // by an AFTER INSERT trigger, and the household SELECT policy depends on
@@ -200,10 +224,13 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         }
     }
 
-    func acceptInvitation(token: String, for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot {
+    func acceptInvitation(token: String, memberName: String, for adult: AuthenticatedAdult) async throws -> HouseholdSnapshot {
         do {
             let rows: [AcceptedHouseholdRow] = try await client
-                .rpc("accept_household_invitation", params: InvitationTokenParameters(token: token))
+                .rpc(
+                    "accept_household_invitation",
+                    params: AcceptInvitationParameters(token: token, displayName: memberName)
+                )
                 .execute()
                 .value
             guard !rows.isEmpty, let household = try await fetchHousehold(for: adult) else {
@@ -214,6 +241,70 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
             throw error
         } catch {
             throw householdError(error, fallback: "Tenora couldn't accept that invitation. Please try again.")
+        }
+    }
+
+    func setMemberName(_ name: String) async throws {
+        let normalized = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard (1...100).contains(normalized.count) else { throw HouseholdServiceError.invalidMemberName }
+        do {
+            let _: String = try await client
+                .rpc("set_household_member_name", params: MemberNameParameters(displayName: normalized))
+                .execute()
+                .value
+        } catch let error as HouseholdServiceError {
+            throw error
+        } catch {
+            throw householdError(error, fallback: "Tenora couldn't save your name. Please try again.")
+        }
+    }
+
+    func requestOwnershipTransfer(to recipientUserID: UUID) async throws {
+        try await runOwnershipCommand(
+            "request_household_ownership_transfer",
+            params: RecipientParameters(recipientUserID: recipientUserID),
+            fallback: "Tenora couldn't request that ownership transfer. Please try again."
+        )
+    }
+
+    func cancelOwnershipTransfer(id: UUID) async throws {
+        try await runOwnershipCommand(
+            "cancel_household_ownership_transfer",
+            params: TransferParameters(transferID: id),
+            fallback: "Tenora couldn't cancel that ownership transfer. Please refresh and try again."
+        )
+    }
+
+    func declineOwnershipTransfer(id: UUID) async throws {
+        try await runOwnershipCommand(
+            "decline_household_ownership_transfer",
+            params: TransferParameters(transferID: id),
+            fallback: "Tenora couldn't decline that ownership transfer. Please refresh and try again."
+        )
+    }
+
+    func acceptOwnershipTransfer(id: UUID) async throws {
+        try await runOwnershipCommand(
+            "accept_household_ownership_transfer",
+            params: TransferParameters(transferID: id),
+            fallback: "Tenora couldn't accept that ownership transfer. Please refresh and try again."
+        )
+    }
+
+    private func runOwnershipCommand<Parameters: Encodable>(
+        _ function: String,
+        params: Parameters,
+        fallback: String
+    ) async throws {
+        do {
+            let didChange: Bool = try await client.rpc(function, params: params).execute().value
+            guard didChange else {
+                throw HouseholdServiceError.service("That ownership transfer is no longer pending. Household details were refreshed.")
+            }
+        } catch let error as HouseholdServiceError {
+            throw error
+        } catch {
+            throw householdError(error, fallback: fallback)
         }
     }
 
@@ -308,6 +399,18 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         if detail.contains("household owner permission required") {
             return .service("Only the household owner can close the household.")
         }
+        if detail.contains("member name must be") || detail.contains("add your name") {
+            return .invalidMemberName
+        }
+        if detail.contains("already uses that name") {
+            return .service("Another adult in this household already uses that name.")
+        }
+        if detail.contains("already pending") {
+            return .service("An ownership transfer is already pending.")
+        }
+        if detail.contains("both adults must add their names") {
+            return .service("Both adults need names before ownership can be transferred.")
+        }
         if detail.contains("row-level security") || detail.contains("42501") {
             return .service("Tenora couldn't verify your household access. Sign out, sign back in, and try again.")
         }
@@ -329,14 +432,62 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
         let status: HouseholdMembershipStatus
         let joinedAt: Date
 
-        var model: HouseholdMembership {
-            HouseholdMembership(id: id, userID: userID, role: role, status: status, joinedAt: joinedAt)
+        func model(displayName: String?) -> HouseholdMembership {
+            HouseholdMembership(
+                id: id,
+                userID: userID,
+                role: role,
+                status: status,
+                joinedAt: joinedAt,
+                displayName: displayName
+            )
         }
 
         enum CodingKeys: String, CodingKey {
             case id, role, status
             case userID = "user_id"
             case joinedAt = "joined_at"
+        }
+    }
+
+    private struct AccountProfileRow: Decodable {
+        let userID: UUID
+        let displayName: String?
+
+        enum CodingKeys: String, CodingKey {
+            case userID = "user_id"
+            case displayName = "display_name"
+        }
+    }
+
+    private struct OwnershipTransferRow: Decodable {
+        let id: UUID
+        let householdID: UUID
+        let requestedBy: UUID
+        let recipientUserID: UUID
+        let status: HouseholdOwnershipTransferStatus
+        let expiresAt: Date
+        let createdAt: Date
+
+        var model: HouseholdOwnershipTransfer {
+            HouseholdOwnershipTransfer(
+                id: id,
+                householdID: householdID,
+                requestedBy: requestedBy,
+                recipientUserID: recipientUserID,
+                status: status,
+                expiresAt: expiresAt,
+                createdAt: createdAt
+            )
+        }
+
+        enum CodingKeys: String, CodingKey {
+            case id, status
+            case householdID = "household_id"
+            case requestedBy = "requested_by"
+            case recipientUserID = "recipient_user_id"
+            case expiresAt = "expires_at"
+            case createdAt = "created_at"
         }
     }
 
@@ -383,6 +534,30 @@ final class SupabaseAuthenticationProvider: AdultAuthenticationProvider, Househo
     private struct InvitationTokenParameters: Encodable {
         let token: String
         enum CodingKeys: String, CodingKey { case token = "p_invitation_token" }
+    }
+
+    private struct AcceptInvitationParameters: Encodable {
+        let token: String
+        let displayName: String
+        enum CodingKeys: String, CodingKey {
+            case token = "p_invitation_token"
+            case displayName = "p_display_name"
+        }
+    }
+
+    private struct MemberNameParameters: Encodable {
+        let displayName: String
+        enum CodingKeys: String, CodingKey { case displayName = "p_display_name" }
+    }
+
+    private struct RecipientParameters: Encodable {
+        let recipientUserID: UUID
+        enum CodingKeys: String, CodingKey { case recipientUserID = "p_recipient_user_id" }
+    }
+
+    private struct TransferParameters: Encodable {
+        let transferID: UUID
+        enum CodingKeys: String, CodingKey { case transferID = "p_transfer_id" }
     }
 
     private struct RevokeInvitationParameters: Encodable {

@@ -2,13 +2,13 @@
 
 **Last updated:** October 29, 2026
 **Current product step:** Step 04 — Household permissions, with the Step 03 signed-device gate pending
-**Implementation state:** Steps 01 and 02 are complete. Step 03 now has its database
-foundation and iOS create, invite, preview, join, and revoke experience. Private sync
-infrastructure remains local-only with cloud reads and writes disabled. No shared
+**Implementation state:** Steps 01 and 02 are complete. Step 03 has its database
+foundation and iOS create, invite, preview, join, and revoke experience. Step 04 now
+supports leaving, protected household closure, and consensual ownership transfer without
+exposing or deleting personal data. Private sync remains disabled and no shared
 productivity data is enabled. Step 03 still requires a signed-device, two-adult lifecycle
-check before it is closed. The first isolated Step 04 slice now supports leaving a
-household without exposing or deleting personal data. Historical-data gates were waived
-for the initial pre-release rollout because current development data may be discarded.
+check before it is closed. Historical-data gates were waived for the initial pre-release
+rollout because current development data may be discarded.
 
 ## Work completed
 
@@ -133,6 +133,40 @@ security-definer command, alongside the four invitation commands. It is intentio
 authenticated-only, rejects anonymous sessions, derives the actor from `auth.uid()`,
 checks current membership in the database, accepts no identity parameters, and uses an
 empty `search_path`.
+
+### Step 04 household permissions — ownership transfer
+
+- Added household-visible preferred names and now require a name when creating a household
+  or accepting an invitation. Existing unnamed adults receive an in-app name prompt.
+- Added a consensual single-owner transfer workflow. The current owner can request one
+  active named adult or admin; the recipient must accept within seven days, after which the
+  former owner remains as an adult member.
+- Added owner cancellation, recipient decline, lazy expiration during household refresh,
+  friendly stale-action handling, and in-app pending-request alerts.
+- Enforced one active owner, one pending request, first-committed concurrency behavior,
+  participant-only pending visibility, household-local name uniqueness, and immutable audit
+  events for every transfer transition.
+- Updated the invitation, leave, closure, and household-foundation database tests for the
+  required-name contract and added a 30-assertion ownership-transfer suite.
+
+**Verification:** Migrations `20261029205609_household_ownership_transfer` and
+`20261029210738_merge_account_profile_read_policies` are applied to the linked development
+project. The five transactional database suites pass, including all 30 ownership
+assertions for authorization, visibility, single-owner enforcement, acceptance,
+cancellation, decline, expiry, and audit history. The simulator app build succeeds. The
+focused household store suite passes all 13 tests, and the complete iOS unit suite passes
+all 140 tests on iPhone 17 Pro Max / iOS 26.5. Result bundle:
+`/tmp/TenoraOwnershipBuild/Logs/Test/Test-Tenora-2026.10.29_16-01-46--0500.xcresult`.
+
+The post-migration database review reports no missing RLS policies or overlapping
+permissive policies. Its remaining security-definer notices describe the intentionally
+authenticated command boundary, and its unused-index notices are informational for the
+new, nearly empty development tables. Leaked-password protection remains a Supabase
+project setting to enable before email/password authentication is offered; Tenora's
+current adult sign-in uses Apple.
+
+Server-driven APNs delivery for transfer requests remains deferred until Tenora has remote
+push infrastructure; the request is surfaced whenever either participant opens Household.
 
 ### Step 04 household permissions — closing a household
 

@@ -12,7 +12,7 @@ select extensions.has_function(
   'Invitation preview command exists'
 );
 select extensions.has_function(
-  'public', 'accept_household_invitation', array['text'],
+  'public', 'accept_household_invitation', array['text', 'text'],
   'Invitation acceptance command exists'
 );
 select extensions.has_function(
@@ -46,6 +46,8 @@ insert into auth.users (
 
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"51515151-5151-5151-5151-515151515151","role":"authenticated","is_anonymous":false}';
+
+select public.set_household_member_name('Invite Owner');
 
 insert into public.households (name, created_by)
 select 'Invitation Test Household', user_row.id
@@ -105,7 +107,8 @@ select extensions.is(
 
 select *
   from public.accept_household_invitation(
-    current_setting('tenora_test.invitation_token')
+    current_setting('tenora_test.invitation_token'),
+    'Invite Adult'
   );
 
 select extensions.is(
@@ -141,7 +144,8 @@ select extensions.throws_ok(
   $$
     select *
       from public.accept_household_invitation(
-        current_setting('tenora_test.invitation_token')
+        current_setting('tenora_test.invitation_token'),
+        'Invite Outsider'
       )
   $$,
   '55000',

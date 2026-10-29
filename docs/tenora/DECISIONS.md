@@ -268,3 +268,21 @@ parameters change. All other privileged helpers remain in the unexposed `private
 **Token handling:** Creation returns 32 random bytes encoded as hexadecimal. Only a SHA-256
 hash is stored. Tokens expire within 30 days, are single-use, and never grant access without
 a separately authenticated adult account.
+
+## D-024 — Require consent for the single household owner role
+
+**Decision:** Each active household has exactly one owner. Only that owner can request a
+transfer to a named active adult or admin, and the role changes only after the recipient
+accepts. One request may be pending for seven days. The owner may cancel, the recipient may
+decline, and the first committed terminal action wins. Acceptance makes the former owner
+an adult member.
+
+**Why:** Ownership controls destructive and recovery-sensitive household actions. A
+transactional, consent-based handoff prevents surprise promotion, concurrent owners, and
+orphaned households. Stable user IDs authorize the transition; preferred names make the UI
+understandable but are never used as authority.
+
+**Privacy and audit:** Only the requesting owner and recipient may read the pending request.
+Every request, acceptance, cancellation, decline, and expiry is retained in immutable
+household audit history. Account names are visible only to active members of the same
+household and must be distinguishable there.

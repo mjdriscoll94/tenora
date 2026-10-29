@@ -45,6 +45,8 @@ insert into auth.users (
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"cccccccc-cccc-cccc-cccc-cccccccccccc","role":"authenticated"}';
 
+select public.set_household_member_name('Household Owner');
+
 insert into public.households (name, created_by)
 select 'The Test Household', user_row.id
   from public.tenora_users user_row;

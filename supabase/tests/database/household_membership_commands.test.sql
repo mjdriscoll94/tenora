@@ -27,6 +27,8 @@ insert into auth.users (
 set local role authenticated;
 set local request.jwt.claims = '{"sub":"81818181-8181-8181-8181-818181818181","role":"authenticated","is_anonymous":false}';
 
+select public.set_household_member_name('Leave Owner');
+
 insert into public.households (name, created_by)
 select 'Leave Test Household', user_row.id
   from public.tenora_users user_row;
@@ -51,7 +53,8 @@ set local request.jwt.claims = '{"sub":"82828282-8282-8282-8282-828282828282","r
 
 select *
   from public.accept_household_invitation(
-    current_setting('tenora_test.leave_invitation_token')
+    current_setting('tenora_test.leave_invitation_token'),
+    'Leave Adult'
   );
 
 select extensions.ok(

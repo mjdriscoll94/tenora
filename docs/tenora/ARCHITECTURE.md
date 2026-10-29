@@ -1,7 +1,7 @@
 # Tenora Family Transition — Architecture Audit and Recommendation
 
 **Audit date:** October 23, 2026
-**Scope:** Repository after product Step 02 and the first Step 03 household identity migration.
+**Scope:** Repository through the Step 04 ownership-transfer permission slice.
 
 ## Executive recommendation
 
@@ -189,7 +189,7 @@ Remaining gaps:
 
 - App and widget privacy manifests declare UserDefaults access and no tracking.
 - App icon, logo, theme colors, and habit assets are bundled.
-- 117 unit tests and 10 UI tests are defined and passing.
+- 140 unit tests pass in the current ownership-transfer verification run; the established UI suite remains available for interface regression coverage.
 - Agent Bridge has a lockfile, six Node tests, a TypeScript build, Dockerfile, Render blueprint, and GitHub Actions workflow.
 
 ### Partially implemented
@@ -321,7 +321,8 @@ Implemented identity and Step 03 foundation:
 - `households(id, name, created_by, created_at, updated_at)`
 - `household_memberships(id, household_id, user_id, role, status, invited_by, joined_at, ended_at, created_at)`
 - `household_invitations(id, household_id, created_by, recipient_email, token_hash, role, status, expires_at, accepted_by, accepted_at, created_at)`
-- `household_audit_events(id, household_id, actor_user_id, event_type, subject_user_id, invitation_id, occurred_at)`
+- `household_ownership_transfers(id, household_id, requested_by, recipient_user_id, status, expires_at, created_at, resolved_at)`
+- `household_audit_events(id, household_id, actor_user_id, event_type, subject_user_id, invitation_id, ownership_transfer_id, occurred_at)`
 
 The database enforces one active household per adult for this release. Household creation
 atomically creates an owner membership. Clients receive no direct mutation privilege for
@@ -330,6 +331,11 @@ use authenticated command functions. Invitation tokens contain 256 random bits, 
 returned only at creation, and are stored only as SHA-256 hashes. Acceptance locks the
 invitation row and changes the membership and invitation state in one transaction, making
 the token single-use. Anonymous and anonymous-auth accounts cannot call these commands.
+Preferred names remain account-level but are readable only by adults sharing an active
+household. Direct profile-name updates are replaced by a guarded command that normalizes
+names and prevents case-insensitive duplicates within the household. Ownership transitions
+are server-authoritative commands that lock the request and household, enforce one active
+owner, require recipient consent, and append every terminal transition to audit history.
 
 Planned shared-record core after the membership and permission gates:
 
@@ -492,7 +498,7 @@ The outbox stores `clientMutationID`, entity ID/type, intended operation, base s
 See [PROGRESS.md](PROGRESS.md) for commands and exact results. In summary:
 
 - Unsigned generic iPhone build: passed, including Tenora and TenoraWidgets.
-- iOS unit tests: 105/105 passed after Phase 2 (the Phase 1 baseline was 96/96).
+- iOS unit tests: 140/140 passed after the ownership-transfer slice (the Phase 2 baseline was 105/105).
 - iOS UI tests: 9/9 passed.
 - Agent Bridge TypeScript build: passed.
 - Agent Bridge tests: 6/6 passed.
